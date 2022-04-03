@@ -23,7 +23,7 @@ public class Item : BaseEntity
     public Item(string name, string description, decimal price, Guid menuId)
     {
         CheckForGeneralData(name, price);
-        Guard.Against.Null(menuId);
+        Guard.Against.NullOrEmpty(menuId);
 
         Id = Guid.NewGuid();
         Name = name;
@@ -45,7 +45,9 @@ public class Item : BaseEntity
     {
         Guard.Against.Null(newCategories);
 
-        var categoriesToAdd = newCategories.Except(_categories);
+        var categoriesToAdd = newCategories.Select(c => c.ToLowerInvariant())
+            .Distinct()
+            .Except(_categories);
         _categories.AddRange(categoriesToAdd);
     }
 
@@ -56,7 +58,10 @@ public class Item : BaseEntity
         if (_categories.Count == 0)
             return;
 
-        var resultCategories = _categories.Except(categoriesToRemove);
+        var resultCategories = _categories
+            .Except(categoriesToRemove.Select(c => c.ToLowerInvariant()).Distinct())
+            .ToArray();
+
         _categories.Clear();
         _categories.AddRange(resultCategories);
     }
@@ -65,7 +70,10 @@ public class Item : BaseEntity
     {
         Guard.Against.Null(newIngredients);
 
-        var ingredientsToAdd = newIngredients.Except(_ingredients);
+        var ingredientsToAdd = newIngredients
+            .Select(i => i.ToLowerInvariant())
+            .Distinct()
+            .Except(_ingredients);
         _ingredients.AddRange(ingredientsToAdd);
     }
 
@@ -73,17 +81,27 @@ public class Item : BaseEntity
     {
         Guard.Against.Null(ingredientsToRemove);
 
-        if (_categories.Count == 0)
+        if (_ingredients.Count == 0)
             return;
 
-        var resultIngredients = _ingredients.Except(ingredientsToRemove);
+        var resultIngredients = _ingredients
+            .Except(ingredientsToRemove.Select(c=> c.ToLowerInvariant()).Distinct())
+            .ToArray();
+
         _ingredients.Clear();
         _ingredients.AddRange(resultIngredients);
     }
 
-    public void AddRating(string userId, ushort rating)
+    public void AddOrChangeRating(string userId, short rating)
     {
-        _ratings.Add(new ItemRating(rating, userId));
+        var userRating = _ratings.SingleOrDefault(r => r.UserId == userId);
+        if (userRating == null)
+        {
+            _ratings.Add(new ItemRating(rating, userId));
+            return;
+        }
+
+        userRating.EditRating(rating);
     }
 
     public void RemoveRating(string userId)
@@ -94,7 +112,7 @@ public class Item : BaseEntity
             _ratings.Remove(ratingToRemove);
     }
 
-    public double TotalRating => Ratings.Average(r => r.Rating);
+    public double TotalRating => Ratings.Any() ? Ratings.Average(r => r.Rating) : 0;
 
     private void CheckForGeneralData(string name, decimal price)
     {

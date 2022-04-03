@@ -22,7 +22,7 @@ public class ItemBuilder : IBuilder<Item>
 
         if (_ratings != null && _ratings.Any())
             foreach (var rating in _ratings)
-                result.AddRating(rating.UserId, rating.Rating);
+                result.AddOrChangeRating(rating.UserId, rating.Rating);
 
         return result;
     }

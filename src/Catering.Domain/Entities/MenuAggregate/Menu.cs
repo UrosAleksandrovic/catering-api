@@ -7,11 +7,20 @@ public class Menu : BaseEntity
     public string Name { get; private set; }
     public IContact Contact { get; private set; }
 
+    private Menu() { }
+
     public Menu(string name)
     {
         ValidateGeneralData(name);
 
         Id = Guid.NewGuid();
+        Name = name;
+    }
+
+    public void Edit(string name)
+    {
+        ValidateGeneralData(name);
+
         Name = name;
     }
 

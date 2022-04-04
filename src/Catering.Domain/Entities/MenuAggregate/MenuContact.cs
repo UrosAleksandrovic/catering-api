@@ -19,12 +19,6 @@ public class MenuContact : IContact
         Address = address;
     }
 
-    private void ValidateGeneralData(string phoneNumber, string email)
-    {
-        if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email))
-            throw new ArgumentNullException($"One of following must not be null: {nameof(phoneNumber)}; {nameof(email)}");
-    }
-
     public void Edit(string phoneNumber, string email, string address)
     {
         ValidateGeneralData(phoneNumber, email);
@@ -32,5 +26,11 @@ public class MenuContact : IContact
         PhoneNumber = phoneNumber;
         Email = email;
         Address = address;
+    }
+
+    private void ValidateGeneralData(string phoneNumber, string email)
+    {
+        if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException($"One of following must not be null: {nameof(phoneNumber)}, {nameof(email)}");
     }
 }

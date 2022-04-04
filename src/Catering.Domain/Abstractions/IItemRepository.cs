@@ -8,4 +8,5 @@ public interface IItemRepository
     Task AddAsync(Item item);
     Task UpdateAsync(Item item);
     Task DeleteAsync(Guid id);
+    Task<List<Item>> GetItemsFromMenuAsync(Guid menuId);
 }

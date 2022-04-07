@@ -1,6 +1,6 @@
 ﻿namespace Catering.Domain.Entities;
 
-public class BaseEntity
+public class BaseEntity<T>
 {
-    public Guid Id { get; protected set; }
+    public T Id { get; protected set; }
 }

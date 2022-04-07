@@ -1,6 +1,8 @@
-﻿namespace Catering.Domain.Entities.MenuAggregate;
+﻿using Catering.Domain.Entities.MenuAggregate;
 
-public class MenuBuilder : IBuilder<Menu>
+namespace Catering.Domain.Builders;
+
+public class MenuBuilder : IBuilder<Menu, Guid>
 {
     private string _name;
     private string _address;
@@ -31,5 +33,10 @@ public class MenuBuilder : IBuilder<Menu>
         _email = email;
 
         return this;
+    }
+
+    public void Reset()
+    {
+        _name = _address = _phoneNumber = _email = default;
     }
 }

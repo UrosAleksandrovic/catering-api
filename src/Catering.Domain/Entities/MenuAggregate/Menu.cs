@@ -2,7 +2,7 @@
 
 namespace Catering.Domain.Entities.MenuAggregate;
 
-public class Menu : BaseEntity
+public class Menu : BaseEntity<Guid>
 {
     public string Name { get; private set; }
     public IContact Contact { get; private set; }

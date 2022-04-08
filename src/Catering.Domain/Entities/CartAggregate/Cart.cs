@@ -13,6 +13,9 @@ public class Cart : BaseEntity<Guid>
     public Cart(string userId)
     {
         Guard.Against.NullOrWhiteSpace(userId);
+
+        Id = Guid.NewGuid();
+        UserId = userId;
     }
 
     public void AddItem(Guid itemId, int quantity, string note = null)

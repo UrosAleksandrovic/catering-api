@@ -25,6 +25,7 @@ public class Order : BaseEntity<long>
     {
         Guard.Against.Default(menuId);
         Guard.Against.NullOrWhiteSpace(userId);
+        Guard.Against.Default(expectedOn);
 
         CreatedOn = DateTime.Now;
         Status = OrderStatus.Subbmited;
@@ -36,13 +37,6 @@ public class Order : BaseEntity<long>
         ExpectedOn = expectedOn;
 
         HomeDeliveryInfo = homeDelivery;
-    }
-
-    public void AddItems(IEnumerable<OrderItem> items)
-    {
-        Guard.Against.NullOrEmpty(items);
-
-        _items.AddRange(items);
     }
 
     public bool IsForHomeDelivery => HomeDeliveryInfo != default;
@@ -63,5 +57,12 @@ public class Order : BaseEntity<long>
         Status = OrderStatus.Canceled;
     }
 
-    public decimal TotalPrice => _items.Any() ? _items.Sum(i => i.PriceSnapshot) : 0;
+    public decimal TotalPrice => _items.Any() ? _items.Sum(i => i.PriceSnapshot * i.Quantity) : 0;
+
+    private void AddItems(IEnumerable<OrderItem> items)
+    {
+        Guard.Against.NullOrEmpty(items);
+
+        _items.AddRange(items);
+    }
 }

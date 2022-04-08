@@ -27,13 +27,6 @@ public class OrderBuilder : IBuilder<Order, long>
         throw new NotImplementedException();
     }
 
-    public OrderBuilder HasUser(string userId)
-    {
-        _userId = userId;
-
-        return this;
-    }
-
     public OrderBuilder HasDateOfDelivery(DateTime expectedOn)
     {
         _expectedOn = expectedOn;
@@ -51,6 +44,7 @@ public class OrderBuilder : IBuilder<Order, long>
     public OrderBuilder HasCart(Cart cart)
     {
         _cart = cart;
+        _userId = cart.UserId;
 
         return this;
     }

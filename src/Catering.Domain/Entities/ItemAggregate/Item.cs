@@ -2,7 +2,7 @@
 
 namespace Catering.Domain.Entities.ItemAggregate;
 
-public class Item : BaseEntity
+public class Item : BaseEntity<Guid>
 {
     public string Name { get; private set; }
     public string Description { get; private set; }
@@ -23,7 +23,7 @@ public class Item : BaseEntity
     public Item(string name, string description, decimal price, Guid menuId)
     {
         CheckForGeneralData(name, price);
-        Guard.Against.NullOrEmpty(menuId);
+        Guard.Against.Default(menuId);
 
         Id = Guid.NewGuid();
         Name = name;

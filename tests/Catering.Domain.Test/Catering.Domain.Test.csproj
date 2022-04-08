@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Catering.Domain\Catering.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Catering.Domain\Catering.Domain.csproj" />
   </ItemGroup>
 
 </Project>

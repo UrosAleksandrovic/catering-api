@@ -1,6 +1,8 @@
-﻿namespace Catering.Domain.Entities.ItemAggregate;
+﻿using Catering.Domain.Entities.ItemAggregate;
 
-public class ItemBuilder : IBuilder<Item>
+namespace Catering.Domain.Builders;
+
+public class ItemBuilder : IBuilder<Item, Guid>
 {
     private string _name;
     private string _description;
@@ -62,5 +64,16 @@ public class ItemBuilder : IBuilder<Item>
         _menuId = menuId;
 
         return this;
+    }
+
+    public void Reset()
+    {
+        _categories = null;
+        _ratings = null;
+        _ingredients = null;
+        _menuId = Guid.Empty;
+        _name = null;
+        _price = default;
+        _description = null;
     }
 }

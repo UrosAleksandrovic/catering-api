@@ -10,6 +10,8 @@ public class Cart : BaseEntity<Guid>
     private readonly List<CartItem> _items = new();
     public IReadOnlyList<CartItem> Items => _items;
     
+    private Cart() { }
+
     public Cart(string userId)
     {
         Guard.Against.NullOrWhiteSpace(userId);

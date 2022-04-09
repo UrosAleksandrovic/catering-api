@@ -9,6 +9,8 @@ public class OrderItem
     public string Note { get; private set;}
     public int Quantity { get; private set; }
 
+    private OrderItem() { }
+
     public OrderItem(Guid itemId, decimal price, int quantity, string note)
     {
         Guard.Against.NegativeOrZero(price);

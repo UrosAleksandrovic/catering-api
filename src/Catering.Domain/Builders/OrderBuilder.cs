@@ -6,7 +6,7 @@ using Catering.Domain.Exceptions;
 
 namespace Catering.Domain.Builders;
 
-public class OrderBuilder : IBuilder<Order, long>
+public class OrderBuilder : IBuilder<Order>
 {
     private string _userId;
     private DateTime _expectedOn;

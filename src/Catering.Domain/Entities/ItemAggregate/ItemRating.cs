@@ -10,6 +10,8 @@ public class ItemRating
     public short Rating { get; private set; }
     public string UserId { get; set; }
 
+    private ItemRating() { }
+
     public ItemRating(short rating, string userId)
     {
         CheckRatingValidity(rating);

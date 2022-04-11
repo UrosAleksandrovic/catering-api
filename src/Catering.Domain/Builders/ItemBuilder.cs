@@ -2,7 +2,7 @@
 
 namespace Catering.Domain.Builders;
 
-public class ItemBuilder : IBuilder<Item, Guid>
+public class ItemBuilder : IBuilder<Item>
 {
     private string _name;
     private string _description;

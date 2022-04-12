@@ -392,4 +392,18 @@ public class ItemTest
         //Assert
         Assert.Equal(4, item.TotalRating);
     }
+
+    [Fact]
+    public void MarkAsDeleted_ValidPath_IsDeletedIsTrue()
+    {
+        //Arrange
+        var item = new Item("Name", "", 10, Guid.NewGuid());
+
+        //Act
+        Assert.False(item.IsDeleted);
+        item.MarkAsDeleted();
+
+        //Assert
+        Assert.True(item.IsDeleted);
+    }
 }

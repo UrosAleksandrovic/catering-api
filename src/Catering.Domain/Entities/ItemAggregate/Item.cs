@@ -2,12 +2,13 @@
 
 namespace Catering.Domain.Entities.ItemAggregate;
 
-public class Item : BaseEntity<Guid>
+public class Item : BaseEntity<Guid>, ISoftDeletable
 {
     public string Name { get; private set; }
     public string Description { get; private set; }
     public decimal Price { get; private set; }
     public Guid MenuId { get; private set; }
+    public bool IsDeleted { get; private set; }
 
     private readonly List<string> _ingredients = new();
     public IReadOnlyList<string> Ingredients => _ingredients.AsReadOnly();
@@ -30,6 +31,7 @@ public class Item : BaseEntity<Guid>
         Description = description;
         Price = price;
         MenuId = menuId;
+        IsDeleted = false;
     }
 
     public void EditGeneralData(string name, string description, decimal price)
@@ -110,6 +112,11 @@ public class Item : BaseEntity<Guid>
 
         if (ratingToRemove != null)
             _ratings.Remove(ratingToRemove);
+    }
+
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
     }
 
     public double TotalRating => Ratings.Any() ? Ratings.Average(r => r.Rating) : 0;

@@ -2,5 +2,7 @@
 
 public interface ISoftDeletable
 {
-    public bool IsDeleted { get; }
+    bool IsDeleted { get; }
+
+    void MarkAsDeleted();
 }

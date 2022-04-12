@@ -114,10 +114,7 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
             _ratings.Remove(ratingToRemove);
     }
 
-    public void MarkAsDeleted()
-    {
-        IsDeleted = true;
-    }
+    public void MarkAsDeleted() => IsDeleted = true;
 
     public double TotalRating => Ratings.Any() ? Ratings.Average(r => r.Rating) : 0;
 

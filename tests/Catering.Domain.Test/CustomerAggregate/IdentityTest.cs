@@ -1,4 +1,5 @@
 ﻿using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Exceptions;
 using System;
 using Xunit;
 
@@ -144,9 +145,10 @@ public class IdentityTest
         void a() => admin.EditOtherIdentity(identity, expectedValue, expectedValue, IdentityPermissions.CompanyAdministrator);
 
         //Assert
-        Assert.Throws<InvalidOperationException>(a);
+        Assert.Throws<IdentityRestrictionException>(a);
     }
 
+    [Fact]
     public void EditOtherIdentity_ChangeEverything_PropertiesChanged()
     {
         //Arrange
@@ -169,6 +171,5 @@ public class IdentityTest
         Assert.Equal(expectedValue, identity.FullName);
         Assert.Equal(expectedValue, identity.Email);
         Assert.Equal(IdentityPermissions.CompanyAdministrator, identity.Permissions);
-
     }
 }

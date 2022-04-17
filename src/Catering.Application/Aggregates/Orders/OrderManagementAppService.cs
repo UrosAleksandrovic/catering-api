@@ -51,7 +51,15 @@ internal class OrderManagementAppService : IOrderManagementAppService
 
     public async Task<FilterResult<OrderInfoDto>> GetFilteredOrders(OrderFilter orderFilters)
     {
-        var orders = await _orderRepository.GetAsync()
+        var orders = await _orderRepository.GetFilteredAsync(orderFilters);
+
+        return new FilterResult<OrderInfoDto>
+        {
+            PageIndex = orders.PageIndex,
+            PageSize = orders.PageSize,
+            Result = _mapper.Map<IEnumerable<OrderInfoDto>>(orders.Result),
+            TotalNumberOfPages = orders.TotalNumberOfPages,
+        };
     }
 
     public async Task<OrderInfoDto> GetOrderByIdAsync(long id)

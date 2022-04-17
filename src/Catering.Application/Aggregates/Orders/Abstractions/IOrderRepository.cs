@@ -11,4 +11,5 @@ public interface IOrderRepository : IBaseRepository<Order>
     Task CreateOrderForCustomerAsync(Customer customer, Order order);
     Task<List<Order>> GetActiveOrdersByItemAsync(Guid itemId);
     Task<Menu> GetOrderMenuAsync(long orderId);
+    Task<FilterResult<Order>> GetFilteredAsync(OrderFilter filters);
 }

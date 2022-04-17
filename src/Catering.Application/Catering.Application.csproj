@@ -8,11 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Catering.Domain\Catering.Domain.csproj" />
-    <ProjectReference Include="..\src\Catering.Domain\Catering.Domain.csproj" />
   </ItemGroup>
 
 </Project>

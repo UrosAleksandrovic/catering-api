@@ -267,7 +267,7 @@ public class ItemTest
     }
 
     [Fact]
-    public void AddOrChangeRating_UserIdIsNull_ArgumentNullException()
+    public void AddOrChangeRating_CustomerIdIsNull_ArgumentNullException()
     {
         //Arrange
         var item = new Item("Name", "", 10, Guid.NewGuid());
@@ -295,40 +295,40 @@ public class ItemTest
     }
 
     [Fact]
-    public void AddOrChangeRating_UserRatingDoesNotExist_RatingIsAdded()
+    public void AddOrChangeRating_CustomerRatingDoesNotExist_RatingIsAdded()
     {
         //Arrange
-        var userId = "id";
-        var userRating = (short)5;
+        var customerId = "id";
+        var customerRating = (short)5;
         var item = new Item("Name", "", 10, Guid.NewGuid());
 
         //Act
-        item.AddOrChangeRating(userId, userRating);
+        item.AddOrChangeRating(customerId, customerRating);
 
         //Assert
         Assert.Equal(1, item.Ratings.Count);
-        Assert.NotNull(item.Ratings.SingleOrDefault(s => s.UserId == userId && s.Rating == userRating));
+        Assert.NotNull(item.Ratings.SingleOrDefault(s => s.CustomerId == customerId && s.Rating == customerRating));
     }
 
     [Fact]
-    public void AddOrChangeRating_UserRatingExists_RatingIsChanged()
+    public void AddOrChangeRating_CustomerRatingExists_RatingIsChanged()
     {
         //Arrange
-        var userId = "id";
-        var newUserRating = (short)3;
+        var customerId = "id";
+        var newCustomerRating = (short)3;
         var item = new Item("Name", "", 10, Guid.NewGuid());
 
         //Act
-        item.AddOrChangeRating(userId, 5);
-        item.AddOrChangeRating(userId, newUserRating);
+        item.AddOrChangeRating(customerId, 5);
+        item.AddOrChangeRating(customerId, newCustomerRating);
 
         //Assert
         Assert.Equal(1, item.Ratings.Count);
-        Assert.NotNull(item.Ratings.SingleOrDefault(s => s.UserId == userId && s.Rating == newUserRating));
+        Assert.NotNull(item.Ratings.SingleOrDefault(s => s.CustomerId == customerId && s.Rating == newCustomerRating));
     }
 
     [Fact]
-    public void RemoveRating_UserIdIsNull_NothingChanged()
+    public void RemoveRating_CustomerIdIsNull_NothingChanged()
     {
         //Arrange
         var item = new Item("Name", "", 10, Guid.NewGuid());
@@ -342,7 +342,7 @@ public class ItemTest
     }
 
     [Fact]
-    public void RemoveRating_UserIdDoesNotExist_NothingChanged()
+    public void RemoveRating_CustomerIdDoesNotExist_NothingChanged()
     {
         //Arrange
         var item = new Item("Name", "", 10, Guid.NewGuid());
@@ -356,15 +356,15 @@ public class ItemTest
     }
 
     [Fact]
-    public void RemoveRating_UserIdExists_RatingRemoved()
+    public void RemoveRating_CustomerIdExists_RatingRemoved()
     {
         //Arrange
-        var userId = "id";
+        var customerId = "id";
         var item = new Item("Name", "", 10, Guid.NewGuid());
-        item.AddOrChangeRating(userId, 5);
+        item.AddOrChangeRating(customerId, 5);
 
         //Act
-        item.RemoveRating(userId);
+        item.RemoveRating(customerId);
 
         //Assert
         Assert.Empty(item.Ratings);

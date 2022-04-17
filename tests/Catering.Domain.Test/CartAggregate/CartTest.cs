@@ -1,10 +1,7 @@
 ﻿using Catering.Domain.Entities.CartAggregate;
 using Catering.Domain.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Catering.Domain.Test.CartAggregate;

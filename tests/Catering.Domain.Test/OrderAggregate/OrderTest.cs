@@ -49,7 +49,7 @@ public class OrderTest
     {
         //Arrange
         var order = _orderBuilder
-            .HasHomeDeliveryOption("Street", "4th", "400")
+            .HasHomeDeliveryOption("Street", "4th/400")
             .Build();
 
         //Assert

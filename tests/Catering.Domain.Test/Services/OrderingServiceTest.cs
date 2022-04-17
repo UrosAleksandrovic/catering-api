@@ -1,6 +1,6 @@
 ﻿using Catering.Domain.Builders;
+using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Domain.Entities.OrderAggregate;
-using Catering.Domain.Entities.UserAggregate;
 using Catering.Domain.Services;
 using FakeItEasy;
 using System;
@@ -11,7 +11,7 @@ namespace Catering.Domain.Test.Services;
 public class OrderingServiceTest
 {
     [Fact]
-    public void PlaceOrder_UserIsNull_ArgumentNullException()
+    public void PlaceOrder_CustomerIsNull_ArgumentNullException()
     {
         //Arrange
         var orderingService = new OrderingService();
@@ -28,21 +28,21 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var user = new User(Guid.NewGuid().ToString(), "Some email", false);
+        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
 
         //Act
-        void a() => orderingService.PlaceOrder(user, null);
+        void a() => orderingService.PlaceOrder(customer, null);
 
         //Assert
         Assert.Throws<ArgumentException>(a);
     }
 
     [Fact]
-    public void PlaceOrder_ValidPath_OrderCreatedUserBudgetReserved()
+    public void PlaceOrder_ValidPath_OrderCreatedCustomerBudgetReserved()
     {
         //Arrange
         var orderingService = new OrderingService();
-        var user = new User(Guid.NewGuid().ToString(), "Some email", false);
+        var customer = new Customer( "Full Name", "Some email", IdentityPermissions.CompanyEmployee);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
             new Order(new[]
@@ -54,15 +54,15 @@ public class OrderingServiceTest
             DateTime.Now));
 
         //Act
-        var resultOrder = orderingService.PlaceOrder(user, orderBuilder);
+        var resultOrder = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Assert
         Assert.Equal(OrderStatus.Subbmited, resultOrder.Status);
-        Assert.Equal(resultOrder.TotalPrice, user.Budget.ReservedAssets);
+        Assert.Equal(resultOrder.TotalPrice, customer.Budget.ReservedAssets);
     }
 
     [Fact]
-    public void ConfirmOrder_UserIsNull_ArgumentNullException()
+    public void ConfirmOrder_CustomerIsNull_ArgumentNullException()
     {
         //Arrange
         var orderingService = new OrderingService();
@@ -79,10 +79,10 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var user = new User(Guid.NewGuid().ToString(), "Some email", false);
+        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
 
         //Act
-        void a() => orderingService.ConfirmOrder(user, null);
+        void a() => orderingService.ConfirmOrder(customer, null);
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -94,8 +94,8 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var user = new User(Guid.NewGuid().ToString(), "Some email", false);
-        user.ResetBudget(100);
+        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
             new Order(new[]
@@ -105,19 +105,19 @@ public class OrderingServiceTest
             Guid.NewGuid(),
             "someid",
             DateTime.Now));
-        var order = orderingService.PlaceOrder(user, orderBuilder);
+        var order = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Act
-        orderingService.ConfirmOrder(user, order);
+        orderingService.ConfirmOrder(customer, order);
 
         //Assert
         Assert.Equal(OrderStatus.Confirmed, order.Status);
-        Assert.Equal(0, user.Budget.ReservedAssets);
-        Assert.Equal(0, user.Budget.Balance);
+        Assert.Equal(0, customer.Budget.ReservedAssets);
+        Assert.Equal(0, customer.Budget.Balance);
     }
 
     [Fact]
-    public void CancelOrder_UserIsNull_ArgumentNullException()
+    public void CancelOrder_CustomerIsNull_ArgumentNullException()
     {
         //Arrange
         var orderingService = new OrderingService();
@@ -134,24 +134,24 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var user = new User(Guid.NewGuid().ToString(), "Some email", false);
+        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
 
         //Act
-        void a() => orderingService.CancelOrder(user, null);
+        void a() => orderingService.CancelOrder(customer, null);
 
         //Assert
         Assert.Throws<ArgumentException>(a);
     }
 
     [Fact]
-    public void CancelOrder_ValidPath_OrderCanceledUserIsRestored()
+    public void CancelOrder_ValidPath_OrderCanceledCustomerIsRestored()
     {
 
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var user = new User(Guid.NewGuid().ToString(), "Some email", false);
-        user.ResetBudget(100);
+        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns<Order>(
             new Order(new[]
@@ -161,14 +161,14 @@ public class OrderingServiceTest
             Guid.NewGuid(),
             "someid",
             DateTime.Now));
-        var order = orderingService.PlaceOrder(user, orderBuilder);
+        var order = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Act
-        orderingService.CancelOrder(user, order);
+        orderingService.CancelOrder(customer, order);
 
         //Assert
         Assert.Equal(OrderStatus.Canceled, order.Status);
-        Assert.Equal(0, user.Budget.ReservedAssets);
-        Assert.Equal(100, user.Budget.Balance);
+        Assert.Equal(0, customer.Budget.ReservedAssets);
+        Assert.Equal(100, customer.Budget.Balance);
     }
 }

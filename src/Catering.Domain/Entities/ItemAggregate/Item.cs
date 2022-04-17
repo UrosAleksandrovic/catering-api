@@ -94,21 +94,21 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
         _ingredients.AddRange(resultIngredients);
     }
 
-    public void AddOrChangeRating(string userId, short rating)
+    public void AddOrChangeRating(string customerId, short rating)
     {
-        var userRating = _ratings.SingleOrDefault(r => r.UserId == userId);
-        if (userRating == null)
+        var custoimerRating = _ratings.SingleOrDefault(r => r.CustomerId == customerId);
+        if (custoimerRating == null)
         {
-            _ratings.Add(new ItemRating(rating, userId));
+            _ratings.Add(new ItemRating(rating, customerId));
             return;
         }
 
-        userRating.EditRating(rating);
+        custoimerRating.EditRating(rating);
     }
 
-    public void RemoveRating(string userId)
+    public void RemoveRating(string customerId)
     {
-        var ratingToRemove = _ratings.SingleOrDefault(r => r.UserId == userId);
+        var ratingToRemove = _ratings.SingleOrDefault(r => r.CustomerId == customerId);
 
         if (ratingToRemove != null)
             _ratings.Remove(ratingToRemove);

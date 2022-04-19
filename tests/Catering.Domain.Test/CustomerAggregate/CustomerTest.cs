@@ -1,5 +1,4 @@
 ﻿using Catering.Domain.Entities.IdentityAggregate;
-using System;
 using Xunit;
 
 namespace Catering.Domain.Test.CustomerAggregate;
@@ -13,7 +12,7 @@ public class CustomerTest
         //Arrange
         var newBudget = 100;
         var customer = new Customer(
-            "Some email",
+            new FullName("Test", "Test"),
             "Full Name",
             IdentityPermissions.CompanyAdministrator);
 
@@ -30,7 +29,7 @@ public class CustomerTest
         //Arrange
         var reservedBalance = 100;
         var customer = new Customer(
-            "Some email",
+            new FullName("Test", "Test"),
             "Full Name",
             IdentityPermissions.CompanyAdministrator);
         customer.ResetBudget(reservedBalance + 1);
@@ -49,7 +48,7 @@ public class CustomerTest
         //Arrange
         var reservedBalance = 100;
         var customer = new Customer(
-            "Some email",
+            new FullName("Test", "Test"),
             "Full Name",
             IdentityPermissions.CompanyAdministrator);
         customer.ResetBudget(reservedBalance + 1);
@@ -69,7 +68,7 @@ public class CustomerTest
         //Arrange
         var reservedBalance = 100;
         var customer = new Customer(
-            "Some email",
+            new FullName("Test", "Test"),
             "Full Name",
             IdentityPermissions.CompanyAdministrator);
         customer.ResetBudget(2 * reservedBalance + 1);

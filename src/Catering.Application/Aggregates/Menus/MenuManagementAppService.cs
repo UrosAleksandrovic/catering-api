@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
 using Catering.Application.Aggregates.Menus.Requests;

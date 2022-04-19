@@ -16,7 +16,7 @@ public class ExternalIdentityTest
         //Arrange
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             "SomePassword@123",
             IdentityPermissions.RestourantEmployee);
 
@@ -34,7 +34,7 @@ public class ExternalIdentityTest
         var password = "SomePassword@123";
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             password,
             IdentityPermissions.RestourantEmployee);
 
@@ -52,7 +52,7 @@ public class ExternalIdentityTest
         var password = "SomePassword@123";
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             password,
             IdentityPermissions.RestourantEmployee);
 
@@ -71,7 +71,7 @@ public class ExternalIdentityTest
         var password = "SomePassword@123";
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             password,
             IdentityPermissions.RestourantEmployee);
 
@@ -90,7 +90,7 @@ public class ExternalIdentityTest
         //Arrange
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             "SomePassword@123",
             IdentityPermissions.RestourantEmployee);
 
@@ -107,7 +107,7 @@ public class ExternalIdentityTest
         //Arrange
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             "SomePassword@123",
             IdentityPermissions.RestourantEmployee);
 
@@ -125,7 +125,7 @@ public class ExternalIdentityTest
         var newPassword = "NewPassword@123";
         var externalIdentity = new ExternalIdentity(
             "Some Email",
-            "Some full name",
+            new FullName("Test", "Test"),
             "SomePassword@123",
             IdentityPermissions.RestourantEmployee);
 

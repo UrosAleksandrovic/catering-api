@@ -5,7 +5,7 @@ public class Customer : Identity, ICustomer
     public CustomerBudget Budget { get; private set; }
 
     public Customer(
-        string fullName,
+        FullName fullName,
         string email,
         IdentityPermissions permissions)
         : base(fullName, email, permissions)

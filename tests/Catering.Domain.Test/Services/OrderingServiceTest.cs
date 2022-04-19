@@ -28,7 +28,10 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        var customer = new Customer(
+            new FullName("Test", "Test"),
+            "Some email",
+            IdentityPermissions.CompanyEmployee);
 
         //Act
         void a() => orderingService.PlaceOrder(customer, null);
@@ -42,7 +45,10 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer( "Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        var customer = new Customer(
+            new FullName("Test", "Test"),
+            "Some email",
+            IdentityPermissions.CompanyEmployee);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
             new Order(new[]
@@ -79,7 +85,10 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        var customer = new Customer(
+            new FullName("Test", "Test"),
+            "Some email",
+            IdentityPermissions.CompanyEmployee);
 
         //Act
         void a() => orderingService.ConfirmOrder(customer, null);
@@ -94,7 +103,10 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        var customer = new Customer(
+            new FullName("Test", "Test"),
+            "Some email",
+            IdentityPermissions.CompanyEmployee);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
@@ -134,7 +146,10 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        var customer = new Customer(
+            new FullName("Test", "Test"),
+            "Some email",
+            IdentityPermissions.CompanyEmployee);
 
         //Act
         void a() => orderingService.CancelOrder(customer, null);
@@ -150,7 +165,10 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var customer = new Customer("Full Name", "Some email", IdentityPermissions.CompanyEmployee);
+        var customer = new Customer(
+            new FullName("Test", "Test"),
+            "Some email",
+            IdentityPermissions.CompanyEmployee);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns<Order>(

@@ -55,10 +55,10 @@ internal class OrderManagementAppService : IOrderManagementAppService
 
         return new FilterResult<OrderInfoDto>
         {
-            PageIndex = orders.PageIndex,
-            PageSize = orders.PageSize,
-            Result = _mapper.Map<IEnumerable<OrderInfoDto>>(orders.Result),
-            TotalNumberOfPages = orders.TotalNumberOfPages,
+            PageIndex = orderFilters.PageIndex,
+            PageSize = orderFilters.PageSize,
+            Result = _mapper.Map<IEnumerable<OrderInfoDto>>(orders.Item1),
+            TotalNumberOfPages = orders.Item2,
         };
     }
 

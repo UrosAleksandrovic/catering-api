@@ -14,12 +14,12 @@ public class IdentityTest
     {
         //Arrange
         var identity = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        void a() => identity.Edit(invalidEmail, "Some full name");
+        void a() => identity.Edit(invalidEmail, new FullName("Test", "Test"));
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -30,12 +30,13 @@ public class IdentityTest
     {
         //Arrange
         var identity = new Identity(
-            "Full Name",
+
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        void a() => identity.Edit(null, "Some full name");
+        void a() => identity.Edit(null, new FullName("Test", "Test"));
 
         //Assert
         Assert.Throws<ArgumentNullException>(a);
@@ -47,16 +48,17 @@ public class IdentityTest
         //Arrange
         var expectedValue = "New Value";
         var identity = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        identity.Edit(expectedValue, expectedValue);
+        identity.Edit(expectedValue, new FullName(expectedValue, expectedValue));
 
         //Assert
         Assert.Equal(expectedValue, identity.Email);
-        Assert.Equal(expectedValue, identity.FullName);
+        Assert.Equal(expectedValue, identity.FullName.FirstName);
+        Assert.Equal(expectedValue, identity.FullName.LastName);
     }
 
     [Fact]
@@ -66,12 +68,16 @@ public class IdentityTest
         var expectedValue = "New Value";
 
         var admin = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.CompanyAdministrator);
 
         //Act
-        void a() => admin.EditOtherIdentity(null, expectedValue, expectedValue, IdentityPermissions.CompanyAdministrator);
+        void a() => admin.EditOtherIdentity(
+            null,
+            expectedValue,
+            new FullName(expectedValue, expectedValue),
+            IdentityPermissions.CompanyAdministrator);
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -86,17 +92,21 @@ public class IdentityTest
         var expectedValue = "New Value";
 
         var admin = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.CompanyAdministrator);
 
         var identity = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        void a() => admin.EditOtherIdentity(identity, invalidEmail, expectedValue, IdentityPermissions.CompanyAdministrator);
+        void a() => admin.EditOtherIdentity(
+            identity,
+            invalidEmail,
+            new FullName(expectedValue, expectedValue),
+            IdentityPermissions.CompanyAdministrator);
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -109,17 +119,21 @@ public class IdentityTest
         var expectedValue = "New Value";
 
         var admin = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.CompanyAdministrator);
 
         var identity = new Identity(
-            "Full Name",
+            new FullName(expectedValue, expectedValue),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        void a() => admin.EditOtherIdentity(identity, null, expectedValue, IdentityPermissions.CompanyAdministrator);
+        void a() => admin.EditOtherIdentity(
+            identity,
+            null,
+            new FullName(expectedValue, expectedValue),
+            IdentityPermissions.CompanyAdministrator);
 
         //Assert
         Assert.Throws<ArgumentNullException>(a);
@@ -132,17 +146,21 @@ public class IdentityTest
         var expectedValue = "New Value";
 
         var admin = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.CompanyEmployee);
 
         var identity = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        void a() => admin.EditOtherIdentity(identity, expectedValue, expectedValue, IdentityPermissions.CompanyAdministrator);
+        void a() => admin.EditOtherIdentity(
+            identity,
+            expectedValue,
+            new FullName(expectedValue, expectedValue),
+            IdentityPermissions.CompanyAdministrator);
 
         //Assert
         Assert.Throws<IdentityRestrictionException>(a);
@@ -155,20 +173,25 @@ public class IdentityTest
         var expectedValue = "New Value";
 
         var admin = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.CompanyAdministrator);
 
         var identity = new Identity(
-            "Full Name",
+            new FullName("Test", "Test"),
             "SomeEmail",
             IdentityPermissions.RestourantEmployee);
 
         //Act
-        admin.EditOtherIdentity(identity, expectedValue, expectedValue, IdentityPermissions.CompanyAdministrator);
+        admin.EditOtherIdentity(
+            identity,
+            expectedValue,
+            new FullName(expectedValue, expectedValue),
+            IdentityPermissions.CompanyAdministrator);
 
         //Assert
-        Assert.Equal(expectedValue, identity.FullName);
+        Assert.Equal(expectedValue, identity.FullName.FirstName);
+        Assert.Equal(expectedValue, identity.FullName.LastName);
         Assert.Equal(expectedValue, identity.Email);
         Assert.Equal(IdentityPermissions.CompanyAdministrator, identity.Permissions);
     }

@@ -6,12 +6,15 @@ namespace Catering.Domain.Entities.IdentityAggregate;
 public class Identity : BaseEntity<string>
 {
     public string Email { get; private set; }
-    public string FullName { get; private set; }
+    public FullName FullName { get; private set; }
     public IdentityPermissions Permissions { get; private set; }
 
     private Identity() { }
 
-    public Identity(string fullName, string email, IdentityPermissions permissions)
+    public Identity(
+        FullName fullName,
+        string email,
+        IdentityPermissions permissions)
     {
         Guard.Against.NullOrWhiteSpace(email);
 
@@ -21,18 +24,18 @@ public class Identity : BaseEntity<string>
         Permissions = permissions;
     }
 
-    public void Edit(string email, string fullName)
+    public void Edit(string email, FullName fullName)
     {
         Guard.Against.NullOrWhiteSpace(email);
 
         Email = email;
-        FullName = fullName;
+        FullName.Edit(fullName.FirstName, fullName.LastName);
     }
 
     public void EditOtherIdentity(
         Identity identity,
         string email,
-        string fullName,
+        FullName fullName,
         IdentityPermissions permissions)
     {
         Guard.Against.Default(identity);

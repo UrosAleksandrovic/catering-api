@@ -6,8 +6,8 @@ namespace Catering.Application.Mailing.Emails;
 public class EmailBuilder : IBuilder<Email>
 {
     private EmailTemplate _template;
-    private Dictionary<string, string> _parameters;
-    private List<string> _recepients;
+    private readonly Dictionary<string, string> _parameters = new();
+    private readonly List<string> _recepients = new();
 
     //TODO: Should I take this from configuration
     private const string _systemSender = "";

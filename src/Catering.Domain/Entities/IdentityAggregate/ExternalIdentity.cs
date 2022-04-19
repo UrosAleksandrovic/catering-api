@@ -6,7 +6,11 @@ public class ExternalIdentity : Identity
 {
     private string _password;
 
-    public ExternalIdentity(string email, string fullName, string password, IdentityPermissions permissions)
+    public ExternalIdentity(
+        string email,
+        FullName fullName,
+        string password,
+        IdentityPermissions permissions)
         : base(fullName, email, permissions)
     {
         Guard.Against.NullOrWhiteSpace(password);
@@ -21,6 +25,6 @@ public class ExternalIdentity : Identity
     {
         Guard.Against.NullOrWhiteSpace(newPassword);
 
-        _password = newPassword;
+        _password = newPassword.Trim();
     }
 }

@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
-internal class CustomerRepository : IdentityRepository<Customer>, ICustomerRepository
+internal class ExternalIdentityRepository : IdentityRepository<ExternalIdentity>, IExternalIdentityRepository
 {
-    protected CustomerRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    protected ExternalIdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
         : base(dbContextFactory) { }
 }

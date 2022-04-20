@@ -1,6 +1,6 @@
 ﻿namespace Catering.Application.Security;
 
-internal interface IDataProtector
+public interface IDataProtector
 {
     string Encrypt(string data);
     string Decrypt(string data);

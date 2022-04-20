@@ -1,7 +1,5 @@
-﻿namespace Catering.Application.Mailing.Emails
+﻿namespace Catering.Application.Mailing.Emails;
+
+public interface IEmailSender : IMailSender<Email>
 {
-    public interface IEmailSender
-    {
-        public Task SendAsync(Email email);
-    }
 }

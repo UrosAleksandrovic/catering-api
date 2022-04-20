@@ -2,7 +2,7 @@
 
 namespace Catering.Application.Aggregates.Identites.Abstractions;
 
-public interface ICustomerRepository : IBaseRepository<Customer>
+public interface ICustomerRepository : IBaseRepository<Customer>, IIdentityRepository<Customer>
 {
 
 }

@@ -15,6 +15,6 @@ public class LoginCustomerHandler : IRequestHandler<LoginCustomer, string>
 
     public Task<string> Handle(LoginCustomer request, CancellationToken cancellationToken)
     {
-        return _customerAuthenticator.TryGenerateTokenAsync(request.Login, request.Password);
+        return _customerAuthenticator.GenerateTokenAsync(request.Login, request.Password);
     }
 }

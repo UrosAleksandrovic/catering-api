@@ -2,6 +2,7 @@
 
 namespace Catering.Application.Aggregates.Identites.Abstractions;
 
-public interface IExternalIdentityRepository : IBaseRepository<ExternalIdentity>, IIdentityRepository<ExternalIdentity>
+public interface IIdentityRepository<T> where T : Identity
 {
+    Task<T> GetByEmailAsync(string email);
 }

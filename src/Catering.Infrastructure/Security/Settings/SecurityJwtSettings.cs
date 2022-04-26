@@ -1,6 +1,6 @@
-﻿namespace Catering.Infrastructure.Security.Options;
+﻿namespace Catering.Infrastructure.Security.Settings;
 
-internal class SecurityJwtOptions
+internal class SecurityJwtSettings
 {
     public const string Position = "Security:Jwt";
 

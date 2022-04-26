@@ -1,4 +1,6 @@
-﻿internal class SecurityLdapOptions
+﻿namespace Catering.Infrastructure.Security.Settings;
+
+internal class SecurityLdapSettings
 {
     public const string Position = "Security:LDAP";
 

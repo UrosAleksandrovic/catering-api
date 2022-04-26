@@ -1,6 +1,6 @@
-﻿namespace Catering.Infrastructure.Security.Options;
+﻿namespace Catering.Infrastructure.Security.Settings;
 
-internal class SecurityAesOptions
+internal class SecurityAesSettings
 {
     public const string Position = "Security:Encryption:Aes";
 

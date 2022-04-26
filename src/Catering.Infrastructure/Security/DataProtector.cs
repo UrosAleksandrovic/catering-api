@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Catering.Application.Security;
-using Catering.Infrastructure.Security.Options;
+using Catering.Infrastructure.Security.Settings;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,10 +9,10 @@ namespace Catering.Infrastructure.Security;
 
 internal class DataProtector : IDataProtector
 {
-    private readonly SecurityAesOptions _aesOptions;
-    private readonly SecurityShaOptions _shaOptions;
+    private readonly SecurityAesSettings _aesOptions;
+    private readonly SecurityShaSettings _shaOptions;
 
-    public DataProtector(IOptions<SecurityAesOptions> aesOptions, IOptions<SecurityShaOptions> shaOptions)
+    public DataProtector(IOptions<SecurityAesSettings> aesOptions, IOptions<SecurityShaSettings> shaOptions)
     {
         _aesOptions = aesOptions.Value;
         _shaOptions = shaOptions.Value;

@@ -32,6 +32,8 @@ internal class OrderPlacedEmailHandler : INotificationHandler<OrderPlaced>
             .Build();
         //TOOD: ADD parameters when design of html template is complete
 
-        await _emailSender.SendAsync(email);
+        var isSent = await _emailSender.SendAsync(email);
+        if (!isSent)
+            await _emailRepository.SaveAsFailedEmailAsync(email);
     }
 }

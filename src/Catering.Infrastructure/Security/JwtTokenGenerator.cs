@@ -1,5 +1,5 @@
 ﻿using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Infrastructure.Security.Options;
+using Catering.Infrastructure.Security.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,9 +10,9 @@ namespace Catering.Infrastructure.Security;
 
 internal class JwtTokenGenerator : IJwtTokenGenerator
 {
-    private readonly SecurityJwtOptions _options;
+    private readonly SecurityJwtSettings _options;
 
-    public JwtTokenGenerator(IOptions<SecurityJwtOptions> options)
+    public JwtTokenGenerator(IOptions<SecurityJwtSettings> options)
     {
         _options = options.Value;
     }

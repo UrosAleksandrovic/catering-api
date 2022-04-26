@@ -1,6 +1,6 @@
 ﻿namespace Catering.Infrastructure.Data;
 
-public class CateringDataOptions
+public class CateringDataSettings
 {
     public const string Position = "Persistance:Catering";
 

@@ -1,6 +1,6 @@
-﻿namespace Catering.Infrastructure.Security.Options;
+﻿namespace Catering.Infrastructure.Security.Settings;
 
-public class SecurityShaOptions
+public class SecurityShaSettings
 {
     public const string Position = "Security:Hashing:Key";
 

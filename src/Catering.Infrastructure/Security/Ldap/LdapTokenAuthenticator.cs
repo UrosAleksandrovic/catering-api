@@ -10,12 +10,12 @@ namespace Catering.Infrastructure.Security.Ldap;
 
 internal class LdapTokenAuthenticator : ITokenAtuhenticator<Customer>
 {
-    private readonly SecurityLdapOptions _ldapOptions;
+    private readonly SecurityLdapSettings _ldapOptions;
     private readonly ICustomerRepository _customerRepository;
     private readonly IJwtTokenGenerator _tokenGenerator;
 
     public LdapTokenAuthenticator(
-        IOptions<SecurityLdapOptions> ldapOptions,
+        IOptions<SecurityLdapSettings> ldapOptions,
         ICustomerRepository customerRepository,
         IJwtTokenGenerator tokenGenerator)
     {

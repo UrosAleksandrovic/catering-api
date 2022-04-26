@@ -6,6 +6,7 @@ namespace Catering.Application.Mailing.Emails;
 public class EmailBuilder : IBuilder<Email>
 {
     private EmailTemplate _template;
+    private string _title;
     private readonly Dictionary<string, string> _parameters = new();
     private readonly List<string> _recepients = new();
 
@@ -41,6 +42,15 @@ public class EmailBuilder : IBuilder<Email>
         return this;
     }
 
+    public EmailBuilder HasTitle(string title)
+    {
+        Guard.Against.NullOrWhiteSpace(title);
+
+        _title = title;
+
+        return this;
+    }
+
     public Email Build()
     {
         var content = _template.HtmlTemplate;
@@ -52,7 +62,8 @@ public class EmailBuilder : IBuilder<Email>
         {
             Content = content,
             Recepiants = _recepients,
-            Sender = _systemSender
+            Sender = _systemSender,
+            Title = _title
         };
     }
 
@@ -61,5 +72,6 @@ public class EmailBuilder : IBuilder<Email>
         _recepients.Clear();
         _parameters.Clear();
         _template = null;
+        _title = null;
     }
 }

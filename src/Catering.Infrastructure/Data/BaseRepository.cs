@@ -1,4 +1,5 @@
 ﻿using Catering.Application;
+using Catering.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data;

@@ -55,14 +55,14 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters)
     {
-        var fetchedResult = await _itemRepository.GetFilteredAsync(itemFilters);
+        var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
 
         return new FilterResult<ItemInfoDto>
         {
             PageIndex = itemFilters.PageIndex,
-            Result = _mapper.Map<IEnumerable<ItemInfoDto>>(fetchedResult.items),
+            Result = _mapper.Map<IEnumerable<ItemInfoDto>>(items),
             PageSize = itemFilters.PageSize,
-            TotalNumberOfPages = fetchedResult.totalCount
+            TotalNumberOfPages = totalCount
         };
     }
 

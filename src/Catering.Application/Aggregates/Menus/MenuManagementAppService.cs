@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
-using Catering.Application.Aggregates.Menus.Requests;
+using Catering.Application.Aggregates.Menus.Notifications;
 using Catering.Application.Dtos.Menu;
 using Catering.Domain.Builders;
 using MediatR;

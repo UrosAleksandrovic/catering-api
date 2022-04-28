@@ -1,6 +1,6 @@
 ﻿namespace Catering.Application.Aggregates.Menus.Dtos;
 
-public class MenuContactDto
+public class MenuContactInfoDto
 {
     public string PhoneNumber { get; set; }
     public string Email { get; set; }

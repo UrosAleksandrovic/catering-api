@@ -3,7 +3,7 @@ using Catering.Application.Aggregates.Orders.Requests;
 using Catering.Domain.Entities.IdentityAggregate;
 using MediatR;
 
-namespace Catering.Application.Handlers;
+namespace Catering.Application.Aggregates.Orders.Handlers;
 
 internal class GetOrderCustomerHandler : IRequestHandler<GetOrderCustomer, Customer>
 {
@@ -15,7 +15,5 @@ internal class GetOrderCustomerHandler : IRequestHandler<GetOrderCustomer, Custo
     }
 
     public Task<Customer> Handle(GetOrderCustomer request, CancellationToken cancellationToken)
-    {
-        return _customerRepository.GetByIdAsync(request.CustomerId);
-    }
+        => _customerRepository.GetByIdAsync(request.CustomerId);
 }

@@ -3,7 +3,7 @@ using Catering.Application.Aggregates.Orders.Requests;
 using Catering.Domain.Entities.ItemAggregate;
 using MediatR;
 
-namespace Catering.Application.Handlers;
+namespace Catering.Application.Aggregates.Orders.Handlers;
 
 internal class GetItemsForPlacingOrderHandler : IRequestHandler<GetItemsForPlacingOrder, List<Item>>
 {
@@ -15,7 +15,5 @@ internal class GetItemsForPlacingOrderHandler : IRequestHandler<GetItemsForPlaci
     }
 
     public Task<List<Item>> Handle(GetItemsForPlacingOrder request, CancellationToken cancellationToken)
-    {
-        return _itemRepository.GetItemsFromCartAsync(request.CustomerId);
-    }
+        => _itemRepository.GetItemsFromCartAsync(request.CustomerId);
 }

@@ -1,5 +1,5 @@
 ﻿using Catering.Application.Aggregates.Orders.Abstractions;
-using Catering.Application.Aggregates.Orders.Requests;
+using Catering.Application.Aggregates.Orders.Notifications;
 using MediatR;
 using static Catering.Application.Mailing.Emails.TemplateNamesConstants;
 

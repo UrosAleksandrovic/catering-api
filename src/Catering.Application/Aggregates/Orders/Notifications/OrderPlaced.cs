@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Catering.Application.Aggregates.Orders.Requests;
+namespace Catering.Application.Aggregates.Orders.Notifications;
 
 internal class OrderPlaced : INotification
 {

@@ -6,5 +6,5 @@ public class MenuInfoDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public MenuContactDto Contact { get; set; }
+    public MenuContactInfoDto Contact { get; set; }
 }

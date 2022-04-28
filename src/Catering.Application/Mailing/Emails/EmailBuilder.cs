@@ -10,9 +10,6 @@ public class EmailBuilder : IBuilder<Email>
     private readonly Dictionary<string, string> _parameters = new();
     private readonly List<string> _recepients = new();
 
-    //TODO: Should I take this from configuration
-    private const string _systemSender = "";
-
 
     public EmailBuilder HasEmailTemplate(EmailTemplate template)
     {

@@ -20,9 +20,11 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
 
     public async Task<string> CreateCompanyCustomer(CreateCustomerDto createCustomer)
     {
-        var customerToCreate = new Customer(createCustomer.Email, ConvertToPermissions(createCustomer));
+        var customerExists = await _customerRepository.GetByEmailAsync(createCustomer.Email);
+        if (customerExists != null)
+            throw new ArgumentException(nameof(createCustomer.Email));
 
-        //TODO: Check if email already exists
+        var customerToCreate = new Customer(createCustomer.Email, ConvertToPermissions(createCustomer));
         await _customerRepository.CreateAsync(customerToCreate);
 
         return customerToCreate.Id;

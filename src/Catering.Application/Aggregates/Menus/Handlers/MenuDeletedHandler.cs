@@ -1,8 +1,8 @@
 ﻿using Catering.Application.Aggregates.Items.Abstractions;
-using Catering.Application.Aggregates.Menus.Requests;
+using Catering.Application.Aggregates.Menus.Notifications;
 using MediatR;
 
-namespace Catering.Application.Handlers;
+namespace Catering.Application.Aggregates.Menus.Handlers;
 
 internal class MenuDeletedHandler : INotificationHandler<MenuDeleted>
 {

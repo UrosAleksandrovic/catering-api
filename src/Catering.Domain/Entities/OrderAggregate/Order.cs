@@ -11,6 +11,7 @@ public class Order : BaseEntity<long>
     public OrderStatus Status { get; private set; }
     public HomeDeliveryInfo HomeDeliveryInfo { get; private set; }
     public Guid MenuId { get; private set; }
+
     private readonly List<OrderItem> _items = new();
     public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 

@@ -1,10 +1,9 @@
-﻿using Catering.Application.Aggregates.Carts.Abstractions;
-using Catering.Application.Aggregates.Carts.Requests;
+﻿using Catering.Application.Aggregates.Carts.Requests;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Domain.Entities.ItemAggregate;
 using MediatR;
 
-namespace Catering.Application.Handlers;
+namespace Catering.Application.Aggregates.Carts.Handlers;
 
 internal class GetItemsFromCartHandler : IRequestHandler<GetItemsFromTheCart, List<Item>>
 {
@@ -16,7 +15,5 @@ internal class GetItemsFromCartHandler : IRequestHandler<GetItemsFromTheCart, Li
     }
 
     public Task<List<Item>> Handle(GetItemsFromTheCart request, CancellationToken cancellationToken)
-    {
-        return _itemRepository.GetItemsFromCartAsync(request.CustomerId);
-    }
+        => _itemRepository.GetItemsFromCartAsync(request.CustomerId);
 }

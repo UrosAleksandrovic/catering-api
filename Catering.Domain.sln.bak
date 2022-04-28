@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.Application", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.Infrastructure", "src\Catering.Infrastructure\Catering.Infrastructure.csproj", "{7D1A9036-DD44-4849-8360-F53EDE31C9F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catering.DependencyInjection", "src\Catering.DependencyInjection\Catering.DependencyInjection.csproj", "{49073A17-455F-4B84-AB1A-98151CDE2CC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catering.Application.DependencyInjection", "Catering.Application.DependencyInjection\Catering.Application.DependencyInjection.csproj", "{49073A17-455F-4B84-AB1A-98151CDE2CC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,9 +1,8 @@
 ﻿using Catering.Application.Aggregates.Carts.Abstractions;
-using Catering.Application.Aggregates.Orders.Requests;
-using Catering.Application.Mailing.Emails;
+using Catering.Application.Aggregates.Orders.Notifications;
 using MediatR;
 
-namespace Catering.Application.Handlers;
+namespace Catering.Application.Aggregates.Orders.Handlers;
 
 internal class OrderPlacedHandler : INotificationHandler<OrderPlaced>
 {
@@ -14,8 +13,6 @@ internal class OrderPlacedHandler : INotificationHandler<OrderPlaced>
         _cartRepository = cartRepository;
     }
 
-    public async Task Handle(OrderPlaced notification, CancellationToken cancellationToken)
-    {
-        await _cartRepository.DeleteAsync(notification.CustomerId);
-    }
+    public Task Handle(OrderPlaced notification, CancellationToken cancellationToken)
+        => _cartRepository.DeleteAsync(notification.CustomerId);
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
+using Catering.Application.Aggregates.Orders.Notifications;
 using Catering.Application.Aggregates.Orders.Requests;
 using Catering.Domain.Builders;
 using Catering.Domain.Entities.OrderAggregate;

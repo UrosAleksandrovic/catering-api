@@ -59,7 +59,6 @@ public class EmailBuilder : IBuilder<Email>
         {
             Content = content,
             Recepiants = _recepients,
-            Sender = _systemSender,
             Title = _title
         };
     }

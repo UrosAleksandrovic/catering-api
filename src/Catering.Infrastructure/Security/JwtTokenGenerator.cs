@@ -19,11 +19,11 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
 
     public string GenerateToken<T>(T identity) where T : Identity
     {
-        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
-        SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        List<Claim> claims = GenerateClaims(identity);
-        JwtSecurityToken token = new JwtSecurityToken(
+        var claims = GenerateClaims(identity);
+        var token = new JwtSecurityToken(
             claims: claims,
             issuer: _options.Issuer,
             expires: DateTime.UtcNow.Add(TimeSpan.FromDays(_options.ExpirationInDays)),
@@ -34,18 +34,19 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
 
     private List<Claim> GenerateClaims<T>(T identity) where T : Identity
     {
-        List<Claim> claims = new List<Claim>();
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, identity.Email));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Iss, _options.Issuer));
+        var expirationTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString();
 
-        claims.Add(new Claim(
-            JwtRegisteredClaimNames.Iat,
-            new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()));
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, identity.Email),
+            new Claim(JwtRegisteredClaimNames.Iss, _options.Issuer),
+            new Claim(JwtRegisteredClaimNames.Iat, expirationTime),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
 
-        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+        foreach (var role in identity.Roles)
+            claims.Add(new Claim(ClaimTypes.Role, role));
 
-        claims.Add(new Claim(nameof(Identity.Permissions), ((byte)identity.Permissions).ToString()));
         return claims;
-
     }
 }

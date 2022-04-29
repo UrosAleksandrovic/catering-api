@@ -14,7 +14,7 @@ public class CustomerTest
         var customer = new Customer(
             new FullName("Test", "Test"),
             "Full Name",
-            IdentityPermissions.CompanyAdministrator);
+            IdentityRole.CompanyAdministrator);
 
         //Act
         customer.ResetBudget(newBudget);
@@ -31,7 +31,7 @@ public class CustomerTest
         var customer = new Customer(
             new FullName("Test", "Test"),
             "Full Name",
-            IdentityPermissions.CompanyAdministrator);
+            IdentityRole.CompanyAdministrator);
         customer.ResetBudget(reservedBalance + 1);
 
         //Act
@@ -50,7 +50,7 @@ public class CustomerTest
         var customer = new Customer(
             new FullName("Test", "Test"),
             "Full Name",
-            IdentityPermissions.CompanyAdministrator);
+            IdentityRole.CompanyAdministrator);
         customer.ResetBudget(reservedBalance + 1);
         customer.ReserveAssets(reservedBalance);
 
@@ -70,7 +70,7 @@ public class CustomerTest
         var customer = new Customer(
             new FullName("Test", "Test"),
             "Full Name",
-            IdentityPermissions.CompanyAdministrator);
+            IdentityRole.CompanyAdministrator);
         customer.ResetBudget(2 * reservedBalance + 1);
         customer.ReserveAssets(reservedBalance);
         customer.ReserveAssets(reservedBalance);

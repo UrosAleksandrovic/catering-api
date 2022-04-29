@@ -10,8 +10,8 @@ public class ExternalIdentity : Identity
         string email,
         FullName fullName,
         string password,
-        IdentityPermissions permissions)
-        : base(fullName, email, permissions)
+        string startRole)
+        : base(fullName, email, startRole)
     {
         Guard.Against.NullOrWhiteSpace(password);
 

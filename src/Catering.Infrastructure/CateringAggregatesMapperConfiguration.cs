@@ -28,9 +28,7 @@ internal class CateringAggregatesMapperConfiguration : Profile
         CreateMap<Identity, IdentityInfoDto>()
             .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FullName.FirstName))
             .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.FullName.LastName))
-            .ForMember(d => d.IsAdministrator, opt => opt.MapFrom(s => s.Permissions.HasFlag(IdentityPermissions.CompanyAdministrator)))
-            .ForMember(d => d.IsCustomer, opt => opt.MapFrom(s => s.Permissions.HasFlag(IdentityPermissions.CompanyEmployee)))
-            .ForMember(d => d.IsRestourantEmployee, opt => opt.MapFrom(s => s.Permissions.HasFlag(IdentityPermissions.RestourantEmployee)));
+            .ForMember(d => d.Roles, opt => opt.MapFrom(s => s.Roles));
 
         CreateMap<CustomerBudget, CustomerBudgetInfoDto>()
             .ForMember(c => c.ReservedBalance, opt => opt.MapFrom(s => s.ReservedAssets))

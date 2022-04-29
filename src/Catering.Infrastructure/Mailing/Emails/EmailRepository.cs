@@ -32,8 +32,7 @@ internal class EmailRepository : IEmailRepository
         {
             Content = _dataProtector.Encrypt(message.Content),
             Title = _dataProtector.Encrypt(message.Title),
-            Recepiants = message.Recepiants.Select(r => _dataProtector.Encrypt(r)),
-            Sender = _dataProtector.Encrypt(message.Sender)
+            Recepiants = message.Recepiants.Select(r => _dataProtector.Encrypt(r))
         };
 
         await dbContext.AddAsync(entityToSave);

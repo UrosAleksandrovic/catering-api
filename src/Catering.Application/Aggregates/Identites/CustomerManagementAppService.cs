@@ -24,7 +24,7 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
         if (customerExists != null)
             throw new ArgumentException(nameof(createCustomer.Email));
 
-        var customerToCreate = new Customer(createCustomer.Email, ConvertToPermissions(createCustomer));
+        var customerToCreate = new Customer(createCustomer.Email, IdentityRole.CompanyEmployee);
         await _customerRepository.CreateAsync(customerToCreate);
 
         return customerToCreate.Id;
@@ -42,11 +42,5 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
         var customer = await _customerRepository.GetByIdAsync(customerId);
 
         return _mapper.Map<CustomerInfoDto>(customer);
-    }
-
-    public IdentityPermissions ConvertToPermissions(CreateCustomerDto createCustomer)
-    {
-        //TODO: Depends on permissions. Get the list of persmissions from Tamara
-        return IdentityPermissions.RestourantEmployee;
     }
 }

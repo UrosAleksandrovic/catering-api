@@ -18,5 +18,14 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
             .IsRequired();
 
         builder.OwnsOne(e => e.FullName);
+
+        builder.Metadata
+            .FindNavigation(nameof(Identity.Roles))
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder
+            .Property(e => e.Roles)
+            .HasColumnType("nvarchar")
+            .HasConversion<StringEnumerationConverter>();
     }
 }

@@ -7,21 +7,24 @@ public class Identity : BaseEntity<string>
 {
     public string Email { get; private set; }
     public FullName FullName { get; private set; }
-    public IdentityPermissions Permissions { get; private set; }
+
+    private readonly List<string> _roles = new();
+    public IReadOnlyList<string> Roles => _roles.AsReadOnly();
 
     private Identity() { }
 
     public Identity(
         FullName fullName,
         string email,
-        IdentityPermissions permissions)
+        string startRole)
     {
         Guard.Against.NullOrWhiteSpace(email);
+        Guard.Against.NullOrWhiteSpace(startRole);
 
         Id = Guid.NewGuid().ToString();
         Email = email;
         FullName = fullName;
-        Permissions = permissions;
+        _roles.Add(startRole);
     }
 
     public void Edit(string email, FullName fullName)
@@ -32,18 +35,30 @@ public class Identity : BaseEntity<string>
         FullName.Edit(fullName.FirstName, fullName.LastName);
     }
 
+    protected void EditRoles(IEnumerable<string> newRoles)
+    {
+        Guard.Against.NullOrEmpty(newRoles);
+
+        _roles.Clear();
+
+        _roles.AddRange(newRoles);
+    }
+
     public void EditOtherIdentity(
         Identity identity,
         string email,
         FullName fullName,
-        IdentityPermissions permissions)
+        IEnumerable<string> newRoles)
     {
         Guard.Against.Default(identity);
 
-        if (Permissions != IdentityPermissions.CompanyAdministrator)
+        if (!IsAdministrator)
             throw new IdentityRestrictionException(Id, nameof(EditOtherIdentity));
 
-        identity.Permissions = permissions;
         identity.Edit(email, fullName);
+        identity.EditRoles(newRoles);
     }
+
+
+    public bool IsAdministrator => _roles.Any(IdentityRole.IsAdministratorRole);
 }

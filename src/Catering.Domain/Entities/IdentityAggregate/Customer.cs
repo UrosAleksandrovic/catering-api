@@ -7,14 +7,14 @@ public class Customer : Identity, ICustomer
     public Customer(
         FullName fullName,
         string email,
-        IdentityPermissions permissions)
-        : base(fullName, email, permissions)
+        string startRole)
+        : base(fullName, email, startRole)
     {
         Budget = new CustomerBudget(0);
     }
 
-    public Customer(string email, IdentityPermissions permissions)
-        :base(null, email, permissions)
+    public Customer(string email, string startRole)
+        :base(null, email, startRole)
     {
         Budget = new CustomerBudget(0);
     }

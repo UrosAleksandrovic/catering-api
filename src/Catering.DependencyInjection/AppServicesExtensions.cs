@@ -1,17 +1,19 @@
-﻿using Catering.Application.Aggregates.Carts.Abstractions;
-using Catering.Application.Aggregates.Identites.Abstractions;
-using Catering.Application.Aggregates.Items.Abstractions;
-using Catering.Application.Aggregates.Menus.Abstractions;
-using Catering.Application.Aggregates.Orders.Abstractions;
-using Catering.Application.Aggregates.Orders;
-using Microsoft.Extensions.DependencyInjection;
-using Catering.Application.Aggregates.Menus;
+﻿using Catering.Application.Aggregates.Carts;
+using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Identites;
-using Catering.Application.Aggregates.Carts;
+using Catering.Application.Aggregates.Identites.Abstractions;
 using Catering.Application.Aggregates.Items;
-using Catering.Infrastructure;
-using MediatR;
+using Catering.Application.Aggregates.Items.Abstractions;
+using Catering.Application.Aggregates.Menus;
+using Catering.Application.Aggregates.Menus.Abstractions;
+using Catering.Application.Aggregates.Orders;
+using Catering.Application.Aggregates.Orders.Abstractions;
+using Catering.Application.Aggregates.Orders.Dtos.Validators;
 using Catering.Application.Aggregates.Orders.Handlers;
+using Catering.Infrastructure;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Catering.DependencyInjection;
 
@@ -41,6 +43,17 @@ public static class AppServicesExtensions
         {
             cfg.AsSingleton();
         }, typeof(OrderPlacedHandler).Assembly);
+
+        return services;
+    }
+
+    public static IServiceCollection AddFluentValidation(this IServiceCollection services)
+    {
+        services.AddMvc().AddFluentValidation(fv =>
+        {
+            fv.DisableDataAnnotationsValidation = true;
+            fv.RegisterValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
+        });
 
         return services;
     }

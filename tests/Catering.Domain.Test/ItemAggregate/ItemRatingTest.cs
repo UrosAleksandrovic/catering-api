@@ -12,7 +12,7 @@ public class ItemRatingTest
     public void EditRating_RatingInvalid_ArgumentOurOfRangeException(short invalidRating)
     {
         //Arrange
-        var rating = new ItemRating(5, "userId");
+        var rating = new ItemRating(5, "customerId");
 
         //Act
         void a() => rating.EditRating(invalidRating);
@@ -25,7 +25,7 @@ public class ItemRatingTest
     {
         //Arrange
         var newRating = (short)3;
-        var rating = new ItemRating(5, "userId");
+        var rating = new ItemRating(5, "customerId");
 
         //Act
         rating.EditRating(newRating);

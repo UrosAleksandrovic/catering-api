@@ -6,9 +6,9 @@ using Catering.Domain.Exceptions;
 
 namespace Catering.Domain.Builders;
 
-public class OrderBuilder : IBuilder<Order, long>
+public class OrderBuilder : IBuilder<Order>
 {
-    private string _userId;
+    private string _customerId;
     private DateTime _expectedOn;
     private HomeDeliveryInfo _homeDeliveryInfo;
     private Cart _cart;
@@ -19,7 +19,7 @@ public class OrderBuilder : IBuilder<Order, long>
         var menuId = GetMenuId();
         var orderItems = GenerateOrderItems();
 
-        return new Order(orderItems, menuId, _userId, _expectedOn, _homeDeliveryInfo);
+        return new Order(orderItems, menuId, _customerId, _expectedOn, _homeDeliveryInfo);
     }
 
     public void Reset()
@@ -34,9 +34,9 @@ public class OrderBuilder : IBuilder<Order, long>
         return this;
     }
 
-    public OrderBuilder HasHomeDeliveryOption(string streetAndHouse, string floor, string appartment)
+    public OrderBuilder HasHomeDeliveryOption(string streetAndHouse, string floorAndAppartment)
     {
-        _homeDeliveryInfo = new HomeDeliveryInfo(streetAndHouse, $"{floor}/{appartment}");
+        _homeDeliveryInfo = new HomeDeliveryInfo(streetAndHouse, floorAndAppartment);
 
         return this;
     }
@@ -44,7 +44,7 @@ public class OrderBuilder : IBuilder<Order, long>
     public OrderBuilder HasCart(Cart cart)
     {
         _cart = cart;
-        _userId = cart.UserId;
+        _customerId = cart.CustomerId;
 
         return this;
     }

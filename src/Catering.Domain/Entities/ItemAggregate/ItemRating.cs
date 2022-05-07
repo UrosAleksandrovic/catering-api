@@ -8,15 +8,17 @@ public class ItemRating
     public const short MaximumRating = 5;
 
     public short Rating { get; private set; }
-    public string UserId { get; set; }
+    public string CustomerId { get; set; }
 
-    public ItemRating(short rating, string userId)
+    private ItemRating() { }
+
+    public ItemRating(short rating, string customerId)
     {
         CheckRatingValidity(rating);
-        Guard.Against.NullOrWhiteSpace(userId);
+        Guard.Against.NullOrWhiteSpace(customerId);
 
         Rating = rating;
-        UserId = userId;
+        CustomerId = customerId;
     }
 
     public void EditRating(short newRating)

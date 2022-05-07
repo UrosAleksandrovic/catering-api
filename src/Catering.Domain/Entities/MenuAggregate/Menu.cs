@@ -2,10 +2,12 @@
 
 namespace Catering.Domain.Entities.MenuAggregate;
 
-public class Menu : BaseEntity<Guid>
+public class Menu : BaseEntity<Guid>, ISoftDeletable
 {
     public string Name { get; private set; }
-    public IContact Contact { get; private set; }
+    public MenuContact Contact { get; private set; }
+
+    public bool IsDeleted { get; private set; }
 
     private Menu() { }
 
@@ -39,4 +41,6 @@ public class Menu : BaseEntity<Guid>
     {
         Guard.Against.NullOrWhiteSpace(name);
     }
+
+    public void MarkAsDeleted() => IsDeleted = true;
 }

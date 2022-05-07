@@ -5,12 +5,13 @@ namespace Catering.Domain.Entities.OrderAggregate;
 
 public class Order : BaseEntity<long>
 {
-    public string UserId { get; set; }
+    public string CustomerId { get; set; }
     public DateTime ExpectedOn { get; set; }
     public DateTime CreatedOn { get; set; }
     public OrderStatus Status { get; private set; }
     public HomeDeliveryInfo HomeDeliveryInfo { get; private set; }
     public Guid MenuId { get; private set; }
+
     private readonly List<OrderItem> _items = new();
     public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 
@@ -19,12 +20,12 @@ public class Order : BaseEntity<long>
     public Order(
         IEnumerable<OrderItem> items,
         Guid menuId,
-        string userId,
+        string customerId,
         DateTime expectedOn,
         HomeDeliveryInfo homeDelivery = null)
     {
         Guard.Against.Default(menuId);
-        Guard.Against.NullOrWhiteSpace(userId);
+        Guard.Against.NullOrWhiteSpace(customerId);
         Guard.Against.Default(expectedOn);
 
         CreatedOn = DateTime.Now;
@@ -33,7 +34,7 @@ public class Order : BaseEntity<long>
         MenuId = menuId;
         AddItems(items);
 
-        UserId = userId;
+        CustomerId = customerId;
         ExpectedOn = expectedOn;
 
         HomeDeliveryInfo = homeDelivery;

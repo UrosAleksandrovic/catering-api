@@ -2,7 +2,7 @@
 
 namespace Catering.Domain.Builders;
 
-public class ItemBuilder : IBuilder<Item, Guid>
+public class ItemBuilder : IBuilder<Item>
 {
     private string _name;
     private string _description;
@@ -24,7 +24,7 @@ public class ItemBuilder : IBuilder<Item, Guid>
 
         if (_ratings != null && _ratings.Any())
             foreach (var rating in _ratings)
-                result.AddOrChangeRating(rating.UserId, rating.Rating);
+                result.AddOrChangeRating(rating.CustomerId, rating.Rating);
 
         return result;
     }

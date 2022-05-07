@@ -5,17 +5,19 @@ namespace Catering.Domain.Entities.CartAggregate;
 
 public class Cart : BaseEntity<Guid>
 {
-    public string UserId { get; private set; }
+    public string CustomerId { get; private set; }
 
     private readonly List<CartItem> _items = new();
     public IReadOnlyList<CartItem> Items => _items;
     
-    public Cart(string userId)
+    private Cart() { }
+
+    public Cart(string customerId)
     {
-        Guard.Against.NullOrWhiteSpace(userId);
+        Guard.Against.NullOrWhiteSpace(customerId);
 
         Id = Guid.NewGuid();
-        UserId = userId;
+        CustomerId = customerId;
     }
 
     public void AddItem(Guid itemId, int quantity, string note = null)

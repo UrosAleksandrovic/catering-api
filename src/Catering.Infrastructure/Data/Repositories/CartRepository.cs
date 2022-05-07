@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
-internal class CartRepository : BaseRepository<Cart, CateringDbContext>, ICartRepository
+internal class CartRepository : BaseCrudRepository<Cart, CateringDbContext>, ICartRepository
 {
     protected CartRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory) { }

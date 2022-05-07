@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
-internal class OrderRepository : BaseRepository<Order, CateringDbContext>, IOrderRepository
+internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, IOrderRepository
 {
     protected OrderRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory)
@@ -69,15 +69,18 @@ internal class OrderRepository : BaseRepository<Order, CateringDbContext>, IOrde
         await dbContext.SaveChangesAsync();
     }
 
-    private IQueryable<Order> ApplyFilters(OrderFilter itemsFilter, IQueryable<Order> queryableOrders)
+    private IQueryable<Order> ApplyFilters(OrderFilter ordersFilter, IQueryable<Order> queryableOrders)
     {
         queryableOrders.AsNoTracking();
 
-        if (itemsFilter.CustomerId != null)
-            queryableOrders = queryableOrders.Where(o => o.CustomerId == itemsFilter.CustomerId);
+        if (ordersFilter.CustomerId != null)
+            queryableOrders = queryableOrders.Where(o => o.CustomerId == ordersFilter.CustomerId);
+
+        if (ordersFilter != null)
+            queryableOrders = queryableOrders.Where(o => o.MenuId == ordersFilter.MenuId);
 
         return queryableOrders
-            .Skip(itemsFilter.PageIndex * itemsFilter.PageSize)
-            .Take(itemsFilter.PageSize);
+            .Skip(ordersFilter.PageIndex * ordersFilter.PageSize)
+            .Take(ordersFilter.PageSize);
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
-internal class ItemRepository : BaseRepository<Item, CateringDbContext>, IItemRepository
+internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IItemRepository
 {
     protected ItemRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory)
@@ -66,14 +66,13 @@ internal class ItemRepository : BaseRepository<Item, CateringDbContext>, IItemRe
         if (itemsFilter.Categories != null && itemsFilter.Categories.Any())
             queryableItems = queryableItems.Where(i => itemsFilter.Categories.All(i.Categories.Contains));
 
-        if (itemsFilter.MenuId != null)
-            queryableItems = queryableItems.Where(i => i.MenuId == itemsFilter.MenuId);
-
         if (itemsFilter.TopPrice != null)
             queryableItems = queryableItems.Where(i => i.Price <= itemsFilter.TopPrice);
 
         if (itemsFilter.BottomPrice != null)
             queryableItems = queryableItems.Where(i => i.Price >= itemsFilter.BottomPrice);
+
+        queryableItems = queryableItems.Where(i => i.MenuId == itemsFilter.MenuId);
 
         return queryableItems
             .Skip(itemsFilter.PageIndex * itemsFilter.PageSize)

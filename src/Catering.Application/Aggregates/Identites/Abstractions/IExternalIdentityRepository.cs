@@ -2,6 +2,6 @@
 
 namespace Catering.Application.Aggregates.Identites.Abstractions;
 
-public interface IExternalIdentityRepository : IBaseRepository<ExternalIdentity>, IIdentityRepository<ExternalIdentity>
+public interface IExternalIdentityRepository : IBaseCrudRepository<ExternalIdentity>, IIdentityRepository<ExternalIdentity>
 {
 }

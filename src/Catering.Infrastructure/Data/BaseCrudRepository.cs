@@ -1,16 +1,15 @@
 ﻿using Catering.Application;
-using Catering.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data;
 
-internal class BaseRepository<T, TContext> : IBaseRepository<T> 
+internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T> 
     where TContext : DbContext 
-    where T : class
+    where T : class, new()
 {
     protected readonly IDbContextFactory<TContext> _dbContextFactory;
 
-    protected BaseRepository(IDbContextFactory<TContext> dbContextFactory)
+    protected BaseCrudRepository(IDbContextFactory<TContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
@@ -42,5 +41,13 @@ internal class BaseRepository<T, TContext> : IBaseRepository<T>
         await dbContext.SaveChangesAsync();
 
         return entity;
+    }
+
+    public async Task HardDeleteAsync(T entity)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        dbContext.Set<T>().Remove(entity);
+        await dbContext.SaveChangesAsync();
     }
 }

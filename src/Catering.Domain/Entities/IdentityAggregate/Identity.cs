@@ -59,6 +59,8 @@ public class Identity : BaseEntity<string>
         identity.EditRoles(newRoles);
     }
 
+    public bool HasRole(string role)
+        => _roles.Contains(role);
 
     public bool IsAdministrator => _roles.Any(IdentityRole.IsAdministratorRole);
 }

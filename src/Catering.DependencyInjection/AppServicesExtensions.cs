@@ -10,6 +10,8 @@ using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos.Validators;
 using Catering.Application.Aggregates.Orders.Handlers;
+using Catering.Domain.Services;
+using Catering.Domain.Services.Abstractions;
 using Catering.Infrastructure;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -54,6 +56,13 @@ public static class AppServicesExtensions
             fv.DisableDataAnnotationsValidation = true;
             fv.RegisterValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddDomainServices(this IServiceCollection services)
+    {
+        services.AddScoped<IOrderingService, OrderingService>();
 
         return services;
     }

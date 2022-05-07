@@ -5,4 +5,5 @@ namespace Catering.Application.Aggregates.Identites.Abstractions;
 public interface IIdentityRepository<T> where T : Identity
 {
     Task<T> GetByEmailAsync(string email);
+    Task<T> GetByIdAsync(string id);
 }

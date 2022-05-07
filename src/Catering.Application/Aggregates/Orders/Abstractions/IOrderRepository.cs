@@ -5,7 +5,7 @@ using Catering.Domain.Entities.OrderAggregate;
 
 namespace Catering.Application.Aggregates.Orders.Abstractions;
 
-public interface IOrderRepository : IBaseRepository<Order>
+public interface IOrderRepository : IBaseCrudRepository<Order>
 {
     Task UpdateOrderWithCustomerAsync(Customer customer, Order order);
     Task CreateOrderForCustomerAsync(Customer customer, Order order);

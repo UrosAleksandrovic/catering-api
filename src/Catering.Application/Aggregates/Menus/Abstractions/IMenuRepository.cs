@@ -2,6 +2,6 @@
 
 namespace Catering.Application.Aggregates.Menus.Abstractions;
 
-public interface IMenuRepository : IBaseRepository<Menu>
+public interface IMenuRepository : IBaseCrudRepository<Menu>
 {
 }

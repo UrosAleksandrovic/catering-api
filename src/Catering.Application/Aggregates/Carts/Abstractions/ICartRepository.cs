@@ -4,6 +4,6 @@ namespace Catering.Application.Aggregates.Carts.Abstractions;
 
 public interface ICartRepository : IBaseCrudRepository<Cart>
 {
-    public Task<Cart> GetByCustomerIdAsync(string customerId);
-    public Task DeleteAsync(string customerId);
+    Task<Cart> GetByCustomerIdAsync(string customerId);
+    Task DeleteAsync(string customerId);
 }

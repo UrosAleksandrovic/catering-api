@@ -5,7 +5,7 @@ namespace Catering.Infrastructure.Data;
 
 internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T> 
     where TContext : DbContext 
-    where T : class, new()
+    where T : class
 {
     protected readonly IDbContextFactory<TContext> _dbContextFactory;
 

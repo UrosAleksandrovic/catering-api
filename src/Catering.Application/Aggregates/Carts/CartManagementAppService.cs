@@ -37,7 +37,7 @@ internal class CartManagementAppService : ICartManagementAppService
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.AddNoteToItem(itemId, note);
+        cart.AddOrEditNoteToItem(itemId, note);
 
         await _cartRepository.UpdateAsync(cart);
     }

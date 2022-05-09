@@ -15,7 +15,7 @@ public class Order : BaseEntity<long>
     private readonly List<OrderItem> _items = new();
     public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 
-    private Order() { }
+    protected Order() { }
 
     public Order(
         IEnumerable<OrderItem> items,

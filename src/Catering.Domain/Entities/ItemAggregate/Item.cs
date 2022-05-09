@@ -49,7 +49,8 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
 
         var categoriesToAdd = newCategories.Select(c => c.ToLowerInvariant())
             .Distinct()
-            .Except(_categories);
+            .Except(Categories);
+
         _categories.AddRange(categoriesToAdd);
     }
 
@@ -60,7 +61,7 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
         if (_categories.Count == 0)
             return;
 
-        var resultCategories = _categories
+        var resultCategories = Categories
             .Except(categoriesToRemove.Select(c => c.ToLowerInvariant()).Distinct())
             .ToArray();
 

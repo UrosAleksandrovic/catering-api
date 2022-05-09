@@ -6,6 +6,6 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class MenuRepository : BaseCrudRepository<Menu, CateringDbContext>, IMenuRepository
 {
-    protected MenuRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
+    public MenuRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
         : base(dbContextFactory) { }
 }

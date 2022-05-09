@@ -9,7 +9,7 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, IOrderRepository
 {
-    protected OrderRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    public OrderRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory)
     {
     }

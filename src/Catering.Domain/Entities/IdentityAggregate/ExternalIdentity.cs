@@ -6,6 +6,8 @@ public class ExternalIdentity : Identity
 {
     private string _password;
 
+    protected ExternalIdentity() : base() { }
+
     public ExternalIdentity(
         string email,
         FullName fullName,

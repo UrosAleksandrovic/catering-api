@@ -11,7 +11,7 @@ public class Identity : BaseEntity<string>
     private readonly List<string> _roles = new();
     public IReadOnlyList<string> Roles => _roles.AsReadOnly();
 
-    private Identity() { }
+    protected Identity() { }
 
     public Identity(
         FullName fullName,

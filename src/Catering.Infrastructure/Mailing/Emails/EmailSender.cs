@@ -1,6 +1,7 @@
 ﻿using Catering.Application.Mailing.Emails;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace Catering.Infrastructure.Mailing.Emails;
@@ -10,9 +11,9 @@ internal class EmailSender : IEmailSender
     private readonly EmailSettings _options;
     private readonly ILogger<EmailSender> _logger;
 
-    public EmailSender(EmailSettings options, ILogger<EmailSender> logger)
+    public EmailSender(IOptions<EmailSettings> options, ILogger<EmailSender> logger)
     {
-        _options = options;
+        _options = options.Value;
         _logger = logger;
     }
 

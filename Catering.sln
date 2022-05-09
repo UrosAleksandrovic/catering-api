@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.Application", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.Infrastructure", "src\Catering.Infrastructure\Catering.Infrastructure.csproj", "{7D1A9036-DD44-4849-8360-F53EDE31C9F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catering.Application.DependencyInjection", "Catering.Application.DependencyInjection\Catering.Application.DependencyInjection.csproj", "{49073A17-455F-4B84-AB1A-98151CDE2CC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.DependencyInjection", "src\Catering.DependencyInjection\Catering.DependencyInjection.csproj", "{49073A17-455F-4B84-AB1A-98151CDE2CC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catering.Api", "src\Catering.Api\Catering.Api.csproj", "{FE9ACD95-B39A-4375-9E81-FA658C156105}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{49073A17-455F-4B84-AB1A-98151CDE2CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49073A17-455F-4B84-AB1A-98151CDE2CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49073A17-455F-4B84-AB1A-98151CDE2CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE9ACD95-B39A-4375-9E81-FA658C156105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE9ACD95-B39A-4375-9E81-FA658C156105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE9ACD95-B39A-4375-9E81-FA658C156105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE9ACD95-B39A-4375-9E81-FA658C156105}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

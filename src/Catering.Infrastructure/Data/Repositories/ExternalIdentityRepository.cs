@@ -6,6 +6,6 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class ExternalIdentityRepository : IdentityRepository<ExternalIdentity>, IExternalIdentityRepository
 {
-    protected ExternalIdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
+    public ExternalIdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
         : base(dbContextFactory) { }
 }

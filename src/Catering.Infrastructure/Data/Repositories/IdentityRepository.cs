@@ -7,7 +7,7 @@ namespace Catering.Infrastructure.Data.Repositories;
 internal class IdentityRepository<T> : BaseCrudRepository<T, CateringDbContext>, IIdentityRepository<T> 
     where T : Identity
 {
-    protected IdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    public IdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory) { }
 
     public async Task<T> GetByEmailAsync(string email)

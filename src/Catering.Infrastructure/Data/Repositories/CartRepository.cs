@@ -6,7 +6,7 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class CartRepository : BaseCrudRepository<Cart, CateringDbContext>, ICartRepository
 {
-    protected CartRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    public CartRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory) { }
 
     public async Task DeleteAsync(string customerId)

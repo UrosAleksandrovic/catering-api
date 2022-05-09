@@ -6,6 +6,6 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class CustomerRepository : IdentityRepository<Customer>, ICustomerRepository
 {
-    protected CustomerRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    public CustomerRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory) { }
 }

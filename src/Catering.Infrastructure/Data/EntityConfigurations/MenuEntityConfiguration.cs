@@ -15,7 +15,6 @@ internal class MenuEntityConfiguration : IEntityTypeConfiguration<Menu>
         var contactBuilder = builder.OwnsOne(e => e.Contact);
         contactBuilder.Property(c => c.Email).IsRequired();
 
-
         builder.HasQueryFilter(e => !e.IsDeleted);
     }
 }

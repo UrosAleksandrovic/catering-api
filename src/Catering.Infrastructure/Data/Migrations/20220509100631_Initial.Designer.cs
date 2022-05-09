@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catering.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CateringDbContext))]
-    [Migration("20220508203246_Initial")]
+    [Migration("20220509100631_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace Catering.Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Roles")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -67,13 +67,13 @@ namespace Catering.Infrastructure.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Categories")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("Ingredients")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");

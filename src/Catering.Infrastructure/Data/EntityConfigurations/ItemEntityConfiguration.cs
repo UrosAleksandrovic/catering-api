@@ -31,7 +31,7 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(e => e.Ingredients)
-            .HasColumnType("nvarchar")
+            .HasColumnType("text")
             .HasConversion<StringListConverter>()
             .Metadata
             .SetValueComparer(typeof(StringListComparer));
@@ -43,7 +43,7 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
         //TODO: Might be a bad idea, think about this one
         builder
             .Property(e => e.Categories)
-            .HasColumnType("nvarchar")
+            .HasColumnType("text")
             .HasConversion<StringListConverter>()
             .Metadata
             .SetValueComparer(typeof(StringListComparer));

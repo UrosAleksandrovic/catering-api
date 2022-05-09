@@ -26,7 +26,7 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(e => e.Roles)
-            .HasColumnType("nvarchar")
+            .HasColumnType("text")
             .HasConversion<StringListConverter>()
             .Metadata
             .SetValueComparer(typeof(StringListComparer));

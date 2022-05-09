@@ -22,7 +22,7 @@ namespace Catering.Infrastructure.Data.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     FullName_FirstName = table.Column<string>(type: "text", nullable: true),
                     FullName_LastName = table.Column<string>(type: "text", nullable: true),
-                    Roles = table.Column<string>(type: "nvarchar", nullable: true)
+                    Roles = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -118,8 +118,8 @@ namespace Catering.Infrastructure.Data.Migrations
                     Price = table.Column<decimal>(type: "numeric(19,4)", nullable: false),
                     MenuId = table.Column<Guid>(type: "uuid", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    Ingredients = table.Column<string>(type: "nvarchar", nullable: true),
-                    Categories = table.Column<string>(type: "nvarchar", nullable: true)
+                    Ingredients = table.Column<string>(type: "text", nullable: true),
+                    Categories = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

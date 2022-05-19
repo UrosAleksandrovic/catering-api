@@ -1,23 +1,27 @@
+using Catering.Api.Configuration;
 using Catering.DependencyInjection;
+using Catering.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddCateringDependecies(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddCateringSwagger();
+
+builder.Services.AddCateringAuthentication(builder.Configuration);
+
+builder.Services.AddCateringDependecies(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseCateringSwagger();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

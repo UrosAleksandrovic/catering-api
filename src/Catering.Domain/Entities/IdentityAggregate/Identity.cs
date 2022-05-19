@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Catering.Domain.Exceptions;
+using System.Linq;
 
 namespace Catering.Domain.Entities.IdentityAggregate;
 
@@ -32,7 +33,15 @@ public class Identity : BaseEntity<string>
         Guard.Against.NullOrWhiteSpace(email);
 
         Email = email;
-        FullName.Edit(fullName.FirstName, fullName.LastName);
+
+        if (FullName == default && fullName != default)
+            FullName = new FullName(fullName.FirstName, fullName.LastName);
+
+        if (FullName != default && fullName != default)
+            FullName.Edit(fullName.FirstName, fullName.LastName);
+
+        if (fullName == default)
+            FullName = default;
     }
 
     protected void EditRoles(IEnumerable<string> newRoles)
@@ -63,4 +72,19 @@ public class Identity : BaseEntity<string>
         => _roles.Contains(role);
 
     public bool IsAdministrator => _roles.Any(IdentityRole.IsAdministratorRole);
+
+    public bool IsCompanyEmployee
+        => _roles.Intersect(new[]
+        {
+            IdentityRole.CompanyEmployee,
+            IdentityRole.CompanyAdministrator,
+            IdentityRole.SuperAdministrator
+        }).Any();
+
+    public bool IsRestourantEmployee
+        => _roles.Intersect(new[]
+        {
+            IdentityRole.RestourantEmployee,
+            IdentityRole.SuperAdministrator
+        }).Any();
 }

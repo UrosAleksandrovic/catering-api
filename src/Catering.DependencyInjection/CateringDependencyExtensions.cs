@@ -23,10 +23,10 @@ public static class CateringDependencyExtensions
 
         services.AddAppServices();
         services.AddCateringMapper();
-        services.AddCateringMediator();
         services.AddFluentValidation();
         services.AddDomainServices();
 
+        services.AddCateringMediator();
         return services;
     }
 }

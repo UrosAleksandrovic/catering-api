@@ -243,6 +243,18 @@ namespace Catering.Infrastructure.Data.Migrations
                 schema: "catering",
                 table: "Items",
                 column: "MenuId");
+
+            migrationBuilder.InsertData(
+                schema: "catering",
+                table: "Identities",
+                columns: new[] { "Id", "Email" },
+                values: new object[] { "sudo", "super.admin@catering.test" });
+
+            migrationBuilder.InsertData(
+                schema: "catering",
+                table: "Customers",
+                columns: new[] { "Id", "Budget_Balance" },
+                values: new object[] { "sudo", 0 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

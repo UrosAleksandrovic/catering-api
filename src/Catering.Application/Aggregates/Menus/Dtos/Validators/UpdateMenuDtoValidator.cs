@@ -2,9 +2,9 @@
 
 namespace Catering.Application.Aggregates.Menus.Dtos.Validators;
 
-internal class CreateMenuDtoValidator : AbstractValidator<CreateMenuDto>
+internal class UpdateMenuDtoValidator : AbstractValidator<CreateMenuDto>
 {
-    public CreateMenuDtoValidator()
+    public UpdateMenuDtoValidator()
     {
         RuleFor(dto => dto.Email)
             .NotEmpty()
@@ -13,8 +13,5 @@ internal class CreateMenuDtoValidator : AbstractValidator<CreateMenuDto>
         RuleFor(dto => dto.Name)
             .NotEmpty()
             .Length(3, 100);
-
-        RuleFor(dto => dto.ContactIdentityId)
-            .NotEmpty();
     }
 }

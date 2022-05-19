@@ -49,9 +49,10 @@ internal class LdapTokenAuthenticator : ITokenAtuhenticator<Customer>
     {
         using var connection = new LdapConnection();
 
-        connection.Connect(_ldapOptions.Server);
+        connection.Connect(_ldapOptions.Server, _ldapOptions.PortNumber);
 
-        connection.Bind(Native.LdapAuthMechanism.SIMPLE, GetUserBaseDn(username), password);
+        var userDn = GetUserBaseDn(username);
+        connection.Bind(Native.LdapAuthMechanism.SIMPLE, userDn, password);
 
         var searchResult = connection.Search(GetUserBaseDn(username), "(objectClass=*)").FirstOrDefault();
 
@@ -66,10 +67,10 @@ internal class LdapTokenAuthenticator : ITokenAtuhenticator<Customer>
 
     private async Task PopulateCustomerAsync(Customer customer, LdapUser ldapUser)
     {
-        if (customer.FullName.FirstName != default)
+        if (customer.FullName?.FirstName != default)
             return;
             
-        customer.FullName.Edit(ldapUser.FirstName, ldapUser.LastName);
+        customer.Edit(customer.Email, new FullName(ldapUser.FirstName, ldapUser.LastName));
 
         await _customerRepository.UpdateAsync(customer);
     }

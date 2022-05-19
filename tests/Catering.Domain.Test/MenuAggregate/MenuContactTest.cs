@@ -13,7 +13,7 @@ public class MenuContactTest
     public void Edit_BothPhoneNumberAndEmailAreInvalid_ArgumentNullException(string invalidInput)
     {
         //Arrange
-        var contact = new MenuContact("Ok", "Ok", "");
+        var contact = new MenuContact("Ok", "Ok", "", Guid.NewGuid().ToString());
 
         //Act
         void a() => contact.Edit(invalidInput, invalidInput, contact.Address);
@@ -31,7 +31,7 @@ public class MenuContactTest
     {
         //Arrange
         var expectedPhone = "123";
-        var contact = new MenuContact("Ok", "Ok", "");
+        var contact = new MenuContact("Ok", "Ok", "", Guid.NewGuid().ToString());
 
         //Act
         contact.Edit(expectedPhone, invalidInput, contact.Address);
@@ -49,7 +49,7 @@ public class MenuContactTest
     {
         //Arrange
         var expectedEmail = "email";
-        var contact = new MenuContact("Ok", "Ok", "");
+        var contact = new MenuContact("Ok", "Ok", "", Guid.NewGuid().ToString());
 
         //Act
         contact.Edit(invalidInput, expectedEmail, contact.Address);
@@ -66,7 +66,7 @@ public class MenuContactTest
         var newEmail = "email";
         var newPhone = "123";
         var newAddress = "address";
-        var contact = new MenuContact("Ok", "Ok", "");
+        var contact = new MenuContact("Ok", "Ok", "", Guid.NewGuid().ToString());
 
         //Act
         contact.Edit(newPhone, newEmail, newAddress);

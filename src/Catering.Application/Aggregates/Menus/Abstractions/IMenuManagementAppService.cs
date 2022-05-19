@@ -6,7 +6,8 @@ namespace Catering.Application.Aggregates.Menus.Abstractions;
 public interface IMenuManagementAppService
 {
     public Task<Guid> CreateAsync(CreateMenuDto createMenu);
-    public Task<Guid> UpdateAsync(Guid id, CreateMenuDto updateMenu);
+    public Task UpdateAsync(Guid id, UpdateMenuDto updateMenu);
     public Task DeleteAsync(Guid id);
     public Task<MenuInfoDto> GetByIdAsync(Guid id);
+    public Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId);
 }

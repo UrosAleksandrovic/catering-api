@@ -42,7 +42,7 @@ public class MenuTest
         newPhoneNumber = newEmail = newAddress = "SomethingNew";
 
         var menu = new Menu("Test");
-        menu.AddOrEditContact("123", "email@email.com", "Some Address");
+        menu.AddOrEditContact("123", "email@email.com", "Some Address", Guid.NewGuid().ToString());
 
         //Act
         menu.AddOrEditContact(newPhoneNumber, newEmail, newAddress);
@@ -62,11 +62,29 @@ public class MenuTest
         var menu = new Menu("Test");
 
         //Act
-        menu.AddOrEditContact(newPhoneNumber, newEmail, newAddress);
+        menu.AddOrEditContact(newPhoneNumber, newEmail, newAddress, Guid.NewGuid().ToString());
 
         //Assert
         Assert.Equal(newPhoneNumber, menu.Contact.PhoneNumber);
         Assert.Equal(newEmail, menu.Contact.Email);
         Assert.Equal(newAddress, menu.Contact.Address);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(null)]
+    public void AddOrEditContact_ContactDoesNotExistInvalidIdentity_ArgumentException(string invalidInput)
+    {
+        //Arrange
+        string newPhoneNumber, newEmail, newAddress;
+        newPhoneNumber = newEmail = newAddress = "SomethingNew";
+        var menu = new Menu("Test");
+
+        //Act
+        void a() => menu.AddOrEditContact(newPhoneNumber, newEmail, newAddress, invalidInput);
+
+        //Assert
+        Assert.ThrowsAny<ArgumentException>(a);
     }
 }

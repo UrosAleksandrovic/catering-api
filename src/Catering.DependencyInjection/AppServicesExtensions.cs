@@ -10,6 +10,7 @@ using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos.Validators;
 using Catering.Application.Aggregates.Orders.Handlers;
+using Catering.Application.Security.Handlers;
 using Catering.Domain.Services;
 using Catering.Domain.Services.Abstractions;
 using Catering.Infrastructure;
@@ -41,11 +42,13 @@ public static class AppServicesExtensions
 
     public static IServiceCollection AddCateringMediator(this IServiceCollection services)
     {
-        services.AddMediatR(cfg =>
-        {
-            cfg.AsSingleton();
-        }, typeof(OrderPlacedHandler).Assembly);
+        //TODO: Need this to be singleton
+        //services.AddMediatR(cfg =>
+        //{
+        //    cfg.AsSingleton();
+        //}, typeof(LoginCustomerHandler).Assembly);
 
+        services.AddMediatR(typeof(LoginCustomerHandler));
         return services;
     }
 

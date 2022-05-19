@@ -26,7 +26,11 @@ public class Menu : BaseEntity<Guid>, ISoftDeletable
         Name = name;
     }
 
-    public void AddOrEditContact(string phoneNumber, string email, string address)
+    public void AddOrEditContact(
+        string phoneNumber,
+        string email,
+        string address,
+        string indentityId = null)
     {
         if (Contact != default)
         {
@@ -34,7 +38,12 @@ public class Menu : BaseEntity<Guid>, ISoftDeletable
             return;
         }
 
-        Contact = new MenuContact(phoneNumber, email, address);
+        Contact = new MenuContact(phoneNumber, email, address, indentityId);
+    }
+
+    public bool HasContact(string identityId)
+    {
+        return Contact?.IdentityId == identityId;
     }
 
     private void ValidateGeneralData(string name)

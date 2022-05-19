@@ -10,7 +10,7 @@ internal class StringListConverter : ValueConverter<IReadOnlyList<string>, strin
     public StringListConverter() 
         : base(
             v => string.Join(EnumerationSeparator, v),
-            v => v.Split(EnumerationSeparator, StringSplitOptions.TrimEntries))
+            v => v.Split(EnumerationSeparator, StringSplitOptions.TrimEntries).ToList())
     {
     }
 }

@@ -167,7 +167,7 @@ namespace Catering.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Catering.Domain.Entities.CartAggregate.CartItem", "Items", b1 =>
+                    b.OwnsMany("Catering.Domain.Entities.CartAggregate.Cart.Items#Catering.Domain.Entities.CartAggregate.CartItem", "Items", b1 =>
                         {
                             b1.Property<Guid>("CartId")
                                 .HasColumnType("uuid");
@@ -200,7 +200,7 @@ namespace Catering.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Identity", b =>
                 {
-                    b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.FullName", "FullName", b1 =>
+                    b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.Identity.FullName#Catering.Domain.Entities.IdentityAggregate.FullName", "FullName", b1 =>
                         {
                             b1.Property<string>("IdentityId")
                                 .HasColumnType("text");
@@ -231,7 +231,7 @@ namespace Catering.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Catering.Domain.Entities.ItemAggregate.ItemRating", "Ratings", b1 =>
+                    b.OwnsMany("Catering.Domain.Entities.ItemAggregate.Item.Ratings#Catering.Domain.Entities.ItemAggregate.ItemRating", "Ratings", b1 =>
                         {
                             b1.Property<Guid>("ItemId")
                                 .HasColumnType("uuid");
@@ -263,7 +263,7 @@ namespace Catering.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Catering.Domain.Entities.MenuAggregate.Menu", b =>
                 {
-                    b.OwnsOne("Catering.Domain.Entities.MenuAggregate.MenuContact", "Contact", b1 =>
+                    b.OwnsOne("Catering.Domain.Entities.MenuAggregate.Menu.Contact#Catering.Domain.Entities.MenuAggregate.MenuContact", "Contact", b1 =>
                         {
                             b1.Property<Guid>("MenuId")
                                 .HasColumnType("uuid");
@@ -291,7 +291,7 @@ namespace Catering.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Catering.Domain.Entities.OrderAggregate.Order", b =>
                 {
-                    b.OwnsOne("Catering.Domain.Entities.OrderAggregate.HomeDeliveryInfo", "HomeDeliveryInfo", b1 =>
+                    b.OwnsOne("Catering.Domain.Entities.OrderAggregate.Order.HomeDeliveryInfo#Catering.Domain.Entities.OrderAggregate.HomeDeliveryInfo", "HomeDeliveryInfo", b1 =>
                         {
                             b1.Property<long>("OrderId")
                                 .HasColumnType("bigint");
@@ -311,7 +311,7 @@ namespace Catering.Infrastructure.Data.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.OwnsMany("Catering.Domain.Entities.OrderAggregate.OrderItem", "Items", b1 =>
+                    b.OwnsMany("Catering.Domain.Entities.OrderAggregate.Order.Items#Catering.Domain.Entities.OrderAggregate.OrderItem", "Items", b1 =>
                         {
                             b1.Property<long>("OrderId")
                                 .HasColumnType("bigint");
@@ -355,7 +355,7 @@ namespace Catering.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.CustomerBudget", "Budget", b1 =>
+                    b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.Customer.Budget#Catering.Domain.Entities.IdentityAggregate.CustomerBudget", "Budget", b1 =>
                         {
                             b1.Property<string>("CustomerId")
                                 .HasColumnType("text");

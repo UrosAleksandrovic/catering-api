@@ -53,24 +53,38 @@ internal class ItemManagementAppService : IItemManagementAppService
         await _itemRepository.UpdateAsync(item);
     }
 
-    public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters)
+    public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId)
     {
-        var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
-
-        return new FilterResult<ItemInfoDto>
+        var result = new FilterResult<ItemInfoDto>
         {
             PageIndex = itemFilters.PageIndex,
-            Result = _mapper.Map<IEnumerable<ItemInfoDto>>(items),
             PageSize = itemFilters.PageSize,
-            TotalNumberOfPages = totalCount
+            TotalNumberOfPages = 0,
+            Result = Enumerable.Empty<ItemInfoDto>()
         };
+
+        var request = new GetIdentityWithMenuId { IdentityId = requestorId, MenuId = itemFilters.MenuId };
+        var requestor = await _publisher.Send(request);
+        if (requestor == default)
+            return result;
+
+        var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
+        result.TotalNumberOfPages = totalCount / itemFilters.PageSize;
+        result.Result = _mapper.Map<IEnumerable<ItemInfoDto>>(items);
+
+        return result;
     }
 
-    public async Task<ItemInfoDto> GetItemByIdAsync(Guid itemId)
+    public async Task<ItemInfoDto> GetItemByIdAsync(Guid itemId, string requestorId)
     {
         var item = await _itemRepository.GetByIdAsync(itemId);
+        if (item == default)
+            return default;
 
-        return item == default ? default : _mapper.Map<ItemInfoDto>(item);
+        var request = new GetIdentityWithMenuId { IdentityId = requestorId, MenuId = item.MenuId };
+        var creator = await _publisher.Send(request);
+
+        return creator == default ? default : _mapper.Map<ItemInfoDto>(item);
     }
 
     public async Task<short> GetCustomerRatingForItemAsync(Guid itemId, string customerId)
@@ -94,7 +108,7 @@ internal class ItemManagementAppService : IItemManagementAppService
         await _itemRepository.UpdateAsync(item);
     }
 
-    public async Task<Guid> UpdateItemAsync(Guid itemId, UpdateItemDto updateRequest)
+    public async Task UpdateItemAsync(Guid itemId, UpdateItemDto updateRequest)
     {
         var item = await _itemRepository.GetByIdAsync(itemId);
         if (item == default)
@@ -105,8 +119,6 @@ internal class ItemManagementAppService : IItemManagementAppService
         item.EditGeneralData(updateRequest.Name, updateRequest.Description, updateRequest.Price);
 
         await _itemRepository.UpdateAsync(item);
-
-        return item.Id;
     }
 
     private void UpdateItemCategories(Item item, IEnumerable<string> updateRequestCategories)
@@ -119,9 +131,9 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     private void UpdateItemIngredients(Item item, IEnumerable<string> updateRequestIngredients)
     {
-        var categoriesToRemove = item.Categories.Except(updateRequestIngredients);
-        item.RemoveCategories(categoriesToRemove);
+        var ingredientsToRemove = item.Ingredients.Except(updateRequestIngredients);
+        item.RemoveIngredients(ingredientsToRemove);
 
-        item.AddCategories(updateRequestIngredients);
+        item.AddIngredients(updateRequestIngredients);
     }
 }

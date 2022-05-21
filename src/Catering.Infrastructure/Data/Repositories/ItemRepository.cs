@@ -20,7 +20,9 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
         var queryableItems = dbContext.Set<Item>().AsQueryable();
         queryableItems = ApplyFilters(itemsFilter, queryableItems);
 
-        return new(await queryableItems.ToListAsync(), await queryableItems.CountAsync());
+        var results = await queryableItems.ToListAsync();
+
+        return new(results, await queryableItems.CountAsync());
     }
 
     public async Task<List<Item>> GetItemsFromCartAsync(string cartOwnerId)
@@ -78,7 +80,7 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
         queryableItems = queryableItems.Where(i => i.MenuId == itemsFilter.MenuId);
 
         return queryableItems
-            .Skip(itemsFilter.PageIndex * itemsFilter.PageSize)
+            .Skip((itemsFilter.PageIndex - 1) * itemsFilter.PageSize)
             .Take(itemsFilter.PageSize);
     }
 }

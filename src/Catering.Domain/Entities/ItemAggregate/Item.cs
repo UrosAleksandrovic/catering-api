@@ -97,14 +97,14 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
 
     public void AddOrChangeRating(string customerId, short rating)
     {
-        var custoimerRating = _ratings.SingleOrDefault(r => r.CustomerId == customerId);
-        if (custoimerRating == null)
+        var customerRating = _ratings.SingleOrDefault(r => r.CustomerId == customerId);
+        if (customerRating == null)
         {
             _ratings.Add(new ItemRating(rating, customerId));
             return;
         }
 
-        custoimerRating.EditRating(rating);
+        customerRating.EditRating(rating);
     }
 
     public void RemoveRating(string customerId)

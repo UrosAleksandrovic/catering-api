@@ -3,6 +3,7 @@ using System;
 using Catering.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catering.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CateringDbContext))]
-    partial class CateringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220521113554_MakeCompositeKeys")]
+    partial class MakeCompositeKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

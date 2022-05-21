@@ -77,14 +77,12 @@ public class Identity : BaseEntity<string>
         => _roles.Intersect(new[]
         {
             IdentityRole.CompanyEmployee,
-            IdentityRole.CompanyAdministrator,
-            IdentityRole.SuperAdministrator
+            IdentityRole.CompanyAdministrator
         }).Any();
 
     public bool IsRestourantEmployee
         => _roles.Intersect(new[]
         {
-            IdentityRole.RestourantEmployee,
-            IdentityRole.SuperAdministrator
+            IdentityRole.RestourantEmployee
         }).Any();
 }

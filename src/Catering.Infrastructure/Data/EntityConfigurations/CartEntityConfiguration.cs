@@ -21,6 +21,9 @@ internal class CartEntityConfiguration : IEntityTypeConfiguration<Cart>
         builder.Metadata
             .FindNavigation(nameof(Cart.Items))
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-        builder.OwnsMany(e => e.Items);
+        builder.OwnsMany(e => e.Items, cfg =>
+        {
+            cfg.HasKey(i => new { i.CartId, i.ItemId });
+        });
     }
 }

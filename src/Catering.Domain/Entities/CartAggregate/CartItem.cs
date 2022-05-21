@@ -4,6 +4,7 @@ namespace Catering.Domain.Entities.CartAggregate;
 
 public class CartItem
 {
+    public Guid CartId { get; private set; }
     public string Note { get; private set; }
     public int Quantity { get; private set; }
     public Guid ItemId { get; private set; }

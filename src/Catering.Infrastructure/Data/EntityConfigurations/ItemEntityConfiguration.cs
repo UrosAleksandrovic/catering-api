@@ -18,9 +18,10 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
         builder.Property(e => e.Name)
             .IsRequired();
 
-        builder
-            .OwnsMany(e => e.Ratings)
-            .HasIndex(r => r.CustomerId);
+        builder.OwnsMany(e => e.Ratings, cfg =>
+            {
+                cfg.HasKey(r => new { r.ItemId, r.CustomerId });
+            });
 
         builder.Metadata
             .FindNavigation(nameof(Item.Ratings))

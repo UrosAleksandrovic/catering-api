@@ -37,7 +37,20 @@ internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T>
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        dbContext.Update(entity);
+        dbContext.Set<T>().Update(entity);
+
+        //dbContext.Set<T>().Attach(entity);
+
+        //var entry = dbContext.Entry(entity);
+        //entry.State = EntityState.Modified;
+
+        //foreach (var navigation in dbContext.Entry(entity).Navigations)
+        //{
+        //    navigation.IsModified = true;
+        //    navigation.IsLoaded = true;
+        //}
+        //dbContext.ChangeTracker.DetectChanges();
+
         await dbContext.SaveChangesAsync();
 
         return entity;

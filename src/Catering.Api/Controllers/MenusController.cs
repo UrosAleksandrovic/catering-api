@@ -4,6 +4,7 @@ using Catering.Application.Aggregates.Menus.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
@@ -31,7 +32,7 @@ public class MenusController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetMenuByIdAsync(Guid id)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var menu = await _menuAppService.GetByIdAsync(id, requestorId);
 
         if (menu == null)

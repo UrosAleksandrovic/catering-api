@@ -10,7 +10,10 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.HasKey(e => e.Id);
 
-        builder.OwnsMany(e => e.Items);
+        builder.OwnsMany(e => e.Items, cfg =>
+        {
+            cfg.HasKey(i => new { i.OrderId, i.ItemId });
+        });
 
         builder.Metadata
             .FindNavigation(nameof(Order.Items))

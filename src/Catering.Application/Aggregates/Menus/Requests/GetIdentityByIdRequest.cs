@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Catering.Application.Aggregates.Menus.Requests;
 
-internal class GetIdentityByIdRequest : IRequest<Identity>
+internal class GetIdentityById : IRequest<Identity>
 {
     public string Id { get; set; }
 }

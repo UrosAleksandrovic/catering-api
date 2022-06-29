@@ -53,38 +53,38 @@ internal class ItemManagementAppService : IItemManagementAppService
         await _itemRepository.UpdateAsync(item);
     }
 
-    public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId)
+    public async Task<FilterResult<DetailedItemsInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId)
     {
-        var result = new FilterResult<ItemInfoDto>
+        var result = new FilterResult<DetailedItemsInfoDto>
         {
             PageIndex = itemFilters.PageIndex,
             PageSize = itemFilters.PageSize,
             TotalNumberOfPages = 0,
-            Result = Enumerable.Empty<ItemInfoDto>()
+            Result = Enumerable.Empty<DetailedItemsInfoDto>()
         };
 
-        var request = new GetIdentityWithMenuId { IdentityId = requestorId, MenuId = itemFilters.MenuId };
+        var request = new GetIdentityForMenuId { IdentityId = requestorId, MenuId = itemFilters.MenuId };
         var requestor = await _publisher.Send(request);
         if (requestor == default)
             return result;
 
         var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
         result.TotalNumberOfPages = totalCount / itemFilters.PageSize;
-        result.Result = _mapper.Map<IEnumerable<ItemInfoDto>>(items);
+        result.Result = _mapper.Map<IEnumerable<DetailedItemsInfoDto>>(items);
 
         return result;
     }
 
-    public async Task<ItemInfoDto> GetItemByIdAsync(Guid itemId, string requestorId)
+    public async Task<DetailedItemsInfoDto> GetItemByIdAsync(Guid itemId, string requestorId)
     {
         var item = await _itemRepository.GetByIdAsync(itemId);
         if (item == default)
             return default;
 
-        var request = new GetIdentityWithMenuId { IdentityId = requestorId, MenuId = item.MenuId };
+        var request = new GetIdentityForMenuId { IdentityId = requestorId, MenuId = item.MenuId };
         var creator = await _publisher.Send(request);
 
-        return creator == default ? default : _mapper.Map<ItemInfoDto>(item);
+        return creator == default ? default : _mapper.Map<DetailedItemsInfoDto>(item);
     }
 
     public async Task<short> GetCustomerRatingForItemAsync(Guid itemId, string customerId)

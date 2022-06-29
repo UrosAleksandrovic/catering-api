@@ -53,6 +53,12 @@ public static class SecurityExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        settingsSection = configuration.GetSection(SecurityAesSettings.Position);
+        services.AddOptions<SecurityAesSettings>()
+            .Bind(settingsSection)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
         services.AddScoped<IDataProtector, DataProtector>();
 
         return services;

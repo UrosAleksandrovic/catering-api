@@ -3,6 +3,6 @@
 public static class TemplateNamesConstants
 {
     public const string OrderPlacedRestourant = "OrderPlaced_Restourant";
-    public const string OrderConfirmed = "OrderConfirmed_Employee";
-    public const string OrderCancelled = "OrderCancelled_Employee";
+    public const string OrderConfirmedCustomer = "OrderConfirmed_Customer";
+    public const string OrderCanceledCustomer = "OrderCanceled_Customer";
 }

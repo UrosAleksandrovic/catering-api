@@ -50,6 +50,15 @@ public class Cart : BaseEntity<Guid>
             existingItem.DecrementQuantity(quantity);
     }
 
+    public void DeleteItem(Guid itemId)
+    {
+        var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
+        if (existingItem == default)
+            throw new ItemNotInCartException(Id, itemId);
+
+        _items.Remove(existingItem);
+    }
+
     public void AddOrEditNoteToItem(Guid itemId, string note)
     {
         var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);

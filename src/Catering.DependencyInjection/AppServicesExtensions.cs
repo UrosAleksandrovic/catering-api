@@ -9,7 +9,6 @@ using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos.Validators;
-using Catering.Application.Aggregates.Orders.Handlers;
 using Catering.Application.Security.Handlers;
 using Catering.Domain.Services;
 using Catering.Domain.Services.Abstractions;
@@ -27,6 +26,7 @@ public static class AppServicesExtensions
         services.AddScoped<IItemManagementAppService, ItemManagementAppService>();
         services.AddScoped<ICartManagementAppService, CartManagementAppService>();
         services.AddScoped<ICustomerManagementAppService, CustomerManagementAppService>();
+        services.AddScoped<IExternalIdentitiesManagementAppService, ExternalIdentitiesManagementAppService>();
         services.AddScoped<IMenuManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
 

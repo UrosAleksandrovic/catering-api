@@ -27,7 +27,6 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
 
     public async Task<List<Item>> GetItemsFromCartAsync(string cartOwnerId)
     {
-        //TODO: Test this query
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         var cartItems = dbContext.Set<Cart>()

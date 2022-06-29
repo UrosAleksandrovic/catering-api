@@ -4,5 +4,5 @@ namespace Catering.Application.Aggregates.Identites.Abstractions;
 
 public interface ICustomerRepository : IBaseCrudRepository<Customer>, IIdentityRepository<Customer>
 {
-
+    Task<(IEnumerable<Customer>,int)> GetFilteredAsync(CustomersFilter filter);
 }

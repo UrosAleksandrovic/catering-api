@@ -24,11 +24,11 @@ internal class CartManagementAppService : ICartManagementAppService
         _publisher = publisher;
     }
 
-    public async Task AddItemAsync(string customerId, Guid itemId, int quantity = 1, string note = null)
+    public async Task AddItemAsync(string customerId, AddItemToCartDto addItemDto)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.AddItem(itemId, quantity, note);
+        cart.AddItem(addItemDto.ItemId, addItemDto.Quantity, addItemDto.Note);
 
         await _cartRepository.UpdateAsync(cart);
     }
@@ -49,6 +49,7 @@ internal class CartManagementAppService : ICartManagementAppService
         cart.DecrementOrDeleteItem(itemId, quantity);
 
         await _cartRepository.UpdateAsync(cart);
+        await _cartRepository.CleanUpDeletedItemsAsync(cart);
     }
 
     public async Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId)
@@ -57,7 +58,7 @@ internal class CartManagementAppService : ICartManagementAppService
         var cartItems = await _publisher.Send(new GetItemsFromTheCart { CustomerId = customerId });
 
         var resultCart = _mapper.Map<CartInfoDto>(cart);
-        resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.Single(ci => ci.Id == i.ItemId)));
+        resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.SingleOrDefault(ci => ci.Id == i.ItemId)));
 
         return resultCart;
     }
@@ -85,6 +86,9 @@ internal class CartManagementAppService : ICartManagementAppService
 
     private CartItemInfoDto MapToCartItemInfo(CartItem cartItem, Item item)
     {
+        if (item == null)
+            return null;
+
         var result = _mapper.Map<CartItemInfoDto>(cartItem);
 
         result.Price = item.Price;

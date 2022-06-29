@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Catering.Application.Aggregates.Items.Handlers;
 
-internal class GetIdentityWithMenuIdHandler : IRequestHandler<GetIdentityWithMenuId, Identity>
+internal class GetIdentityWithMenuIdHandler : IRequestHandler<GetIdentityForMenuId, Identity>
 {
     private readonly IMenuRepository _menuRepository;
     private readonly IIdentityRepository<Identity> _identity;
@@ -19,7 +19,7 @@ internal class GetIdentityWithMenuIdHandler : IRequestHandler<GetIdentityWithMen
         _identity = identity;
     }
 
-    public async Task<Identity> Handle(GetIdentityWithMenuId request, CancellationToken cancellationToken)
+    public async Task<Identity> Handle(GetIdentityForMenuId request, CancellationToken cancellationToken)
     {
         var identity = await _identity.GetByIdAsync(request.IdentityId);
         if (identity == default)

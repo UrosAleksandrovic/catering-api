@@ -15,6 +15,6 @@ internal class LoginExternalIndentityHandler : IRequestHandler<LoginExternalIden
 
     public Task<string> Handle(LoginExternalIdentity request, CancellationToken cancellationToken)
     {
-        return _externalIdentityAuthenticator.GenerateTokenAsync(request.Password, request.Password);
+        return _externalIdentityAuthenticator.GenerateTokenAsync(request.Login, request.Password);
     }
 }

@@ -19,9 +19,9 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
         _mapper = mapper;
     }
 
-    public async Task<string> CreateCompanyCustomer(CreateCustomerDto createCustomer, string creatorId)
+    public async Task<string> CreateCompanyCustomerAsync(CreateCustomerDto createCustomer, string creatorId)
     {
-        await CheckIfInitiatorIsAdminAsync(creatorId, nameof(CreateCompanyCustomer));
+        await CheckIfInitiatorIsAdminAsync(creatorId, nameof(CreateCompanyCustomerAsync));
 
         var customerExists = await _customerRepository.GetByEmailAsync(createCustomer.Email);
         if (customerExists != null)
@@ -33,14 +33,14 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
         return customerToCreate.Id;
     }
 
-    public async Task<CustomerBudgetInfoDto> GetCustomerBudgetInfo(string customerId)
+    public async Task<CustomerBudgetInfoDto> GetCustomerBudgetInfoAsync(string customerId)
     {
         var customer = await _customerRepository.GetByIdAsync(customerId);
 
         return _mapper.Map<CustomerBudgetInfoDto>(customer.Budget);
     }
 
-    public async Task<CustomerInfoDto> GetCustomerInfo(string customerId)
+    public async Task<CustomerInfoDto> GetCustomerInfoAsync(string customerId)
     {
         var customer = await _customerRepository.GetByIdAsync(customerId);
 
@@ -63,5 +63,22 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
 
         if (!initiator.IsAdministrator)
             throw new IdentityRestrictionException(initiatorId, actionName);
+    }
+
+    public async Task<FilterResult<CustomerInfoDto>> GetFilteredAsync(CustomersFilter filter)
+    {
+        var result = new FilterResult<CustomerInfoDto>
+        {
+            PageIndex = filter.PageIndex,
+            PageSize = filter.PageSize,
+            TotalNumberOfPages = 0,
+            Result = Enumerable.Empty<CustomerInfoDto>()
+        };
+
+        var (items, totalCount) = await _customerRepository.GetFilteredAsync(filter);
+        result.TotalNumberOfPages = totalCount / filter.PageSize;
+        result.Result = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
+
+        return result;
     }
 }

@@ -8,4 +8,14 @@ internal class MenuRepository : BaseCrudRepository<Menu, CateringDbContext>, IMe
 {
     public MenuRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
         : base(dbContextFactory) { }
+
+    public async Task<Menu> GetByContactIdAsync(string contactId)
+    {
+        var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        return await dbContext.Menus
+            .AsNoTracking()
+            .Where(m => m.Contact.IdentityId == contactId)
+            .FirstOrDefaultAsync();
+    }
 }

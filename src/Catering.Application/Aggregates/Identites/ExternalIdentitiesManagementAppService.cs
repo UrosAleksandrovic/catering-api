@@ -18,16 +18,16 @@ internal class ExternalIdentitiesManagementAppService : IExternalIdentitiesManag
         _dataProtector = dataProtector;
     }
 
-    public async Task<string> CreateRestourantIdentityAsync(CreateRestourantDto createRestourant)
+    public async Task<string> CreateRestourantIdentityAsync(CreateRestourantDto createRequest)
     {
-        var restourantExists = await _externalIdentityRepository.GetByEmailAsync(createRestourant.Email);
+        var restourantExists = await _externalIdentityRepository.GetByEmailAsync(createRequest.Email);
         if (restourantExists != null)
             throw new ArgumentException("Restourant with provided email already exists.");
 
         var restourantToCreate = new ExternalIdentity(
-            createRestourant.Email,
-            new FullName(createRestourant.Name),
-            _dataProtector.Encrypt(createRestourant.InitialPassword),
+            createRequest.Email,
+            new FullName(createRequest.Name),
+            _dataProtector.Hash(createRequest.InitialPassword),
             IdentityRole.RestourantEmployee);
 
         await _externalIdentityRepository.CreateAsync(restourantToCreate);

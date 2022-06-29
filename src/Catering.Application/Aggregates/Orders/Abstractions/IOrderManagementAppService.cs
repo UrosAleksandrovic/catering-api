@@ -4,9 +4,9 @@ namespace Catering.Application.Aggregates.Orders.Abstractions;
 
 public interface IOrderManagementAppService
 {
-    Task<long> PlaceOrderAsync(CreateOrderDto createOrder);
-    Task<OrderInfoDto> GetOrderByIdAsync(long id);
-    Task<FilterResult<OrderInfoDto>> GetFilteredOrders(OrderFilter orderFilters);
-    Task CancelOrderAsync(long id);
-    Task ConfirmOrderAsync(long id);
+    Task<long> PlaceOrderAsync(string customerId, CreateOrderDto createOrder);
+    Task<OrderInfoDto> GetByIdAsync(long id, string requestorId);
+    Task<FilterResult<OrderInfoDto>> GetFilteredAsync(OrdersFilter ordersFilters, string requestorId);
+    Task CancelAsync(long orderId);
+    Task ConfirmAsync(long orderId);
 }

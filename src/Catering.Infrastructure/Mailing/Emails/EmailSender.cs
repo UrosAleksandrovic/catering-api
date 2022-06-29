@@ -51,7 +51,7 @@ internal class EmailSender : IEmailSender
     private MimeMessage ConstructMailMessage(Email cateringEmail)
     {
         var contentBuilder = new BodyBuilder();
-        contentBuilder.HtmlBody = cateringEmail.Content;
+        contentBuilder.HtmlBody = cateringEmail.GetContent();
 
         var mailMessage = new MimeMessage();
         mailMessage.From.Add(new MailboxAddress(_options.SystemDisplayName, _options.SystemSender));

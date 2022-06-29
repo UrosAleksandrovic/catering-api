@@ -34,4 +34,22 @@ internal class CartRepository : BaseCrudRepository<Cart, CateringDbContext>, ICa
 
         return entity;
     }
+
+    public async Task CleanUpDeletedItemsAsync(Cart cart)
+    {
+        var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var entity = await dbContext
+            .Set<Cart>()
+            .Include(c => c.Items)
+            .FirstOrDefaultAsync(e => e.Id == cart.Id);
+
+        var itemsToBeDeleted = entity.Items.Where(i => !cart.Items.Any(ci => ci.ItemId == i.ItemId));
+
+        if (itemsToBeDeleted.Any())
+        {
+            dbContext.RemoveRange(itemsToBeDeleted);
+            await dbContext.SaveChangesAsync();
+        }
+    }
 }

@@ -28,10 +28,19 @@ internal class EmailRepository : IEmailRepository
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
+        var encryptedParameters = message.TemplateParameters
+                    .Select(p => new EmailParameter
+                    {
+                        EmailId = p.EmailId,
+                        Name = _dataProtector.Encrypt(p.Name),
+                        Value = _dataProtector.Encrypt(p.Value)
+                    });
+
         var entityToSave = new Email
         {
-            Content = _dataProtector.Encrypt(message.Content),
+            TemplateContent = _dataProtector.Encrypt(message.TemplateContent),
             Title = _dataProtector.Encrypt(message.Title),
+            TemplateParameters = encryptedParameters,
             Recepiants = message.Recepiants.Select(r => _dataProtector.Encrypt(r))
         };
 

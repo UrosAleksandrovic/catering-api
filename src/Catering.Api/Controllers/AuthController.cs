@@ -14,21 +14,25 @@ public class AuthController : ControllerBase
         _publisher = publisher;
     }
 
-    [HttpPost("/auth/ldap/login")]
+    [HttpPost("/api/auth/ldap/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> Login(string username, string password)
+    public async Task<ActionResult<string>> Login(
+        [FromBody] string username, 
+        [FromBody] string password)
     {
         var response = await _publisher.Send(new LoginCustomer { Login = username, Password = password });
 
-        return Ok(response);
+        return Ok(new { token = response });
     }
 
-    [HttpPost("/auth/login")]
+    [HttpPost("/api/auth/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> LoginExternalIdentity(string username, string password)
+    public async Task<ActionResult<string>> LoginExternalIdentity(
+        [FromBody] string username,
+        [FromBody] string password)
     {
         var response = await _publisher.Send(new LoginExternalIdentity { Login = username, Password = password });
 
-        return Ok(response);
+        return Ok(new { token = response });
     }
 }

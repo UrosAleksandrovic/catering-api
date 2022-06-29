@@ -35,10 +35,16 @@ internal class CateringAggregatesMapperConfiguration : Profile
             .ForMember(d => d.Budget, opt => opt.MapFrom(s => s.Balance));
 
         CreateMap<Customer, CustomerInfoDto>()
-            .ForMember(d => d.CustomerBudgetInfo, opt => opt.MapFrom(s => s.Budget));
+            .ForMember(d => d.CustomerBudgetInfo, opt => opt.MapFrom(s => s.Budget))
+            .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FullName.FirstName))
+            .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.FullName.LastName));
 
         CreateMap<Item, ItemInfoDto>()
             .ForMember(d => d.TotalRating, opt => opt.MapFrom(s => s.TotalRating));
+
+        CreateMap<Item, DetailedItemsInfoDto>()
+            .ForMember(d => d.Ingredients, opt => opt.MapFrom(s => s.Ingredients))
+            .ForMember(d => d.Categories, opt => opt.MapFrom(s => s.Categories));
 
         CreateMap<MenuContact, MenuContactInfoDto>();
         CreateMap<Menu, MenuInfoDto>();

@@ -36,7 +36,7 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         return result;
     }
 
-    public async Task<(List<Order>, int)> GetFilteredAsync(OrderFilter filters)
+    public async Task<(List<Order>, int)> GetFilteredAsync(OrdersFilter filters)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
@@ -59,6 +59,22 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         return menu;
     }
 
+    public async Task<(List<Order>, int)> GetOrdersForCustomerAsync(OrdersFilter filters)
+    {
+        if (filters.CustomerId == default)
+            return (new List<Order>(), 0);
+
+        return await GetFilteredAsync(filters);
+    }
+
+    public async Task<(List<Order>, int)> GetOrdersForMenuAsync(OrdersFilter filters)
+    {
+        if (filters.MenuId == default)
+            return (new List<Order>(), 0);
+
+        return await GetFilteredAsync(filters);
+    }
+
     public async Task UpdateOrderWithCustomerAsync(Customer customer, Order order)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
@@ -69,18 +85,18 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         await dbContext.SaveChangesAsync();
     }
 
-    private IQueryable<Order> ApplyFilters(OrderFilter ordersFilter, IQueryable<Order> queryableOrders)
+    private IQueryable<Order> ApplyFilters(OrdersFilter ordersFilter, IQueryable<Order> queryableOrders)
     {
         queryableOrders.AsNoTracking();
 
         if (ordersFilter.CustomerId != null)
             queryableOrders = queryableOrders.Where(o => o.CustomerId == ordersFilter.CustomerId);
 
-        if (ordersFilter != null)
+        if (ordersFilter.MenuId != null)
             queryableOrders = queryableOrders.Where(o => o.MenuId == ordersFilter.MenuId);
 
         return queryableOrders
-            .Skip(ordersFilter.PageIndex * ordersFilter.PageSize)
+            .Skip((ordersFilter.PageIndex - 1) * ordersFilter.PageSize)
             .Take(ordersFilter.PageSize);
     }
 }

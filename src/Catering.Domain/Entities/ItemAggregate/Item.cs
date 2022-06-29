@@ -49,7 +49,8 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
 
         var categoriesToAdd = newCategories.Select(c => c.ToLowerInvariant())
             .Distinct()
-            .Except(_categories);
+            .Except(Categories);
+
         _categories.AddRange(categoriesToAdd);
     }
 
@@ -60,7 +61,7 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
         if (_categories.Count == 0)
             return;
 
-        var resultCategories = _categories
+        var resultCategories = Categories
             .Except(categoriesToRemove.Select(c => c.ToLowerInvariant()).Distinct())
             .ToArray();
 
@@ -96,14 +97,14 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
 
     public void AddOrChangeRating(string customerId, short rating)
     {
-        var custoimerRating = _ratings.SingleOrDefault(r => r.CustomerId == customerId);
-        if (custoimerRating == null)
+        var customerRating = _ratings.SingleOrDefault(r => r.CustomerId == customerId);
+        if (customerRating == null)
         {
             _ratings.Add(new ItemRating(rating, customerId));
             return;
         }
 
-        custoimerRating.EditRating(rating);
+        customerRating.EditRating(rating);
     }
 
     public void RemoveRating(string customerId)

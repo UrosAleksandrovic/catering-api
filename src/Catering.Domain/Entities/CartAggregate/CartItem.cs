@@ -4,13 +4,14 @@ namespace Catering.Domain.Entities.CartAggregate;
 
 public class CartItem
 {
+    public Guid CartId { get; private set; }
     public string Note { get; private set; }
     public int Quantity { get; private set; }
     public Guid ItemId { get; private set; }
 
     private CartItem() { }
 
-    public CartItem(Guid itemId, string note, int quantity = 1)
+    public CartItem(Guid itemId, int quantity = 1, string note = null)
     {
         Guard.Against.NegativeOrZero(quantity);
         Guard.Against.Default(itemId);

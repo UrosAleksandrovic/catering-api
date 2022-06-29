@@ -4,17 +4,16 @@ public class Customer : Identity, ICustomer
 {
     public CustomerBudget Budget { get; private set; }
 
-    public Customer(
-        FullName fullName,
-        string email,
-        string startRole)
+    protected Customer() : base() { }
+
+    public Customer(FullName fullName, string email, string startRole)
         : base(fullName, email, startRole)
     {
         Budget = new CustomerBudget(0);
     }
 
     public Customer(string email, string startRole)
-        :base(null, email, startRole)
+        : base(null, email, startRole)
     {
         Budget = new CustomerBudget(0);
     }

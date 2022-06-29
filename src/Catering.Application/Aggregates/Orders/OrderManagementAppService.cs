@@ -29,7 +29,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
         _mapper = mapper;
     }
 
-    public async Task CancelOrderAsync(long id)
+    public async Task CancelAsync(long id) 
     {
         var order = await GetExistingByIdAsync(id);
 
@@ -39,7 +39,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
     }
 
-    public async Task ConfirmOrderAsync(long id)
+    public async Task ConfirmAsync(long id)
     {
         var order = await GetExistingByIdAsync(id);
 
@@ -50,9 +50,9 @@ internal class OrderManagementAppService : IOrderManagementAppService
         await _publisher.Publish(new OrderConfirmed { CustomerId = customer.Id, OrderId = order.Id });
     }
 
-    public async Task<FilterResult<OrderInfoDto>> GetFilteredOrders(OrderFilter orderFilters)
+    public async Task<FilterResult<OrderInfoDto>> GetFilteredAsync(OrdersFilter orderFilters, string requestorId)
     {
-        var orders = await _orderRepository.GetFilteredAsync(orderFilters);
+        var orders = await GetFilteredOrdersBasedOnRequestorAsync(orderFilters, requestorId);
 
         return new FilterResult<OrderInfoDto>
         {
@@ -63,34 +63,43 @@ internal class OrderManagementAppService : IOrderManagementAppService
         };
     }
 
-    public async Task<OrderInfoDto> GetOrderByIdAsync(long id)
+    public async Task<OrderInfoDto> GetByIdAsync(long id, string requestorId)
     {
         var order = await GetExistingByIdAsync(id);
+
+        var customerRequest = new GetOrderCustomer { CustomerId = requestorId };
+        var customer = await _publisher.Send(customerRequest);
+
+        if (customer.IsCompanyEmployee && order.CustomerId != customer.Id)
+            return null;
 
         return _mapper.Map<OrderInfoDto>(order);
     }
 
-    public async Task<long> PlaceOrderAsync(CreateOrderDto createOrder)
+    public async Task<long> PlaceOrderAsync(string customerId, CreateOrderDto createOrder)
     {
-        var cartOfOrder = await _publisher.Send(new GetCartFromCustomer { CustomerId = createOrder.CustomerId });
+        if (string.IsNullOrWhiteSpace(customerId))
+            throw new ArgumentNullException(nameof(customerId));
+
+        var cartOfOrder = await _publisher.Send(new GetCartFromCustomer { CustomerId = customerId });
 
         var orderBuilder = new OrderBuilder()
             .HasCart(cartOfOrder)
             .HasDateOfDelivery(createOrder.ExpectedTimeOfDelivery)
-            .HasItems(await _publisher.Send(new GetItemsForPlacingOrder { CustomerId = cartOfOrder.CustomerId }));
+            .HasItems(await _publisher.Send(new GetItemsForPlacingOrder { CustomerId = customerId }));
 
         if (createOrder.HomeDeliveryInfo != default)
             orderBuilder.HasHomeDeliveryOption(
                 createOrder.HomeDeliveryInfo.StreetAndHouse,
                 createOrder.HomeDeliveryInfo.FloorAndApartment);
 
-        var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = createOrder.CustomerId });
+        var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = customerId });
 
         var order = _orderingService.PlaceOrder(customer, orderBuilder);
 
         await _orderRepository.CreateOrderForCustomerAsync(customer, order);
 
-        await _publisher.Send(new OrderPlaced { CustomerId = createOrder.CustomerId, OrderId = order.Id});
+        await _publisher.Publish(new OrderPlaced { CustomerId = customerId, OrderId = order.Id});
         return order.Id;
     }
 
@@ -101,5 +110,31 @@ internal class OrderManagementAppService : IOrderManagementAppService
             throw new KeyNotFoundException();
 
         return order;
+    }
+
+    private async Task<(List<Order>, int)> GetFilteredOrdersBasedOnRequestorAsync(OrdersFilter orderFilters, string requestorId)
+    {
+        var identityRequest = new GetIdentityWithId { IdentityId = requestorId };
+        var requestorIdentity = await _publisher.Send(identityRequest);
+
+        if (requestorIdentity.IsCompanyEmployee && !requestorIdentity.IsAdministrator)
+        {
+            var newFilter = new OrdersFilter(orderFilters)
+            {
+                CustomerId = requestorIdentity.Id
+            };
+            return await _orderRepository.GetOrdersForCustomerAsync(newFilter);
+        }
+
+        if (requestorIdentity.IsRestourantEmployee)
+        {
+            var newFilter = new OrdersFilter(orderFilters)
+            {
+                MenuId = await _publisher.Send(new GetMenuWithContactId { ContactId = requestorId })
+            };
+            return await _orderRepository.GetOrdersForMenuAsync(newFilter);
+        }
+
+        return await _orderRepository.GetFilteredAsync(orderFilters);
     }
 }

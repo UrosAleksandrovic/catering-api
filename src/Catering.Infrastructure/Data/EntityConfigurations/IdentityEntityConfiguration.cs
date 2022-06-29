@@ -1,5 +1,6 @@
 ﻿using Catering.Domain.Entities.IdentityAggregate;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catering.Infrastructure.Data.EntityConfigurations;
@@ -17,15 +18,17 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
         builder.Property(e => e.Email)
             .IsRequired();
 
-        builder.OwnsOne(e => e.FullName);
+        var fullNameBuilder = builder.OwnsOne(e => e.FullName);
+        fullNameBuilder.Property(e => e.FirstName).IsRequired();
 
-        builder.Metadata
-            .FindNavigation(nameof(Identity.Roles))
+        builder.Property(e => e.Roles)
+            .Metadata
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        builder
-            .Property(e => e.Roles)
-            .HasColumnType("nvarchar")
-            .HasConversion<StringEnumerationConverter>();
+        builder.Property(e => e.Roles)
+            .HasColumnType("text")
+            .HasConversion<StringListConverter>()
+            .Metadata
+            .SetValueComparer(typeof(StringListComparer));
     }
 }

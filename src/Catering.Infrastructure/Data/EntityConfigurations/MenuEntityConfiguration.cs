@@ -1,4 +1,5 @@
-﻿using Catering.Domain.Entities.MenuAggregate;
+﻿using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Entities.MenuAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,9 @@ internal class MenuEntityConfiguration : IEntityTypeConfiguration<Menu>
 
         var contactBuilder = builder.OwnsOne(e => e.Contact);
         contactBuilder.Property(c => c.Email).IsRequired();
-
+        contactBuilder.HasOne<Identity>()
+                    .WithMany()
+                    .HasForeignKey(e => e.IdentityId);
 
         builder.HasQueryFilter(e => !e.IsDeleted);
     }

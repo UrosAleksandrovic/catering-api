@@ -23,6 +23,9 @@ internal class OrderPlacedEmailHandler : INotificationHandler<OrderPlaced>
 
     public async Task Handle(OrderPlaced notification, CancellationToken cancellationToken)
     {
+        //TODO: Remove this
+        return;
+
         var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestourant);
         var orderMenu = await _orderRepository.GetOrderMenuAsync(notification.OrderId);
 

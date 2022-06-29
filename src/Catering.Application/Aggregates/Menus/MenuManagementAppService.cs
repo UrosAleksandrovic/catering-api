@@ -2,6 +2,7 @@
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
 using Catering.Application.Aggregates.Menus.Notifications;
+using Catering.Application.Aggregates.Menus.Requests;
 using Catering.Application.Dtos.Menu;
 using Catering.Domain.Builders;
 using MediatR;
@@ -29,6 +30,7 @@ internal class MenuManagementAppService : IMenuManagementAppService
         var menuToCreate = new MenuBuilder()
             .HasName(createMenu.Name)
             .HasContact(createMenu.PhoneNumber, createMenu.Email, createMenu.Address)
+            .HasContactIdentity(createMenu.ContactIdentityId)
             .Build();
 
         var createdItem = await _menuRepository.CreateAsync(menuToCreate);
@@ -53,17 +55,29 @@ internal class MenuManagementAppService : IMenuManagementAppService
         return _mapper.Map<MenuInfoDto>(await _menuRepository.GetByIdAsync(id));
     }
 
-    public async Task<Guid> UpdateAsync(Guid id, CreateMenuDto updateMenu)
+    public async Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId)
+    {
+        var menu = await _menuRepository.GetByIdAsync(id);
+
+        var requestor = await _publisher.Send(new GetIdentityById { Id = requestorId });
+
+        if (!requestor.IsRestourantEmployee)
+            return _mapper.Map<MenuInfoDto>(menu);
+
+        return menu.HasContact(requestorId) ? _mapper.Map<MenuInfoDto>(menu) : null;
+    }
+
+    public async Task UpdateAsync(Guid id, UpdateMenuDto updateMenu)
     {
         var menu = await _menuRepository.GetByIdAsync(id);
         if (menu == default)
             throw new KeyNotFoundException();
 
-        menu.AddOrEditContact(updateMenu.PhoneNumber, updateMenu.Email, updateMenu.Address);
+        menu.AddOrEditContact(updateMenu.PhoneNumber,
+                              updateMenu.Email,
+                              updateMenu.Address);
         menu.Edit(updateMenu.Name);
 
         await _menuRepository.UpdateAsync(menu);
-
-        return menu.Id;
     }
 }

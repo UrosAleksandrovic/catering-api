@@ -4,6 +4,7 @@ using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Mailing.Emails;
+using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Infrastructure.Data.Repositories;
 using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ public static class RepositoriesExtensions
         services.AddScoped<IMenuRepository, MenuRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IExternalIdentityRepository, ExternalIdentityRepository>();
+        services.AddScoped<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
 
         return services;
     }

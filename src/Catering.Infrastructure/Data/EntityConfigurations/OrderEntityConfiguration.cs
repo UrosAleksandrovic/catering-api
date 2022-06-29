@@ -10,13 +10,28 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.HasKey(e => e.Id);
 
+        builder.OwnsMany(e => e.Items, cfg =>
+        {
+            cfg.HasKey(i => new { i.OrderId, i.ItemId });
+        });
+
         builder.Metadata
             .FindNavigation(nameof(Order.Items))
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-        builder.OwnsMany(e => e.Items);
 
-        builder.OwnsOne(e => e.HomeDeliveryInfo);
+        var homeDeliveryInfoBuilder = builder.OwnsOne(e => e.HomeDeliveryInfo);
+        homeDeliveryInfoBuilder.Property(e => e.StreetAndHouse).IsRequired();
 
         builder.Property(e => e.CustomerId).IsRequired();
+
+        builder.Property(e => e.ExpectedOn)
+            .HasConversion<DateTimeConverter>()
+            .Metadata
+            .SetValueComparer(typeof(DateTimeComparer));
+
+        builder.Property(e => e.CreatedOn)
+            .HasConversion<DateTimeConverter>()
+            .Metadata
+            .SetValueComparer(typeof(DateTimeComparer));
     }
 }

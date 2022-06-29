@@ -13,5 +13,8 @@ internal class CreateMenuDtoValidator : AbstractValidator<CreateMenuDto>
         RuleFor(dto => dto.Name)
             .NotEmpty()
             .Length(3, 100);
+
+        RuleFor(dto => dto.ContactIdentityId)
+            .NotEmpty();
     }
 }

@@ -4,7 +4,8 @@ namespace Catering.Application.Aggregates.Identites.Abstractions;
 
 public interface ICustomerManagementAppService
 {
-    Task<string> CreateCompanyCustomer(CreateCustomerDto createCustomer, string creatorId);
-    Task<CustomerInfoDto> GetCustomerInfo(string customerId);
-    Task<CustomerBudgetInfoDto> GetCustomerBudgetInfo(string customerId);
+    Task<string> CreateCompanyCustomerAsync(CreateCustomerDto createCustomer, string creatorId);
+    Task<CustomerInfoDto> GetCustomerInfoAsync(string customerId);
+    Task<CustomerBudgetInfoDto> GetCustomerBudgetInfoAsync(string customerId);
+    Task<FilterResult<CustomerInfoDto>> GetFilteredAsync(CustomersFilter filter);
 }

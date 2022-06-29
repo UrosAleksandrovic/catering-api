@@ -8,13 +8,14 @@ public class MenuBuilder : IBuilder<Menu>
     private string _address;
     private string _phoneNumber;
     private string _email;
+    private string _identityId;
 
     public Menu Build()
     {
         var result = new Menu(_name);
 
-        if (_phoneNumber != null || _address != null || _email != null)
-            result.AddOrEditContact(_phoneNumber, _email, _address);
+        if (_phoneNumber != null || _address != null || _email != null || _identityId != null)
+            result.AddOrEditContact(_phoneNumber, _email, _address, _identityId);
 
         return result;
     }
@@ -35,8 +36,15 @@ public class MenuBuilder : IBuilder<Menu>
         return this;
     }
 
+    public MenuBuilder HasContactIdentity(string identityId)
+    {
+        _identityId = identityId;
+
+        return this;
+    }
+
     public void Reset()
     {
-        _name = _address = _phoneNumber = _email = default;
+        _identityId = _name = _address = _phoneNumber = _email = default;
     }
 }

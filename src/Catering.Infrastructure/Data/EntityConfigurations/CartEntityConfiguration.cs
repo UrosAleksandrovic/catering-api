@@ -18,9 +18,13 @@ internal class CartEntityConfiguration : IEntityTypeConfiguration<Cart>
 
         builder.Property(e => e.CustomerId).IsRequired();
 
+        builder.OwnsMany(e => e.Items, cfg =>
+        {
+            cfg.HasKey(i => new { i.CartId, i.ItemId });
+        });
+
         builder.Metadata
             .FindNavigation(nameof(Cart.Items))
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-        builder.OwnsMany(e => e.Items);
     }
 }

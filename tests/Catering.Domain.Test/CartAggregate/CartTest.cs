@@ -137,7 +137,7 @@ public class CartTest
         var cart = new Cart(Guid.NewGuid().ToString());
 
         //Act
-        void a() => cart.AddNoteToItem(Guid.NewGuid(), "Some Note");
+        void a() => cart.AddOrEditNoteToItem(Guid.NewGuid(), "Some Note");
 
         //Assert
         Assert.Throws<ItemNotInCartException>(a);
@@ -157,7 +157,7 @@ public class CartTest
         cart.AddItem(itemId, 1, initialNote);
 
         //Act
-        cart.AddNoteToItem(itemId, newNote);
+        cart.AddOrEditNoteToItem(itemId, newNote);
 
         //Assert
         Assert.Equal(newNote, cart.Items.Single(i => i.ItemId == itemId).Note);

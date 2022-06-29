@@ -8,7 +8,7 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IItemRepository
 {
-    protected ItemRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    public ItemRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory)
     {
     }
@@ -17,15 +17,16 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var queryableItems = dbContext.Items.AsQueryable();
+        var queryableItems = dbContext.Set<Item>().AsQueryable();
         queryableItems = ApplyFilters(itemsFilter, queryableItems);
 
-        return new(await queryableItems.ToListAsync(), await queryableItems.CountAsync());
+        var results = await queryableItems.ToListAsync();
+
+        return new(results, await queryableItems.CountAsync());
     }
 
     public async Task<List<Item>> GetItemsFromCartAsync(string cartOwnerId)
     {
-        //TODO: Test this query
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         var cartItems = dbContext.Set<Cart>()
@@ -33,7 +34,7 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
            .Where(c => c.CustomerId == cartOwnerId)
            .SelectMany(c => c.Items);
 
-        var result = await dbContext.Items.AsNoTracking().Join(
+        var result = await dbContext.Set<Item>().AsNoTracking().Join(
             cartItems,
             item => item.Id,
             cartItem => cartItem.ItemId,
@@ -46,7 +47,10 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
     public async Task<List<Item>> GetItemsFromMenuAsync(Guid menuId)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-        var result = await dbContext.Items.Where(i => i.MenuId == menuId).ToListAsync();
+        var result = await dbContext
+            .Set<Item>()
+            .Where(i => i.MenuId == menuId)
+            .ToListAsync();
 
         return result;
     }
@@ -55,7 +59,7 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        dbContext.Items.UpdateRange(items);
+        dbContext.Set<Item>().UpdateRange(items);
         await dbContext.SaveChangesAsync();
     }
 
@@ -75,7 +79,7 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
         queryableItems = queryableItems.Where(i => i.MenuId == itemsFilter.MenuId);
 
         return queryableItems
-            .Skip(itemsFilter.PageIndex * itemsFilter.PageSize)
+            .Skip((itemsFilter.PageIndex - 1) * itemsFilter.PageSize)
             .Take(itemsFilter.PageSize);
     }
 }

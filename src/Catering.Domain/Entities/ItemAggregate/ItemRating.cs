@@ -7,6 +7,7 @@ public class ItemRating
     public const short MinimumRating = 0;
     public const short MaximumRating = 5;
 
+    public Guid ItemId { get; private set; }
     public short Rating { get; private set; }
     public string CustomerId { get; set; }
 

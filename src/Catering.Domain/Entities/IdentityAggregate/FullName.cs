@@ -7,6 +7,8 @@ public class FullName
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
 
+    private FullName() { }
+
     public FullName(string firstName, string lastName = null)
     {
         FirstName = firstName.Trim();

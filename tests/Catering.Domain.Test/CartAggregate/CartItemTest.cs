@@ -13,7 +13,7 @@ public class CartItemTest
     public void IncrementQuantity_NegativeOrZeroPassed_ArgumentException(int quantity)
     {
         //Arrange
-        var cartItem = new CartItem(Guid.NewGuid(), null);
+        var cartItem = new CartItem(Guid.NewGuid());
 
         //Act
         void a() => cartItem.IncrementQuantity(quantity);
@@ -27,7 +27,7 @@ public class CartItemTest
     {
         //Arrange
         var startingQuantity = 2;
-        var cartItem = new CartItem(Guid.NewGuid(), null, startingQuantity);
+        var cartItem = new CartItem(Guid.NewGuid(), startingQuantity);
 
         //Act
         cartItem.IncrementQuantity();
@@ -43,7 +43,7 @@ public class CartItemTest
     public void DecrementQuantity_NegativeOrZeroPassed_ArgumentException(int quantity)
     {
         //Arrange
-        var cartItem = new CartItem(Guid.NewGuid(), null);
+        var cartItem = new CartItem(Guid.NewGuid());
 
         //Act
         void a() => cartItem.DecrementQuantity(quantity);
@@ -57,7 +57,7 @@ public class CartItemTest
     {
         //Arrange
         var startingQuantity = 2;
-        var cartItem = new CartItem(Guid.NewGuid(), null, startingQuantity);
+        var cartItem = new CartItem(Guid.NewGuid(), startingQuantity);
 
         //Act
         void a() => cartItem.DecrementQuantity(startingQuantity + 1);
@@ -72,7 +72,7 @@ public class CartItemTest
         //Arrange
         var startingNote = "Initial Note";
         var expectedNote = "New Note";
-        var cartItem = new CartItem(Guid.NewGuid(), startingNote);
+        var cartItem = new CartItem(Guid.NewGuid(), note: startingNote);
 
         //Act
         cartItem.EditNote(expectedNote);

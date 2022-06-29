@@ -10,7 +10,6 @@ public class EmailBuilder : IBuilder<Email>
     private readonly Dictionary<string, string> _parameters = new();
     private readonly List<string> _recepients = new();
 
-
     public EmailBuilder HasEmailTemplate(EmailTemplate template)
     {
         Guard.Against.Default(template);
@@ -25,7 +24,11 @@ public class EmailBuilder : IBuilder<Email>
         Guard.Against.NullOrWhiteSpace(parameterName);
         Guard.Against.NullOrWhiteSpace(value);
 
-        _parameters.Add(parameterName, value);
+        var parameterExists = _parameters.TryGetValue(parameterName, out var oldValue);
+        if (parameterExists)
+            _parameters[parameterName] = value;
+        else
+            _parameters.Add(parameterName, value);
 
         return this;
     }
@@ -50,14 +53,10 @@ public class EmailBuilder : IBuilder<Email>
 
     public Email Build()
     {
-        var content = _template.HtmlTemplate;
-
-        foreach(var parameter in _parameters)
-            content = content.Replace($"[[[{parameter.Key}]]]", parameter.Value);
-
         return new Email
         {
-            Content = content,
+            TemplateContent = _template.HtmlTemplate,
+            TemplateParameters = _parameters.Select(kv => new EmailParameter { Name = kv.Key, Value = kv.Value}),
             Recepiants = _recepients,
             Title = _title
         };

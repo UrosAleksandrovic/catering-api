@@ -8,8 +8,5 @@ internal class CreateOrderDtoValidator : AbstractValidator<CreateOrderDto>
     {
         RuleFor(dto => dto.ExpectedTimeOfDelivery)
             .Must(v => v != default);
-
-        RuleFor(dto => dto.CustomerId)
-            .NotEmpty();
     }
 }

@@ -9,7 +9,7 @@ public class Cart : BaseEntity<Guid>
 
     private readonly List<CartItem> _items = new();
     public IReadOnlyList<CartItem> Items => _items;
-    
+
     private Cart() { }
 
     public Cart(string customerId)
@@ -20,13 +20,13 @@ public class Cart : BaseEntity<Guid>
         CustomerId = customerId;
     }
 
-    public void AddItem(Guid itemId, int quantity, string note = null)
+    public void AddItem(Guid itemId, int quantity = 1, string note = null)
     {
         var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
         if (existingItem != default)
             throw new ItemAlreadyInCartException(Id, itemId);
 
-        _items.Add(new CartItem(itemId, note, quantity));
+        _items.Add(new CartItem(itemId, quantity, note));
     }
 
     public void IncrementItem(Guid itemId, int quantity = 1)
@@ -50,7 +50,16 @@ public class Cart : BaseEntity<Guid>
             existingItem.DecrementQuantity(quantity);
     }
 
-    public void AddNoteToItem(Guid itemId, string note)
+    public void DeleteItem(Guid itemId)
+    {
+        var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
+        if (existingItem == default)
+            throw new ItemNotInCartException(Id, itemId);
+
+        _items.Remove(existingItem);
+    }
+
+    public void AddOrEditNoteToItem(Guid itemId, string note)
     {
         var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
         if (existingItem == default)

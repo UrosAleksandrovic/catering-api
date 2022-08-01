@@ -44,7 +44,6 @@ public class CompanyEmployeesController : ControllerBase
     [AuthorizeCompanyAdmins]
     public async Task<IActionResult> GetCompanyEmployees([FromQuery] CustomersFilter filter)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var result = await _customerAppService.GetFilteredAsync(filter);
 
         return Ok(result);

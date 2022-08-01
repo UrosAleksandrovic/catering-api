@@ -42,12 +42,6 @@ public static class AppServicesExtensions
 
     public static IServiceCollection AddCateringMediator(this IServiceCollection services)
     {
-        //TODO: Need this to be singleton
-        //services.AddMediatR(cfg =>
-        //{
-        //    cfg.AsSingleton();
-        //}, typeof(LoginCustomerHandler).Assembly);
-
         services.AddMediatR(typeof(LoginCustomerHandler));
         return services;
     }

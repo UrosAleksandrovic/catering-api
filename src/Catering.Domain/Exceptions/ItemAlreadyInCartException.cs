@@ -1,6 +1,4 @@
-﻿using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Catering.Domain.Exceptions;
 

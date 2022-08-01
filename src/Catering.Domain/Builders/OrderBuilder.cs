@@ -79,7 +79,7 @@ public class OrderBuilder : IBuilder<Order>
             if (cartItem == null)
                 throw new ItemNotInCartException(_cart.Id, item.Id);
 
-            orderItems.Add(new OrderItem(item.Id, item.Price, cartItem.Quantity, cartItem.Note));
+            orderItems.Add(new OrderItem(item.Id, item.Price, item.Name, cartItem.Quantity, cartItem.Note));
         }
 
         return orderItems;

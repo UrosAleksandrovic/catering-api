@@ -1,5 +1,6 @@
 ﻿namespace Catering.Application.Mailing.Emails;
 
-public interface IEmailSender : IMailSender<Email>
+public interface IEmailSender : IMailSender<CateringEmail>
 {
+
 }

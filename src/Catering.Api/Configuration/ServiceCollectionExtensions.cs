@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Catering.Api.Configuration.ErrorHandling;
+using Catering.Api.Configuration.ErrorHandling.Abstractions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace Catering.Api.Configuration;
 
@@ -48,6 +51,21 @@ public static class ServiceCollectionExtensions
                 }
             });
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCateringExceptionHandling(this IServiceCollection services, Assembly assemblyContiningHandlers)
+    {
+        var types = assemblyContiningHandlers.GetTypes().Where(t => typeof(ErrorHttpResolver<>).IsAssignableFrom(t));
+
+        var publisher = new ErrorPublisher();
+        var success = publisher.TryAddExceptionResolvers(types);
+
+        if (!success)
+            throw new ArgumentException($"Could not add handlers from assembly: {assemblyContiningHandlers.FullName}");
+
+        services.AddSingleton<IErrorPublisher>(publisher);
 
         return services;
     }

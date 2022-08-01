@@ -8,19 +8,17 @@ internal class MailingDbContext : DbContext
 {
     private const string SchemaName = "mailing";
 
-    public MailingDbContext(DbContextOptions options) : base(options)
-    { }
+    public MailingDbContext(DbContextOptions options) 
+        : base(options) { }
 
     internal DbSet<EmailTemplate> Templates { get; set; }
-    internal DbSet<Email> FailedEmails { get; set; }
-    internal DbSet<EmailParameter> EmailParameters { get; set; }
+    internal DbSet<FailedCateringEmail> FailedEmails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
-        new EmailEntityConfiguration().Configure(modelBuilder.Entity<Email>());
+        new FailedEmailEntityConfiguration().Configure(modelBuilder.Entity<FailedCateringEmail>());
         new EmailTemplateEntityConfiguration().Configure(modelBuilder.Entity<EmailTemplate>());
-        new EmailParameterEntityConfiguration().Configure(modelBuilder.Entity<EmailParameter>());
     }
 }

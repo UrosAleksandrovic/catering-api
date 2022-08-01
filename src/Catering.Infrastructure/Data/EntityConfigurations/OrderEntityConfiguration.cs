@@ -1,4 +1,5 @@
 ﻿using Catering.Domain.Entities.OrderAggregate;
+using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +14,7 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
         builder.OwnsMany(e => e.Items, cfg =>
         {
             cfg.HasKey(i => new { i.OrderId, i.ItemId });
+            cfg.Property(p => p.NameSnapshot).IsRequired();
         });
 
         builder.Metadata

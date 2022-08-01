@@ -1,4 +1,5 @@
 ﻿using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -27,8 +28,8 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
 
         builder.Property(e => e.Roles)
             .HasColumnType("text")
-            .HasConversion<StringListConverter>()
+            .HasConversion<StringReadonlyListConverter>()
             .Metadata
-            .SetValueComparer(typeof(StringListComparer));
+            .SetValueComparer(typeof(StringReadonlyListComparer));
     }
 }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Catering.Application.Security.Handlers;
 
-public class LoginCustomerHandler : IRequestHandler<LoginCustomer, string>
+internal class LoginCustomerHandler : IRequestHandler<LoginCustomer, string>
 {
     private readonly ITokenAtuhenticator<Customer> _customerAuthenticator;
 

@@ -2,5 +2,4 @@
 
 public interface IMail
 {
-    string GetContent();
 }

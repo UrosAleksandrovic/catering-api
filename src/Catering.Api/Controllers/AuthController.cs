@@ -1,4 +1,5 @@
-﻿using Catering.Application.Security.Requests;
+﻿using Catering.Application.Security.Dtos;
+using Catering.Application.Security.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,22 +17,20 @@ public class AuthController : ControllerBase
 
     [HttpPost("/api/auth/ldap/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> Login(
-        [FromBody] string username, 
-        [FromBody] string password)
+    public async Task<ActionResult<string>> Login([FromBody] UsernameAndPasswordDto customerRequest)
     {
-        var response = await _publisher.Send(new LoginCustomer { Login = username, Password = password });
+        var request = new LoginCustomer { Login = customerRequest.Username, Password = customerRequest.Password };
+        var response = await _publisher.Send(request);
 
         return Ok(new { token = response });
     }
 
     [HttpPost("/api/auth/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> LoginExternalIdentity(
-        [FromBody] string username,
-        [FromBody] string password)
+    public async Task<ActionResult<string>> LoginExternalIdentity([FromBody] UsernameAndPasswordDto externalRequest)
     {
-        var response = await _publisher.Send(new LoginExternalIdentity { Login = username, Password = password });
+        var request = new LoginExternalIdentity { Login = externalRequest.Username, Password = externalRequest.Password };
+        var response = await _publisher.Send(request);
 
         return Ok(new { token = response });
     }

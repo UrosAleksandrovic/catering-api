@@ -17,14 +17,15 @@ internal class EmailSender : IEmailSender
         _logger = logger;
     }
 
-    public async Task<bool> SendAsync(Email message)
+    public async Task<bool> SendAsync(CateringEmail emailToSend)
     {
-        var mailMessage = ConstructMailMessage(message);
+        var mailMessage = ConstructMailMessage(emailToSend);
 
         using var smtpClient = new SmtpClient();
 
         var numOfAttempts = 0;
-        while (numOfAttempts <= _options.RetryMaxLimit)
+        var isSuccessfullySent = false;
+        while (numOfAttempts <= _options.RetryMaxLimit && !isSuccessfullySent)
         {
             try
             {
@@ -34,29 +35,30 @@ internal class EmailSender : IEmailSender
                 await smtpClient.SendAsync(mailMessage);
 
                 await smtpClient.DisconnectAsync(true);
+
+                isSuccessfullySent = true;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Email message failed to be sent");
-            }
-            finally
-            {
                 numOfAttempts++;
             }
         }
 
-        return numOfAttempts < _options.RetryMaxLimit;
+        return isSuccessfullySent;
     }
 
-    private MimeMessage ConstructMailMessage(Email cateringEmail)
+    private MimeMessage ConstructMailMessage(CateringEmail emailToSend)
     {
-        var contentBuilder = new BodyBuilder();
-        contentBuilder.HtmlBody = cateringEmail.GetContent();
+        var contentBuilder = new BodyBuilder
+        {
+            HtmlBody = emailToSend.Content
+        };
 
         var mailMessage = new MimeMessage();
         mailMessage.From.Add(new MailboxAddress(_options.SystemDisplayName, _options.SystemSender));
-        mailMessage.To.AddRange(cateringEmail.Recepiants.Select(e => new MailboxAddress(null, e)));
-        mailMessage.Subject = cateringEmail.Title;
+        mailMessage.To.AddRange(emailToSend.Recepiants.Select(e => new MailboxAddress(null, e)));
+        mailMessage.Subject = emailToSend.Title;
         mailMessage.Body = contentBuilder.ToMessageBody();
         mailMessage.Date = DateTime.Now;
 

@@ -1,4 +1,5 @@
-﻿using Catering.Application.Mailing.Emails;
+﻿using Catering.Application.Mailing;
+using Catering.Application.Mailing.Emails;
 using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ public static class MailingExtensions
             .ValidateOnStart();
 
         services.AddTransient<IEmailSender, EmailSender>();
+        services.AddTransient<IEmailBuilder, EmailBuilder>();
 
         return services;
     }

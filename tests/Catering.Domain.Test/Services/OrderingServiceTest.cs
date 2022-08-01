@@ -53,7 +53,7 @@ public class OrderingServiceTest
         A.CallTo(() => orderBuilder.Build()).Returns(
             new Order(new[]
             {
-                new OrderItem(Guid.NewGuid(), 1, 1, null)
+                new OrderItem(Guid.NewGuid(), 1, "Item", 1, null)
             },
             Guid.NewGuid(),
             "someid",
@@ -112,7 +112,7 @@ public class OrderingServiceTest
         A.CallTo(() => orderBuilder.Build()).Returns(
             new Order(new[]
             {
-                new OrderItem(Guid.NewGuid(), itemPrice, 1, null)
+                new OrderItem(Guid.NewGuid(), itemPrice, "Item", 1, null)
             },
             Guid.NewGuid(),
             "someid",
@@ -174,7 +174,7 @@ public class OrderingServiceTest
         A.CallTo(() => orderBuilder.Build()).Returns<Order>(
             new Order(new[]
             {
-                new OrderItem(Guid.NewGuid(), itemPrice, 1, null)
+                new OrderItem(Guid.NewGuid(), itemPrice, "Item", 1, null)
             },
             Guid.NewGuid(),
             "someid",

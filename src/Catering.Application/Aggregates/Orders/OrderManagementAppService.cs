@@ -29,25 +29,27 @@ internal class OrderManagementAppService : IOrderManagementAppService
         _mapper = mapper;
     }
 
-    public async Task CancelAsync(long id) 
+    public async Task CancelAsync(long orderId) 
     {
-        var order = await GetExistingByIdAsync(id);
+        var order = await GetExistingByIdAsync(orderId);
 
         var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = order.CustomerId });
 
         _orderingService.CancelOrder(customer, order);
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
+
+        _ = _publisher.Publish(new OrderCanceled { CustomerId = customer.Id, OrderId = order.Id });
     }
 
-    public async Task ConfirmAsync(long id)
+    public async Task ConfirmAsync(long orderId)
     {
-        var order = await GetExistingByIdAsync(id);
+        var order = await GetExistingByIdAsync(orderId);
 
         var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = order.CustomerId });
 
         _orderingService.ConfirmOrder(customer, order);
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
-        await _publisher.Publish(new OrderConfirmed { CustomerId = customer.Id, OrderId = order.Id });
+        _ = _publisher.Publish(new OrderConfirmed { CustomerId = customer.Id, OrderId = order.Id });
     }
 
     public async Task<FilterResult<OrderInfoDto>> GetFilteredAsync(OrdersFilter orderFilters, string requestorId)
@@ -82,6 +84,8 @@ internal class OrderManagementAppService : IOrderManagementAppService
             throw new ArgumentNullException(nameof(customerId));
 
         var cartOfOrder = await _publisher.Send(new GetCartFromCustomer { CustomerId = customerId });
+        if (cartOfOrder == default || !cartOfOrder.Items.Any())
+            throw new ArgumentException("Customer does not have cart.");
 
         var orderBuilder = new OrderBuilder()
             .HasCart(cartOfOrder)
@@ -99,7 +103,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
 
         await _orderRepository.CreateOrderForCustomerAsync(customer, order);
 
-        await _publisher.Publish(new OrderPlaced { CustomerId = customerId, OrderId = order.Id});
+        _ = _publisher.Publish(new OrderPlaced { CustomerId = customerId, OrderId = order.Id });
         return order.Id;
     }
 

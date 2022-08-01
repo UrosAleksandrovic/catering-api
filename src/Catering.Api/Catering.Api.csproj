@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Catering.DependencyInjection\Catering.DependencyInjection.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<Content Include="resources\*">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+  </ItemGroup>
+
 </Project>

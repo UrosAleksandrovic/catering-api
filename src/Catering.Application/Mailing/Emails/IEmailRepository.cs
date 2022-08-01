@@ -3,5 +3,5 @@
 public interface IEmailRepository
 {
     Task<EmailTemplate> GetTemplateAsync(string templateName);
-    Task<Email> SaveAsFailedEmailAsync(Email message);
+    Task<CateringEmail> SaveAsFailedEmailAsync(CateringEmail message);
 }

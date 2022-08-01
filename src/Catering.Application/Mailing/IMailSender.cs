@@ -2,5 +2,5 @@
 
 public interface IMailSender<T> where T : IMail
 {
-    Task<bool> SendAsync(T message);
+    Task<bool> SendAsync(T messageToSend);
 }

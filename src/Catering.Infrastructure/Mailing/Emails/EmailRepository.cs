@@ -24,24 +24,17 @@ internal class EmailRepository : IEmailRepository
         return await dbContext.Templates.AsNoTracking().FirstOrDefaultAsync(t => t.Name == templateName);
     }
 
-    public async Task<Email> SaveAsFailedEmailAsync(Email message)
+    public async Task<CateringEmail> SaveAsFailedEmailAsync(CateringEmail message)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var encryptedParameters = message.TemplateParameters
-                    .Select(p => new EmailParameter
-                    {
-                        EmailId = p.EmailId,
-                        Name = _dataProtector.Encrypt(p.Name),
-                        Value = _dataProtector.Encrypt(p.Value)
-                    });
-
-        var entityToSave = new Email
+        var entityToSave = new FailedCateringEmail
         {
-            TemplateContent = _dataProtector.Encrypt(message.TemplateContent),
+            Id = Guid.NewGuid(),
             Title = _dataProtector.Encrypt(message.Title),
-            TemplateParameters = encryptedParameters,
-            Recepiants = message.Recepiants.Select(r => _dataProtector.Encrypt(r))
+            Recepiants = message.Recepiants.Select(v => _dataProtector.Encrypt(v)),
+            Content = _dataProtector.Encrypt(message.Content),
+            GeneratedOn = message.GeneratedOn,
         };
 
         await dbContext.AddAsync(entityToSave);

@@ -18,7 +18,7 @@ namespace Catering.Infrastructure.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("catering")
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -315,6 +315,10 @@ namespace Catering.Infrastructure.Data.Migrations
                             b1.Property<Guid>("ItemId")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("uuid");
+
+                            b1.Property<string>("NameSnapshot")
+                                .IsRequired()
+                                .HasColumnType("text");
 
                             b1.Property<string>("Note")
                                 .HasColumnType("text");

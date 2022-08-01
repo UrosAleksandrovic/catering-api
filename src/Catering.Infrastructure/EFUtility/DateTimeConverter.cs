@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Catering.Infrastructure.Data.EntityConfigurations;
+namespace Catering.Infrastructure.EFUtility;
 
 internal class DateTimeConverter : ValueConverter<DateTime, DateTime>
 {
     public DateTimeConverter()
-        :base(v => v.ToUniversalTime(),
+        : base(v => v.ToUniversalTime(),
               v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
     { }
 }

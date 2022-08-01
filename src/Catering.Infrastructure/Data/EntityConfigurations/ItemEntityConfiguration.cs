@@ -1,5 +1,6 @@
 ﻿using Catering.Domain.Entities.ItemAggregate;
 using Catering.Domain.Entities.MenuAggregate;
+using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -33,21 +34,20 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
 
         builder.Property(e => e.Ingredients)
             .HasColumnType("text")
-            .HasConversion<StringListConverter>()
+            .HasConversion<StringReadonlyListConverter>()
             .Metadata
-            .SetValueComparer(typeof(StringListComparer));
+            .SetValueComparer(typeof(StringReadonlyListComparer));
 
         builder.Property(e => e.Categories)
             .Metadata
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        //TODO: Might be a bad idea, think about this one
         builder
             .Property(e => e.Categories)
             .HasColumnType("text")
-            .HasConversion<StringListConverter>()
+            .HasConversion<StringReadonlyListConverter>()
             .Metadata
-            .SetValueComparer(typeof(StringListComparer));
+            .SetValueComparer(typeof(StringReadonlyListComparer));
 
         builder.HasQueryFilter(e => !e.IsDeleted);
 

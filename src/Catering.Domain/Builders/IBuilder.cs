@@ -1,6 +1,4 @@
-﻿using Catering.Domain.Entities;
-
-namespace Catering.Domain.Builders;
+﻿namespace Catering.Domain.Builders;
 
 public interface IBuilder<out T> 
 {

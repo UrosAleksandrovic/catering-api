@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   postgres-server:
-    name: 'caterin-postgres-server'
+    container_name: 'catering-postgres-server'
     image: postgres
     restart: always
     volumes:
@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   ldap-server:
-    name: 'catering-ldap-server'
+    container_name: 'catering-ldap-server'
     image: thoteam/slapd-server-mock
     restart: always
     volumes:
@@ -22,16 +22,18 @@ services:
     ports:
       - 389:389
 
-  seoulair-device:
-        container_name: seoulair-device
-        restart: always
-        image: seoulair-device
-        network_mode: bridge
-        build:
-            context: ./
-            dockerfile: Dockerfile
-        ports:
-            - 5500:5500
-        links:
-            - sql-server
-            - ldap-server
+  catering-api:
+    container_name: catering-api
+    restart: always
+    image: catering-api
+    network_mode: bridge
+    build:
+        context: ./
+        dockerfile: Dockerfile
+    ports:
+      - 5500:5500
+    links:
+      - postgres-server
+      - ldap-server
+    environment:
+      ASPNETCORE_ENVIRONMENT: 'Development'

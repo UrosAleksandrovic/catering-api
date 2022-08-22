@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using Catering.Domain.Exceptions;
-using System.Linq;
 
 namespace Catering.Domain.Entities.IdentityAggregate;
 

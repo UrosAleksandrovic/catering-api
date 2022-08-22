@@ -55,7 +55,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCateringExceptionHandling(this IServiceCollection services, Assembly assemblyContiningHandlers)
+    public static IServiceCollection AddCateringExceptionHandlling(this IServiceCollection services, Assembly assemblyContiningHandlers)
     {
         var types = assemblyContiningHandlers.GetTypes().Where(t => typeof(ErrorHttpResolver<>).IsAssignableFrom(t));
 
@@ -66,6 +66,23 @@ public static class ServiceCollectionExtensions
             throw new ArgumentException($"Could not add handlers from assembly: {assemblyContiningHandlers.FullName}");
 
         services.AddSingleton<IErrorPublisher>(publisher);
+
+        return services;
+    }
+
+    public static IServiceCollection AddCateringCors(this IServiceCollection services, IConfiguration configuration)
+    {
+        var corsUrls = configuration.GetSection("CORS").Get<string[]>();
+
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins(corsUrls)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
 
         return services;
     }

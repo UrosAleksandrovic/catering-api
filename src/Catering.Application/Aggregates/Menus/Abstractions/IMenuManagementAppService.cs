@@ -10,4 +10,5 @@ public interface IMenuManagementAppService
     public Task DeleteAsync(Guid id);
     public Task<MenuInfoDto> GetByIdAsync(Guid id);
     public Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId);
+    public Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter);
 }

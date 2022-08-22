@@ -6,6 +6,7 @@ public class OrdersFilter : FilterBase
     public Guid? MenuId { get; set; }
 
     public OrdersFilter() { }
+
     public OrdersFilter(OrdersFilter filter)
     {
         PageSize = filter.PageSize;

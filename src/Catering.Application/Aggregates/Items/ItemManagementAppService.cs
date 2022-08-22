@@ -136,4 +136,15 @@ internal class ItemManagementAppService : IItemManagementAppService
 
         item.AddIngredients(updateRequestIngredients);
     }
+
+    public async Task<List<ItemsLeaderboardDto>> GetMostOrderedFromTheMenuAsync(int top, Guid menuId)
+    {
+        var result = await _itemRepository.GetMostOrderedFromTheMenuAsync(top, menuId);
+
+        List<ItemsLeaderboardDto> dtoResult = new();
+        foreach (var item in result)
+            dtoResult.Add(new ItemsLeaderboardDto { ItemInfo = _mapper.Map<ItemInfoDto>(item.item), EvaluatedValue = item.numOfOrders });
+
+        return dtoResult;
+    }
 }

@@ -48,4 +48,17 @@ public class CompanyEmployeesController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpGet("profile")]
+    [AuthorizeCompanyEmployee]
+    public async Task<IActionResult> GetProfileAsync()
+    {
+        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var budget = await _customerAppService.GetCustomerInfoAsync(requestorId);
+
+        if (budget != null)
+            return Ok(budget);
+
+        return NotFound();
+    }
 }

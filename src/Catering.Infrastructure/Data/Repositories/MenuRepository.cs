@@ -1,4 +1,5 @@
-﻿using Catering.Application.Aggregates.Menus.Abstractions;
+﻿using Catering.Application.Aggregates.Menus;
+using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Domain.Entities.MenuAggregate;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,5 +18,26 @@ internal class MenuRepository : BaseCrudRepository<Menu, CateringDbContext>, IMe
             .AsNoTracking()
             .Where(m => m.Contact.IdentityId == contactId)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<(List<Menu> menus, int totalCount)> GetFilteredAsync(MenusFilter menusFilter)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var queryableMenus = dbContext.Menus.AsQueryable();
+        queryableMenus = ApplyFilters(menusFilter, queryableMenus);
+
+        var results = await queryableMenus.ToListAsync();
+
+        return new(results, await queryableMenus.CountAsync());
+    }
+
+    private IQueryable<Menu> ApplyFilters(MenusFilter menusFilter, IQueryable<Menu> queryableMenus)
+    {
+        queryableMenus.AsNoTracking();
+
+        return queryableMenus
+            .Skip((menusFilter.PageIndex - 1) * menusFilter.PageSize)
+            .Take(menusFilter.PageSize);
     }
 }

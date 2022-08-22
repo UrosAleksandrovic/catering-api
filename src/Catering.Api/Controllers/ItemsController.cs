@@ -80,4 +80,13 @@ public class ItemsController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpGet("{menuId}/topOrdered")]
+    [Authorize]
+    public async Task<IActionResult> GetTopOrdered([FromRoute] Guid menuId, [FromQuery] int top = 10)
+    {
+        var result = await _itemsAppService.GetMostOrderedFromTheMenuAsync(top, menuId);
+
+        return Ok(new { Items = result });
+    }
 }

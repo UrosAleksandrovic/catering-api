@@ -67,6 +67,23 @@ internal class MenuManagementAppService : IMenuManagementAppService
         return menu.HasContact(requestorId) ? _mapper.Map<MenuInfoDto>(menu) : null;
     }
 
+    public async Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter)
+    {
+        var result = new FilterResult<MenuInfoDto>
+        {
+            PageIndex = menusFilter.PageIndex,
+            PageSize = menusFilter.PageSize,
+            TotalNumberOfPages = 0,
+            Result = Enumerable.Empty<MenuInfoDto>()
+        };
+
+        var (menus, totalCount) = await _menuRepository.GetFilteredAsync(menusFilter);
+        result.TotalNumberOfPages = totalCount / menusFilter.PageSize;
+        result.Result = _mapper.Map<IEnumerable<MenuInfoDto>>(menus);
+
+        return result;
+    }
+
     public async Task UpdateAsync(Guid id, UpdateMenuDto updateMenu)
     {
         var menu = await _menuRepository.GetByIdAsync(id);

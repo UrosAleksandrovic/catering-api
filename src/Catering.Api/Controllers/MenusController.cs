@@ -1,4 +1,5 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Application.Aggregates.Menus;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -39,6 +40,15 @@ public class MenusController : ControllerBase
 
         return Ok(menu);
     }
+
+    [HttpGet]
+    [AuthorizeCompanyEmployee]
+    public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
+    {
+        var result = await _menuAppService.GetFilteredAsync(filter);
+
+        return Ok(result);
+    } 
 
     [HttpPut("{id}")]
     [AuthorizeCompanyAdmins]

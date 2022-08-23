@@ -17,20 +17,20 @@ public class AuthController : ControllerBase
 
     [HttpPost("/api/auth/ldap/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> Login([FromBody] UsernameAndPasswordDto customerRequest)
+    public async Task<ActionResult<string>> LoginLdap([FromBody] UsernameAndPasswordDto request)
     {
-        var request = new LoginCustomer { Login = customerRequest.Username, Password = customerRequest.Password };
-        var response = await _publisher.Send(request);
+        var identityRequest = new LoginLdap { Login = request.Username, Password = request.Password };
+        var response = await _publisher.Send(identityRequest);
 
         return Ok(new { token = response });
     }
 
     [HttpPost("/api/auth/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> LoginExternalIdentity([FromBody] UsernameAndPasswordDto externalRequest)
+    public async Task<ActionResult<string>> LoginCateringIdentity([FromBody] UsernameAndPasswordDto request)
     {
-        var request = new LoginExternalIdentity { Login = externalRequest.Username, Password = externalRequest.Password };
-        var response = await _publisher.Send(request);
+        var identityRequest = new LoginCateringIdentity { Login = request.Username, Password = request.Password };
+        var response = await _publisher.Send(identityRequest);
 
         return Ok(new { token = response });
     }

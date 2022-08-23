@@ -61,7 +61,7 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
 
             _emailBuilder.HasTitle($"Order #{order.Id}");
             _emailBuilder.HasEmailTemplate(template, new { Order = order });
-            _emailBuilder.HasRecepient(customer.Email);
+            _emailBuilder.HasRecepient(customer.Identity.Email);
 
             generatedEmail = _emailBuilder.Build();
         }

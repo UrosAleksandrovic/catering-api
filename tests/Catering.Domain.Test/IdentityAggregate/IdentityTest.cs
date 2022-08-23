@@ -17,7 +17,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => identity.Edit(invalidEmail, new FullName("Test", "Test"));
@@ -33,7 +33,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => identity.Edit(null, new FullName("Test", "Test"));
@@ -50,7 +50,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         identity.Edit(expectedValue, new FullName(expectedValue, expectedValue));
@@ -70,14 +70,14 @@ public class IdentityTest
         var admin = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.SuperAdministrator);
+            IdentityRoleExtensions.GetSuperAdministrator());
 
         //Act
         void a() => admin.EditOtherIdentity(
             null,
             expectedValue,
             new FullName(expectedValue, expectedValue),
-            new[] { IdentityRole.RestourantEmployee });
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -94,19 +94,19 @@ public class IdentityTest
         var admin = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.SuperAdministrator);
+            IdentityRoleExtensions.GetSuperAdministrator());
 
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
             identity,
             invalidEmail,
             new FullName(expectedValue, expectedValue),
-            new[] { IdentityRole.CompanyAdministrator });
+            IdentityRoleExtensions.GetClientAdministrator());
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -121,19 +121,19 @@ public class IdentityTest
         var admin = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.CompanyAdministrator);
+            IdentityRoleExtensions.GetClientAdministrator());
 
         var identity = new Identity(
             new FullName(expectedValue, expectedValue),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
             identity,
             null,
             new FullName(expectedValue, expectedValue),
-            new[] { IdentityRole.CompanyAdministrator });
+            IdentityRoleExtensions.GetClientAdministrator());
 
         //Assert
         Assert.Throws<ArgumentNullException>(a);
@@ -148,19 +148,19 @@ public class IdentityTest
         var admin = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.CompanyEmployee);
+            IdentityRoleExtensions.GetClientEmployee());
 
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
             identity,
             expectedValue,
             new FullName(expectedValue, expectedValue),
-            new[] { IdentityRole.CompanyAdministrator });
+            IdentityRoleExtensions.GetClientAdministrator());
 
         //Assert
         Assert.Throws<IdentityRestrictionException>(a);
@@ -175,49 +175,22 @@ public class IdentityTest
         var admin = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.SuperAdministrator);
+            IdentityRoleExtensions.GetSuperAdministrator());
 
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
             identity,
             expectedValue,
             new FullName(expectedValue, expectedValue),
-            new List<string>());
+            0);
 
         //Assert
         Assert.Throws<ArgumentException>(a);
-    }
-
-    [Fact]
-    public void EditOtherIdentity_PassNullRoles_ArgumentNullException()
-    {
-        //Arrange
-        var expectedValue = "New Value";
-
-        var admin = new Identity(
-            new FullName("Test", "Test"),
-            "SomeEmail",
-            IdentityRole.SuperAdministrator);
-
-        var identity = new Identity(
-            new FullName("Test", "Test"),
-            "SomeEmail",
-            IdentityRole.RestourantEmployee);
-
-        //Act
-        void a() => admin.EditOtherIdentity(
-            identity,
-            expectedValue,
-            new FullName(expectedValue, expectedValue),
-            null);
-
-        //Assert
-        Assert.Throws<ArgumentNullException>(a);
     }
 
     [Fact]
@@ -226,28 +199,20 @@ public class IdentityTest
         //Arrange
         var expectedValue = "New Value";
 
-        var admin = new Identity(
-            new FullName("Test", "Test"),
-            "SomeEmail",
-            IdentityRole.CompanyAdministrator);
-
-        var identity = new Identity(
-            new FullName("Test", "Test"),
-            "SomeEmail",
-            IdentityRole.RestourantEmployee);
+        var admin = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientAdministrator());
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         admin.EditOtherIdentity(
             identity,
             expectedValue,
             new FullName(expectedValue, expectedValue),
-            new[] { IdentityRole.CompanyAdministrator });
+            IdentityRoleExtensions.GetClientAdministrator());
 
         //Assert
         Assert.Equal(expectedValue, identity.FullName.FirstName);
         Assert.Equal(expectedValue, identity.FullName.LastName);
         Assert.Equal(expectedValue, identity.Email);
-        Assert.Equal(1, identity.Roles.Count);
-        Assert.Contains(IdentityRole.CompanyAdministrator, identity.Roles);
+        Assert.Equal(IdentityRoleExtensions.GetClientAdministrator(), identity.Role);
     }
 }

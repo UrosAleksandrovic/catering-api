@@ -5,6 +5,7 @@ using Catering.Application.Aggregates.Menus.Notifications;
 using Catering.Application.Aggregates.Menus.Requests;
 using Catering.Application.Dtos.Menu;
 using Catering.Domain.Builders;
+using Catering.Domain.Entities.IdentityAggregate;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Menus;
@@ -61,7 +62,7 @@ internal class MenuManagementAppService : IMenuManagementAppService
 
         var requestor = await _publisher.Send(new GetIdentityById { Id = requestorId });
 
-        if (!requestor.IsRestourantEmployee)
+        if (!requestor.Role.IsRestourantEmployee())
             return _mapper.Map<MenuInfoDto>(menu);
 
         return menu.HasContact(requestorId) ? _mapper.Map<MenuInfoDto>(menu) : null;

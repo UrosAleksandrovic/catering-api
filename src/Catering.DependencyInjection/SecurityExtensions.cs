@@ -31,8 +31,8 @@ public static class SecurityExtensions
             .ValidateOnStart();
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddScoped<ITokenAtuhenticator<Customer>, LdapTokenAuthenticator>();
-        services.AddScoped<ITokenAtuhenticator<ExternalIdentity>, CateringTokenAuthenticator>();
+        services.AddScoped<ITokenAtuhenticator<Identity>, LdapTokenAuthenticator>();
+        services.AddScoped<ITokenAtuhenticator<CateringIdentity>, CateringTokenAuthenticator>();
 
         return services;
     }

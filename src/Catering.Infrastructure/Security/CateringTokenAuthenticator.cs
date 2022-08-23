@@ -6,14 +6,14 @@ using System.Security.Authentication;
 
 namespace Catering.Infrastructure.Security;
 
-internal class CateringTokenAuthenticator : ITokenAtuhenticator<ExternalIdentity>
+internal class CateringTokenAuthenticator : ITokenAtuhenticator<CateringIdentity>
 {
-    private readonly IExternalIdentityRepository _repository;
+    private readonly ICateringIdentitiesRepository _repository;
     private readonly IDataProtector _dataProtector;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
     public CateringTokenAuthenticator(
-        IExternalIdentityRepository repository,
+        ICateringIdentitiesRepository repository,
         IDataProtector dataProtector,
         IJwtTokenGenerator jwtTokenGenerator)
     {
@@ -22,7 +22,7 @@ internal class CateringTokenAuthenticator : ITokenAtuhenticator<ExternalIdentity
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
-    public async Task<ExternalIdentity> AuthenticateAsync(string identity, string password)
+    public async Task<CateringIdentity> AuthenticateAsync(string identity, string password)
     {
         Guard.Against.NullOrWhiteSpace(identity);
         Guard.Against.NullOrWhiteSpace(password);

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catering.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CateringDbContext))]
-    [Migration("20220509100631_Initial")]
+    [Migration("20220823131222_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Catering.Infrastructure.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("catering")
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -43,6 +43,16 @@ namespace Catering.Infrastructure.Data.Migrations
                     b.ToTable("Carts", "catering");
                 });
 
+            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Customer", b =>
+                {
+                    b.Property<string>("IdentityId")
+                        .HasColumnType("text");
+
+                    b.HasKey("IdentityId");
+
+                    b.ToTable("Customers", "catering");
+                });
+
             modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Identity", b =>
                 {
                     b.Property<string>("Id")
@@ -52,8 +62,8 @@ namespace Catering.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Roles")
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -142,14 +152,7 @@ namespace Catering.Infrastructure.Data.Migrations
                     b.ToTable("Orders", "catering");
                 });
 
-            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Customer", b =>
-                {
-                    b.HasBaseType("Catering.Domain.Entities.IdentityAggregate.Identity");
-
-                    b.ToTable("Customers", "catering");
-                });
-
-            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.ExternalIdentity", b =>
+            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.CateringIdentity", b =>
                 {
                     b.HasBaseType("Catering.Domain.Entities.IdentityAggregate.Identity");
 
@@ -158,7 +161,7 @@ namespace Catering.Infrastructure.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("Password");
 
-                    b.ToTable("ExternalIdentities", "catering");
+                    b.ToTable("CateringIdentities", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.CartAggregate.Cart", b =>
@@ -174,13 +177,8 @@ namespace Catering.Infrastructure.Data.Migrations
                             b1.Property<Guid>("CartId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
                             b1.Property<Guid>("ItemId")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Note")
@@ -189,7 +187,7 @@ namespace Catering.Infrastructure.Data.Migrations
                             b1.Property<int>("Quantity")
                                 .HasColumnType("integer");
 
-                            b1.HasKey("CartId", "Id");
+                            b1.HasKey("CartId", "ItemId");
 
                             b1.ToTable("CartItem", "catering");
 
@@ -198,6 +196,38 @@ namespace Catering.Infrastructure.Data.Migrations
                         });
 
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Customer", b =>
+                {
+                    b.HasOne("Catering.Domain.Entities.IdentityAggregate.Identity", "Identity")
+                        .WithOne()
+                        .HasForeignKey("Catering.Domain.Entities.IdentityAggregate.Customer", "IdentityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.CustomerBudget", "Budget", b1 =>
+                        {
+                            b1.Property<string>("CustomerIdentityId")
+                                .HasColumnType("text");
+
+                            b1.Property<decimal>("Balance")
+                                .HasColumnType("numeric(19,4)");
+
+                            b1.Property<decimal>("ReservedAssets")
+                                .HasColumnType("numeric(19,4)");
+
+                            b1.HasKey("CustomerIdentityId");
+
+                            b1.ToTable("Customers", "catering");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerIdentityId");
+                        });
+
+                    b.Navigation("Budget");
+
+                    b.Navigation("Identity");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Identity", b =>
@@ -238,21 +268,13 @@ namespace Catering.Infrastructure.Data.Migrations
                             b1.Property<Guid>("ItemId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
                             b1.Property<string>("CustomerId")
                                 .HasColumnType("text");
 
                             b1.Property<short>("Rating")
                                 .HasColumnType("smallint");
 
-                            b1.HasKey("ItemId", "Id");
-
-                            b1.HasIndex("CustomerId");
+                            b1.HasKey("ItemId", "CustomerId");
 
                             b1.ToTable("ItemRating", "catering");
 
@@ -277,12 +299,21 @@ namespace Catering.Infrastructure.Data.Migrations
                                 .IsRequired()
                                 .HasColumnType("text");
 
+                            b1.Property<string>("IdentityId")
+                                .HasColumnType("text");
+
                             b1.Property<string>("PhoneNumber")
                                 .HasColumnType("text");
 
                             b1.HasKey("MenuId");
 
+                            b1.HasIndex("IdentityId");
+
                             b1.ToTable("Menus", "catering");
+
+                            b1.HasOne("Catering.Domain.Entities.IdentityAggregate.Identity", null)
+                                .WithMany()
+                                .HasForeignKey("IdentityId");
 
                             b1.WithOwner()
                                 .HasForeignKey("MenuId");
@@ -318,14 +349,13 @@ namespace Catering.Infrastructure.Data.Migrations
                             b1.Property<long>("OrderId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
                             b1.Property<Guid>("ItemId")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("uuid");
+
+                            b1.Property<string>("NameSnapshot")
+                                .IsRequired()
+                                .HasColumnType("text");
 
                             b1.Property<string>("Note")
                                 .HasColumnType("text");
@@ -336,7 +366,7 @@ namespace Catering.Infrastructure.Data.Migrations
                             b1.Property<int>("Quantity")
                                 .HasColumnType("integer");
 
-                            b1.HasKey("OrderId", "Id");
+                            b1.HasKey("OrderId", "ItemId");
 
                             b1.ToTable("OrderItem", "catering");
 
@@ -349,41 +379,11 @@ namespace Catering.Infrastructure.Data.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Customer", b =>
+            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.CateringIdentity", b =>
                 {
                     b.HasOne("Catering.Domain.Entities.IdentityAggregate.Identity", null)
                         .WithOne()
-                        .HasForeignKey("Catering.Domain.Entities.IdentityAggregate.Customer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.CustomerBudget", "Budget", b1 =>
-                        {
-                            b1.Property<string>("CustomerId")
-                                .HasColumnType("text");
-
-                            b1.Property<decimal>("Balance")
-                                .HasColumnType("numeric(19,4)");
-
-                            b1.Property<decimal>("ReservedAssets")
-                                .HasColumnType("numeric(19,4)");
-
-                            b1.HasKey("CustomerId");
-
-                            b1.ToTable("Customers", "catering");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CustomerId");
-                        });
-
-                    b.Navigation("Budget");
-                });
-
-            modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.ExternalIdentity", b =>
-                {
-                    b.HasOne("Catering.Domain.Entities.IdentityAggregate.Identity", null)
-                        .WithOne()
-                        .HasForeignKey("Catering.Domain.Entities.IdentityAggregate.ExternalIdentity", "Id")
+                        .HasForeignKey("Catering.Domain.Entities.IdentityAggregate.CateringIdentity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

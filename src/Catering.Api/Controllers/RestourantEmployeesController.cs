@@ -9,19 +9,18 @@ namespace Catering.Api.Controllers;
 [Route("api/restourantEmployees")]
 public class RestourantEmployeesController : ControllerBase
 {
-    private readonly IExternalIdentitiesManagementAppService _service;
+    private readonly ICateringIdentititesManagementAppService _service;
 
-    public RestourantEmployeesController(IExternalIdentitiesManagementAppService service)
+    public RestourantEmployeesController(ICateringIdentititesManagementAppService service)
     {
         _service = service;
     }
 
     [HttpPost]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> RegisterAsync([FromBody] CreateRestourantDto createRequest)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _service.CreateRestourantIdentityAsync(createRequest);
+        await _service.CreateRestourantAsync(createRequest);
 
         return NoContent();
     }

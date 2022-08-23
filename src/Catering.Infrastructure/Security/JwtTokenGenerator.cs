@@ -47,8 +47,7 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.Aud, _options.Audience)
         };
 
-        foreach (var role in identity.Roles)
-            claims.Add(new Claim(ClaimTypes.Role, role));
+        claims.Add(new Claim(ClaimTypes.Role, identity.Role.ToIdentityString()));
 
         return claims;
     }

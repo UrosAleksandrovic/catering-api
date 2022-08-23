@@ -14,11 +14,11 @@ public class ExternalIdentityTest
     public void ComparePassword_PassedPasswordIsNullOrEmpty_EvaluatesFalse(string invalidPassword)
     {
         //Arrange
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         var result = externalIdentity.ComparePassword(invalidPassword);
@@ -32,11 +32,11 @@ public class ExternalIdentityTest
     {
         //Arrange
         var password = "SomePassword@123";
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             password,
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         var result = externalIdentity.ComparePassword(string.Join("", Enumerable.Repeat('s', password.Length)));
@@ -50,11 +50,11 @@ public class ExternalIdentityTest
     {
         //Arrange
         var password = "SomePassword@123";
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             password,
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         password = "somePassword@123";
@@ -69,11 +69,11 @@ public class ExternalIdentityTest
     {
         //Arrange
         var password = "SomePassword@123";
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             password,
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         var result = externalIdentity.ComparePassword(password);
@@ -88,11 +88,11 @@ public class ExternalIdentityTest
     public void EditPassword_PasswordIsInvalid_ArgumentException(string invalidPassword)
     {
         //Arrange
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => externalIdentity.EditPassword(invalidPassword);
@@ -105,11 +105,11 @@ public class ExternalIdentityTest
     public void EditPassword_PasswordIsNull_ArgumentNullException()
     {
         //Arrange
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         void a() => externalIdentity.EditPassword(null);
@@ -123,11 +123,11 @@ public class ExternalIdentityTest
     {
         //Arrange
         var newPassword = "NewPassword@123";
-        var externalIdentity = new ExternalIdentity(
+        var externalIdentity = new CateringIdentity(
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRole.RestourantEmployee);
+            IdentityRoleExtensions.GetRestourantEmployee());
 
         //Act
         externalIdentity.EditPassword(newPassword);

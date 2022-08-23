@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace Catering.Domain.Test.CustomerAggregate;
+namespace Catering.Domain.Test.IdentityAggregate;
 
 public class CustomerBudgetTest
 {

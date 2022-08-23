@@ -2,17 +2,17 @@
 
 namespace Catering.Domain.Entities.IdentityAggregate;
 
-public class ExternalIdentity : Identity
+public class CateringIdentity : Identity
 {
     private string _password;
 
-    protected ExternalIdentity() : base() { }
+    protected CateringIdentity() : base() { }
 
-    public ExternalIdentity(
+    public CateringIdentity(
         string email,
         FullName fullName,
         string password,
-        string startRole)
+        IdentityRole startRole)
         : base(fullName, email, startRole)
     {
         Guard.Against.NullOrWhiteSpace(password);

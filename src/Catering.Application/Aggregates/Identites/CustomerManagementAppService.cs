@@ -8,29 +8,35 @@ namespace Catering.Application.Aggregates.Identites;
 
 internal class CustomerManagementAppService : ICustomerManagementAppService
 {
+    private readonly IIdentityRepository<Identity> _identityRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IMapper _mapper;
 
     public CustomerManagementAppService(
         ICustomerRepository customerRepository,
-        IMapper mapper)
+        IMapper mapper,
+        IIdentityRepository<Identity> identityRepository)
     {
         _customerRepository = customerRepository;
         _mapper = mapper;
+        _identityRepository = identityRepository;
     }
 
-    public async Task<string> CreateCompanyCustomerAsync(CreateCustomerDto createCustomer, string creatorId)
+    public async Task<string> CreateClientsCustomerAsync(CreateCustomerDto createCustomer, string creatorId)
     {
-        await CheckIfInitiatorIsAdminAsync(creatorId, nameof(CreateCompanyCustomerAsync));
+        await CheckIfInitiatorIsAdminAsync(creatorId, nameof(CreateClientsCustomerAsync));
 
-        var customerExists = await _customerRepository.GetByEmailAsync(createCustomer.Email);
+        var customerExists = await _customerRepository.GetByIdentityEmailAsync(createCustomer.Email);
         if (customerExists != null)
-            throw new ArgumentException("Company user with provided email already exists.");
+            throw new ArgumentException("Client user with provided email already exists.");
 
-        var customerToCreate = new Customer(createCustomer.Email, IdentityRole.CompanyEmployee);
+        var customerIdentity = new Identity(createCustomer.Email, IdentityRole.Employee | IdentityRole.Client);
+        var customerToCreate = new Customer(customerIdentity);
+
+        await _identityRepository.CreateAsync(customerIdentity);
         await _customerRepository.CreateAsync(customerToCreate);
 
-        return customerToCreate.Id;
+        return customerIdentity.Id;
     }
 
     public async Task<CustomerBudgetInfoDto> GetCustomerBudgetInfoAsync(string customerId)
@@ -47,7 +53,7 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
         return _mapper.Map<CustomerInfoDto>(customer);
     }
 
-    private async Task<Identity> GetInitiatorAsync(string initiatorId)
+    private async Task<Customer> GetInitiatorAsync(string initiatorId)
     {
         var result = await _customerRepository.GetByIdAsync(initiatorId);
 
@@ -61,7 +67,7 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
     {
         var initiator = await GetInitiatorAsync(initiatorId);
 
-        if (!initiator.IsAdministrator)
+        if (!initiator.Identity.Role.IsAdministrator())
             throw new IdentityRestrictionException(initiatorId, actionName);
     }
 

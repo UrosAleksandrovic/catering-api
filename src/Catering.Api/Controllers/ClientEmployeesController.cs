@@ -7,28 +7,28 @@ using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
-[Route("/api/companyEmployees")]
-public class CompanyEmployeesController : ControllerBase
+[Route("/api/clientEmployee")]
+public class ClientEmployeesController : ControllerBase
 {
     private readonly ICustomerManagementAppService _customerAppService;
 
-    public CompanyEmployeesController(ICustomerManagementAppService customerAppService)
+    public ClientEmployeesController(ICustomerManagementAppService customerAppService)
     {
         _customerAppService = customerAppService;
     }
 
     [HttpPost]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> RegisterAsync(CreateCustomerDto createRequest)
     {
         var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _customerAppService.CreateCompanyCustomerAsync(createRequest, requestorId);
+        await _customerAppService.CreateClientsCustomerAsync(createRequest, requestorId);
 
         return NoContent();
     }
 
     [HttpGet("budget")]
-    [AuthorizeCompanyEmployee]
+    [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetBudgetInfoAsync()
     {
         var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -41,8 +41,8 @@ public class CompanyEmployeesController : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizeCompanyAdmins]
-    public async Task<IActionResult> GetCompanyEmployees([FromQuery] CustomersFilter filter)
+    [AuthorizeClientsAdmins]
+    public async Task<IActionResult> GetClientsEmployeesAsync([FromQuery] CustomersFilter filter)
     {
         var result = await _customerAppService.GetFilteredAsync(filter);
 
@@ -50,14 +50,14 @@ public class CompanyEmployeesController : ControllerBase
     }
 
     [HttpGet("profile")]
-    [AuthorizeCompanyEmployee]
+    [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetProfileAsync()
     {
         var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var budget = await _customerAppService.GetCustomerInfoAsync(requestorId);
+        var customerInfoDto = await _customerAppService.GetCustomerInfoAsync(requestorId);
 
-        if (budget != null)
-            return Ok(budget);
+        if (customerInfoDto != null)
+            return Ok(customerInfoDto);
 
         return NotFound();
     }

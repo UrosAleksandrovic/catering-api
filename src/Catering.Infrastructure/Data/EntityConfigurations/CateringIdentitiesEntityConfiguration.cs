@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catering.Infrastructure.Data.EntityConfigurations;
 
-internal class ExternailIdentitiesEntityConfiguration : IEntityTypeConfiguration<ExternalIdentity>
+internal class CateringIdentitiesConfiguration : IEntityTypeConfiguration<CateringIdentity>
 {
-    private const string TableName = "ExternalIdentities";
+    private const string TableName = "CateringIdentities";
 
-    public void Configure(EntityTypeBuilder<ExternalIdentity> builder)
+    public void Configure(EntityTypeBuilder<CateringIdentity> builder)
     {
         builder.ToTable(TableName);
 

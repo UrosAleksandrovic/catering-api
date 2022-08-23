@@ -2,7 +2,8 @@
 
 namespace Catering.Application.Aggregates.Identites.Abstractions;
 
-public interface ICustomerRepository : IBaseCrudRepository<Customer>, IIdentityRepository<Customer>
+public interface ICustomerRepository : IBaseCrudRepository<Customer>
 {
     Task<(IEnumerable<Customer>,int)> GetFilteredAsync(CustomersFilter filter);
+    Task<Customer> GetByIdentityEmailAsync(string email);
 }

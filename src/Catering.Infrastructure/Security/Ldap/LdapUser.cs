@@ -27,7 +27,7 @@ internal class LdapUser
                 case "USERPASSWORD": if (string.IsNullOrEmpty(this.UserPassword)) { this.UserPassword = values.First(); } break;
                 case "GIVENNAME": if (string.IsNullOrEmpty(this.FirstName)) { this.FirstName = values.First(); } break;
                 case "SN": if (string.IsNullOrEmpty(this.LastName)) { this.LastName = values.First(); } break;
-                case "TITLE": if (string.IsNullOrEmpty(this.Title)) { this.Title = values.First(); }; break;
+                case "TITLE": if (string.IsNullOrEmpty(this.Title)) { this.Title = values.First(); } break;
                 case "OBJECTCLASS": if (string.IsNullOrEmpty(this.Ojectclass)) { this.Ojectclass = values.First(); } break;
                 case "MOBILE": if (string.IsNullOrEmpty(this.Mobile)) { this.Mobile = values.First(); } break;
                 case "MAIL": if (string.IsNullOrEmpty(this.Mail)) { this.Mail = values.First(); } break;

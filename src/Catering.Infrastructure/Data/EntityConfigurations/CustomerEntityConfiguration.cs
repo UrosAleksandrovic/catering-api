@@ -12,6 +12,12 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<Customer>
     {
         builder.ToTable(TableName);
 
+        builder.HasKey(e => e.IdentityId);
+
+        builder.HasOne(e => e.Identity)
+               .WithOne()
+               .HasPrincipalKey<Identity>(e => e.Id);
+
         var budgetBuidler = builder.OwnsOne(e => e.Budget);
 
         budgetBuidler.Property(e => e.ReservedAssets)

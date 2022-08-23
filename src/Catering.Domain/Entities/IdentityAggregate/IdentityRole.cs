@@ -1,20 +1,47 @@
-﻿using Ardalis.GuardClauses;
+﻿using System.Text;
 
 namespace Catering.Domain.Entities.IdentityAggregate;
 
-public static class IdentityRole
+[Flags]
+public enum IdentityRole
 {
-    public const string SuperAdministrator = "SuperAdmin";
+    Super = 1,
+    Administrator = 2,
+    Client = 4,
+    Restourant = 8,
+    Employee = 16,
+}
 
-    public const string CompanyAdministrator = "CompanyAdmin";
-    public const string CompanyEmployee = "CompanyEmployee";
+public static class IdentityRoleExtensions
+{
+    public static bool IsAdministrator(this IdentityRole role)
+        => role.HasFlag(IdentityRole.Administrator);
 
-    public const string RestourantEmployee = "RestourantEmployee";
+    public static bool IsClientEmployee(this IdentityRole role)
+        => role.HasFlag(IdentityRole.Client) && role.HasFlag(IdentityRole.Employee);
 
-    public static bool IsAdministratorRole(string roleName)
+    public static bool IsRestourantEmployee(this IdentityRole role)
+        => role.HasFlag(IdentityRole.Restourant) && role.HasFlag(IdentityRole.Employee);
+
+    public static bool IsSuperAdmin(this IdentityRole role)
+        => role.HasFlag(IdentityRole.Super) && role.HasFlag(IdentityRole.Administrator);
+
+    public static IEnumerable<IdentityRole> GetRoles(this IdentityRole input)
+        => Enum.GetValues<IdentityRole>().Where(value => input.HasFlag(value));
+
+    public static IdentityRole GetClientAdministrator() => IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee;
+
+    public static IdentityRole GetSuperAdministrator() => IdentityRole.Super | IdentityRole.Administrator;
+
+    public static IdentityRole GetRestourantEmployee() => IdentityRole.Restourant | IdentityRole.Employee;
+    public static IdentityRole GetClientEmployee() => IdentityRole.Client | IdentityRole.Employee;
+
+    public static string ToIdentityString(this IdentityRole input)
     {
-        Guard.Against.NullOrWhiteSpace(roleName);
+        var identityRole = new StringBuilder();
+        foreach (var role in input.GetRoles())
+            identityRole.Append(role.ToString());
 
-        return roleName.Equals(SuperAdministrator) || roleName.Equals(CompanyAdministrator);
+        return identityRole.ToString();
     }
 }

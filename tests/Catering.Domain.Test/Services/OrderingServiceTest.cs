@@ -28,10 +28,8 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer(
-            new FullName("Test", "Test"),
-            "Some email",
-            IdentityRole.CompanyEmployee);
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var customer = new Customer(identity);
 
         //Act
         void a() => orderingService.PlaceOrder(customer, null);
@@ -45,10 +43,8 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer(
-            new FullName("Test", "Test"),
-            "Some email",
-            IdentityRole.CompanyEmployee);
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var customer = new Customer(identity);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
             new Order(new[]
@@ -85,10 +81,8 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer(
-            new FullName("Test", "Test"),
-            "Some email",
-            IdentityRole.CompanyEmployee);
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var customer = new Customer(identity);
 
         //Act
         void a() => orderingService.ConfirmOrder(customer, null);
@@ -103,10 +97,8 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var customer = new Customer(
-            new FullName("Test", "Test"),
-            "Some email",
-            IdentityRole.CompanyEmployee);
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var customer = new Customer(identity);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
@@ -146,10 +138,8 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var customer = new Customer(
-            new FullName("Test", "Test"),
-            "Some email",
-            IdentityRole.CompanyEmployee);
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var customer = new Customer(identity);
 
         //Act
         void a() => orderingService.CancelOrder(customer, null);
@@ -165,10 +155,8 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var customer = new Customer(
-            new FullName("Test", "Test"),
-            "Some email",
-            IdentityRole.CompanyEmployee);
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var customer = new Customer(identity);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns<Order>(

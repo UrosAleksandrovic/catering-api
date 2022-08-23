@@ -1,20 +1,17 @@
 ﻿namespace Catering.Domain.Entities.IdentityAggregate;
 
-public class Customer : Identity, ICustomer
+public class Customer : ICustomer
 {
+    public string IdentityId { get; private set; }
+    public Identity Identity { get; private set; }
+
     public CustomerBudget Budget { get; private set; }
 
     protected Customer() : base() { }
 
-    public Customer(FullName fullName, string email, string startRole)
-        : base(fullName, email, startRole)
+    public Customer(Identity identity)
     {
-        Budget = new CustomerBudget(0);
-    }
-
-    public Customer(string email, string startRole)
-        : base(null, email, startRole)
-    {
+        IdentityId = identity.Id;
         Budget = new CustomerBudget(0);
     }
 

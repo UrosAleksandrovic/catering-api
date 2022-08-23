@@ -20,8 +20,8 @@ internal class CateringDbContext : DbContext
     internal DbSet<Menu> Menus { get; set; }
     internal DbSet<Order> Orders { get; set; }
     internal DbSet<Identity> Identities { get; set; }
+    internal DbSet<CateringIdentity> CateringIdentities { get; set; }
     internal DbSet<Customer> Customers { get; set; }
-    internal DbSet<ExternalIdentity> ExternalIdentities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,7 +32,7 @@ internal class CateringDbContext : DbContext
         new CartEntityConfiguration().Configure(modelBuilder.Entity<Cart>());
         new OrderEntityConfiguration().Configure(modelBuilder.Entity<Order>());
         new IdentityEntityConfiguration().Configure(modelBuilder.Entity<Identity>());
-        new ExternailIdentitiesEntityConfiguration().Configure(modelBuilder.Entity<ExternalIdentity>());
+        new CateringIdentitiesConfiguration().Configure(modelBuilder.Entity<CateringIdentity>());
         new CustomerEntityConfiguration().Configure(modelBuilder.Entity<Customer>());
     }
 }

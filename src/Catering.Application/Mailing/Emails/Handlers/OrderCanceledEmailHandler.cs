@@ -66,7 +66,7 @@ internal class OrderCanceledEmailHandler : INotificationHandler<OrderCanceled>
 
             _emailBuilder.HasTitle($"Order #{order.Id}");
             _emailBuilder.HasEmailTemplate(template, new { Order = order, Menu = menu, Customer = customer });
-            _emailBuilder.HasRecepient(customer.Email);
+            _emailBuilder.HasRecepient(customer.Identity.Email);
             generatedEmail = _emailBuilder.Build();
         }
         catch(Exception e)

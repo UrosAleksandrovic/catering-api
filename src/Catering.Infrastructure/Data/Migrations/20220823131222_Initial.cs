@@ -22,28 +22,11 @@ namespace Catering.Infrastructure.Data.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     FullName_FirstName = table.Column<string>(type: "text", nullable: true),
                     FullName_LastName = table.Column<string>(type: "text", nullable: true),
-                    Roles = table.Column<string>(type: "text", nullable: true)
+                    Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Identities", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Menus",
-                schema: "catering",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Contact_PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    Contact_Email = table.Column<string>(type: "text", nullable: true),
-                    Contact_Address = table.Column<string>(type: "text", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Menus", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,28 +50,7 @@ namespace Catering.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customers",
-                schema: "catering",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Budget_Balance = table.Column<decimal>(type: "numeric(19,4)", nullable: true),
-                    Budget_ReservedAssets = table.Column<decimal>(type: "numeric(19,4)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Customers_Identities_Id",
-                        column: x => x.Id,
-                        principalSchema: "catering",
-                        principalTable: "Identities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExternalIdentities",
+                name: "CateringIdentities",
                 schema: "catering",
                 columns: table => new
                 {
@@ -97,13 +59,102 @@ namespace Catering.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExternalIdentities", x => x.Id);
+                    table.PrimaryKey("PK_CateringIdentities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExternalIdentities_Identities_Id",
+                        name: "FK_CateringIdentities_Identities_Id",
                         column: x => x.Id,
                         principalSchema: "catering",
                         principalTable: "Identities",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customers",
+                schema: "catering",
+                columns: table => new
+                {
+                    IdentityId = table.Column<string>(type: "text", nullable: false),
+                    Budget_Balance = table.Column<decimal>(type: "numeric(19,4)", nullable: true),
+                    Budget_ReservedAssets = table.Column<decimal>(type: "numeric(19,4)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.IdentityId);
+                    table.ForeignKey(
+                        name: "FK_Customers_Identities_IdentityId",
+                        column: x => x.IdentityId,
+                        principalSchema: "catering",
+                        principalTable: "Identities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Menus",
+                schema: "catering",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Contact_PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    Contact_Email = table.Column<string>(type: "text", nullable: true),
+                    Contact_Address = table.Column<string>(type: "text", nullable: true),
+                    Contact_IdentityId = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Menus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Menus_Identities_Contact_IdentityId",
+                        column: x => x.Contact_IdentityId,
+                        principalSchema: "catering",
+                        principalTable: "Identities",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItem",
+                schema: "catering",
+                columns: table => new
+                {
+                    OrderId = table.Column<long>(type: "bigint", nullable: false),
+                    ItemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NameSnapshot = table.Column<string>(type: "text", nullable: false),
+                    PriceSnapshot = table.Column<decimal>(type: "numeric", nullable: false),
+                    Note = table.Column<string>(type: "text", nullable: true),
+                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItem", x => new { x.OrderId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_OrderItem_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalSchema: "catering",
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                schema: "catering",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "catering",
+                        principalTable: "Customers",
+                        principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -134,46 +185,23 @@ namespace Catering.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderItem",
+                name: "CartItem",
                 schema: "catering",
                 columns: table => new
                 {
-                    OrderId = table.Column<long>(type: "bigint", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CartId = table.Column<Guid>(type: "uuid", nullable: false),
                     ItemId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PriceSnapshot = table.Column<decimal>(type: "numeric", nullable: false),
                     Note = table.Column<string>(type: "text", nullable: true),
                     Quantity = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItem", x => new { x.OrderId, x.Id });
+                    table.PrimaryKey("PK_CartItem", x => new { x.CartId, x.ItemId });
                     table.ForeignKey(
-                        name: "FK_OrderItem_Orders_OrderId",
-                        column: x => x.OrderId,
+                        name: "FK_CartItem_Carts_CartId",
+                        column: x => x.CartId,
                         principalSchema: "catering",
-                        principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Carts",
-                schema: "catering",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Carts_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalSchema: "catering",
-                        principalTable: "Customers",
+                        principalTable: "Carts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -184,43 +212,17 @@ namespace Catering.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     ItemId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Rating = table.Column<short>(type: "smallint", nullable: false),
-                    CustomerId = table.Column<string>(type: "text", nullable: true)
+                    CustomerId = table.Column<string>(type: "text", nullable: false),
+                    Rating = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemRating", x => new { x.ItemId, x.Id });
+                    table.PrimaryKey("PK_ItemRating", x => new { x.ItemId, x.CustomerId });
                     table.ForeignKey(
                         name: "FK_ItemRating_Items_ItemId",
                         column: x => x.ItemId,
                         principalSchema: "catering",
                         principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CartItem",
-                schema: "catering",
-                columns: table => new
-                {
-                    CartId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Note = table.Column<string>(type: "text", nullable: true),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    ItemId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CartItem", x => new { x.CartId, x.Id });
-                    table.ForeignKey(
-                        name: "FK_CartItem_Carts_CartId",
-                        column: x => x.CartId,
-                        principalSchema: "catering",
-                        principalTable: "Carts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -233,28 +235,16 @@ namespace Catering.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemRating_CustomerId",
-                schema: "catering",
-                table: "ItemRating",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Items_MenuId",
                 schema: "catering",
                 table: "Items",
                 column: "MenuId");
 
-            migrationBuilder.InsertData(
+            migrationBuilder.CreateIndex(
+                name: "IX_Menus_Contact_IdentityId",
                 schema: "catering",
-                table: "Identities",
-                columns: new[] { "Id", "Email" },
-                values: new object[] { "sudo", "super.admin@catering.test" });
-
-            migrationBuilder.InsertData(
-                schema: "catering",
-                table: "Customers",
-                columns: new[] { "Id", "Budget_Balance" },
-                values: new object[] { "sudo", 0 });
+                table: "Menus",
+                column: "Contact_IdentityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -264,7 +254,7 @@ namespace Catering.Infrastructure.Data.Migrations
                 schema: "catering");
 
             migrationBuilder.DropTable(
-                name: "ExternalIdentities",
+                name: "CateringIdentities",
                 schema: "catering");
 
             migrationBuilder.DropTable(

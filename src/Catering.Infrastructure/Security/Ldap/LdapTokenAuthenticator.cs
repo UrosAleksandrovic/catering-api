@@ -9,33 +9,33 @@ using System.Security.Authentication;
 
 namespace Catering.Infrastructure.Security.Ldap;
 
-internal class LdapTokenAuthenticator : ITokenAtuhenticator<Customer>
+internal class LdapTokenAuthenticator : ITokenAtuhenticator<Identity>
 {
     private readonly SecurityLdapSettings _ldapOptions;
-    private readonly ICustomerRepository _customerRepository;
+    private readonly IIdentityRepository<Identity> _identityRepository;
     private readonly IJwtTokenGenerator _tokenGenerator;
 
     public LdapTokenAuthenticator(
         IOptions<SecurityLdapSettings> ldapOptions,
-        ICustomerRepository customerRepository,
+        IIdentityRepository<Identity> identityRepository,
         IJwtTokenGenerator tokenGenerator)
     {
         _ldapOptions = ldapOptions.Value;
-        _customerRepository = customerRepository;
+        _identityRepository = identityRepository;
         _tokenGenerator = tokenGenerator;
     }
 
-    public async Task<Customer> AuthenticateAsync(string identity, string password)
+    public async Task<Identity> AuthenticateAsync(string identity, string password)
     {
         var ldapUser = RetrieveLdapUser(identity, password);
 
-        var registeredCustomer = await _customerRepository.GetByEmailAsync(ldapUser.Mail);
-        if (registeredCustomer == default)
+        var registeredIdentity = await _identityRepository.GetByEmailAsync(ldapUser.Mail);
+        if (registeredIdentity == default)
             throw new AuthenticationException();
 
-        await PopulateCustomerAsync(registeredCustomer, ldapUser);
+        await PopulateIdentityAsync(registeredIdentity, ldapUser);
 
-        return registeredCustomer;
+        return registeredIdentity;
     }
 
     public async Task<string> GenerateTokenAsync(string identity, string password)
@@ -65,13 +65,13 @@ internal class LdapTokenAuthenticator : ITokenAtuhenticator<Customer>
         return $"{qualifier}={username},{_ldapOptions.DirectoryPath}";
     }
 
-    private async Task PopulateCustomerAsync(Customer customer, LdapUser ldapUser)
+    private async Task PopulateIdentityAsync(Identity identity, LdapUser ldapUser)
     {
-        if (customer.FullName?.FirstName != default)
+        if (identity.FullName?.FirstName != default)
             return;
             
-        customer.Edit(customer.Email, new FullName(ldapUser.FirstName, ldapUser.LastName));
+        identity.Edit(identity.Email, new FullName(ldapUser.FirstName, ldapUser.LastName));
 
-        await _customerRepository.UpdateAsync(customer);
+        await _identityRepository.UpdateAsync(identity);
     }
 }

@@ -20,7 +20,7 @@ public static class RepositoriesExtensions
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IMenuRepository, MenuRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IExternalIdentityRepository, ExternalIdentityRepository>();
+        services.AddScoped<ICateringIdentitiesRepository, CateringIdentityRepository>();
         services.AddScoped<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
 
         return services;

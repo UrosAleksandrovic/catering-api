@@ -5,16 +5,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
-internal class CustomerRepository : IdentityRepository<Customer>, ICustomerRepository
+internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbContext>, ICustomerRepository
 {
     public CustomerRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory) { }
+
+    public async Task<Customer> GetByIdentityEmailAsync(string email)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        return await dbContext.Set<Customer>()
+            .AsNoTracking()
+            .Include(c => c.Identity)
+            .Where(c => c.Identity.Email == email)
+            .FirstOrDefaultAsync();
+    }
 
     public async Task<(IEnumerable<Customer>, int)> GetFilteredAsync(CustomersFilter filter)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var resultQuery = ApplyFilters(dbContext.Customers.AsNoTracking(), filter);
+        var resultQuery = ApplyFilters(dbContext.Customers.AsNoTracking().Include(c => c.Identity), filter);
 
         return (await resultQuery.ToListAsync(),
                 await resultQuery.CountAsync());
@@ -25,16 +36,16 @@ internal class CustomerRepository : IdentityRepository<Customer>, ICustomerRepos
         var finalFilter = customers;
 
         if (filter.IsAdministrator != default)
-            finalFilter = finalFilter.Where(c => c.IsAdministrator);
+            finalFilter = finalFilter.Where(c => c.Identity.Role.IsAdministrator());
 
         if (filter.FirstName != default)
-            finalFilter = finalFilter.Where(c => EF.Functions.Like(c.FullName.FirstName, $"%{filter.FirstName}%"));
+            finalFilter = finalFilter.Where(c => EF.Functions.Like(c.Identity.FullName.FirstName, $"%{filter.FirstName}%"));
 
         if (filter.LastName != default)
-            finalFilter = finalFilter.Where(c => EF.Functions.Like(c.FullName.FirstName, $"%{filter.LastName}%"));
+            finalFilter = finalFilter.Where(c => EF.Functions.Like(c.Identity.FullName.FirstName, $"%{filter.LastName}%"));
 
         if (filter.Email != default)
-            finalFilter = finalFilter.Where(c => EF.Functions.Like(c.Email, $"%{filter.Email}%"));
+            finalFilter = finalFilter.Where(c => EF.Functions.Like(c.Identity.Email, $"%{filter.Email}%"));
 
         if (filter.MaxBalance != default)
             finalFilter = finalFilter.Where(c => c.Budget.Balance < filter.MaxBalance);
@@ -43,7 +54,7 @@ internal class CustomerRepository : IdentityRepository<Customer>, ICustomerRepos
             finalFilter = finalFilter.Where(c => c.Budget.Balance < filter.MinBalance);
 
         if (filter.Role != default)
-            finalFilter = finalFilter.Where(c => c.Roles.Contains(filter.Role));
+            finalFilter = finalFilter.Where(c => c.Identity.Role.HasFlag(filter.Role));
 
         return finalFilter.Skip((filter.PageIndex - 1) * filter.PageSize)
                           .Take(filter.PageSize);

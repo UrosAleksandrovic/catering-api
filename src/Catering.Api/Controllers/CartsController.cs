@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace Catering.Api.Controllers;
 
 [Route("api/carts")]
-[AuthorizeCompanyEmployee]
+[AuthorizeClientsEmployee]
 public class CartsController : ControllerBase
 {
     private readonly ICartManagementAppService _cartsAppService;

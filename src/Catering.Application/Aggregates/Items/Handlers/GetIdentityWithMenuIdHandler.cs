@@ -25,14 +25,14 @@ internal class GetIdentityWithMenuIdHandler : IRequestHandler<GetIdentityForMenu
         if (identity == default)
             return default;
 
-        if (identity.IsAdministrator || identity.IsCompanyEmployee)
+        if (identity.Role.IsAdministrator() || identity.Role.IsClientEmployee())
             return identity;
 
         var menu = await _menuRepository.GetByIdAsync(request.MenuId);
         if (menu == default)
             return default;
 
-        if (identity.IsRestourantEmployee)
+        if (identity.Role.IsRestourantEmployee())
             return menu.HasContact(identity.Id) ? identity : default;
 
         return default;

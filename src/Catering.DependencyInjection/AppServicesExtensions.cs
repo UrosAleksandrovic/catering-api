@@ -26,7 +26,7 @@ public static class AppServicesExtensions
         services.AddScoped<IItemManagementAppService, ItemManagementAppService>();
         services.AddScoped<ICartManagementAppService, CartManagementAppService>();
         services.AddScoped<ICustomerManagementAppService, CustomerManagementAppService>();
-        services.AddScoped<IExternalIdentitiesManagementAppService, ExternalIdentitiesManagementAppService>();
+        services.AddScoped<ICateringIdentititesManagementAppService, CateringIdentitiesManagementAppService>();
         services.AddScoped<IMenuManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
 
@@ -42,7 +42,7 @@ public static class AppServicesExtensions
 
     public static IServiceCollection AddCateringMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(LoginCustomerHandler));
+        services.AddMediatR(typeof(LoginLdapIdentity));
         return services;
     }
 

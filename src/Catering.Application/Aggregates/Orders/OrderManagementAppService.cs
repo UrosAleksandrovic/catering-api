@@ -4,6 +4,7 @@ using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Aggregates.Orders.Notifications;
 using Catering.Application.Aggregates.Orders.Requests;
 using Catering.Domain.Builders;
+using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Domain.Entities.OrderAggregate;
 using Catering.Domain.Services.Abstractions;
 using MediatR;
@@ -38,7 +39,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
         _orderingService.CancelOrder(customer, order);
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
 
-        _ = _publisher.Publish(new OrderCanceled { CustomerId = customer.Id, OrderId = order.Id });
+        _ = _publisher.Publish(new OrderCanceled { CustomerId = customer.IdentityId, OrderId = order.Id });
     }
 
     public async Task ConfirmAsync(long orderId)
@@ -49,7 +50,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
 
         _orderingService.ConfirmOrder(customer, order);
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
-        _ = _publisher.Publish(new OrderConfirmed { CustomerId = customer.Id, OrderId = order.Id });
+        _ = _publisher.Publish(new OrderConfirmed { CustomerId = customer.IdentityId, OrderId = order.Id });
     }
 
     public async Task<FilterResult<OrderInfoDto>> GetFilteredAsync(OrdersFilter orderFilters, string requestorId)
@@ -72,7 +73,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
         var customerRequest = new GetOrderCustomer { CustomerId = requestorId };
         var customer = await _publisher.Send(customerRequest);
 
-        if (customer.IsCompanyEmployee && order.CustomerId != customer.Id)
+        if (customer.Identity.Role.IsClientEmployee() && order.CustomerId != customer.IdentityId)
             return null;
 
         return _mapper.Map<OrderInfoDto>(order);
@@ -121,7 +122,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
         var identityRequest = new GetIdentityWithId { IdentityId = requestorId };
         var requestorIdentity = await _publisher.Send(identityRequest);
 
-        if (requestorIdentity.IsCompanyEmployee && !requestorIdentity.IsAdministrator)
+        if (requestorIdentity.Role.IsClientEmployee() && !requestorIdentity.Role.IsAdministrator())
         {
             var newFilter = new OrdersFilter(orderFilters)
             {
@@ -130,7 +131,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
             return await _orderRepository.GetOrdersForCustomerAsync(newFilter);
         }
 
-        if (requestorIdentity.IsRestourantEmployee)
+        if (requestorIdentity.Role.IsRestourantEmployee())
         {
             var newFilter = new OrdersFilter(orderFilters)
             {

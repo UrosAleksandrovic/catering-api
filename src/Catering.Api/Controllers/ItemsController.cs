@@ -9,6 +9,8 @@ using System.Security.Claims;
 namespace Catering.Api.Controllers;
 
 [Route("/api/items")]
+//TODO: Correct tests
+//TODO: Make migrations
 public class ItemsController : ControllerBase
 {
     private readonly IItemManagementAppService _itemsAppService;
@@ -19,7 +21,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateAsync([FromBody] CreateItemDto createRequest)
     {
         var createdId = await _itemsAppService.CreateItemAsync(createRequest);
@@ -43,7 +45,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
     {
         await _itemsAppService.DeleteItemAsync(id);
@@ -52,7 +54,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateItemDto updateRequest)
     {
         await _itemsAppService.UpdateItemAsync(id, updateRequest);
@@ -61,7 +63,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPut("{id}/{rating}")]
-    [AuthorizeCompanyEmployee]
+    [AuthorizeClientsEmployee]
     public async Task<IActionResult> RateItemAsync([FromRoute] Guid id, [FromRoute] short rating)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

@@ -37,7 +37,7 @@ internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T>
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var tracker = dbContext.Update(entity);
+        dbContext.Update(entity);
         await dbContext.SaveChangesAsync();
 
         return entity;

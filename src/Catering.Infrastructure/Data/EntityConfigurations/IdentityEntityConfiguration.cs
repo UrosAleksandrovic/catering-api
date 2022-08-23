@@ -21,15 +21,5 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
 
         var fullNameBuilder = builder.OwnsOne(e => e.FullName);
         fullNameBuilder.Property(e => e.FirstName).IsRequired();
-
-        builder.Property(e => e.Roles)
-            .Metadata
-            .SetPropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.Property(e => e.Roles)
-            .HasColumnType("text")
-            .HasConversion<StringReadonlyListConverter>()
-            .Metadata
-            .SetValueComparer(typeof(StringReadonlyListComparer));
     }
 }

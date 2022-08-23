@@ -19,7 +19,7 @@ public class MenusController : ControllerBase
     }
 
     [HttpPost]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateMenuAsync([FromBody]CreateMenuDto createRequest)
     {
         var createdId = await _menuAppService.CreateAsync(createRequest);
@@ -42,7 +42,7 @@ public class MenusController : ControllerBase
     }
 
     [HttpGet]
-    [AuthorizeCompanyEmployee]
+    [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
     {
         var result = await _menuAppService.GetFilteredAsync(filter);
@@ -51,7 +51,7 @@ public class MenusController : ControllerBase
     } 
 
     [HttpPut("{id}")]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateMenu([FromRoute] Guid id, [FromBody] UpdateMenuDto updateRequest)
     {
         await _menuAppService.UpdateAsync(id, updateRequest);
@@ -60,7 +60,7 @@ public class MenusController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [AuthorizeCompanyAdmins]
+    [AuthorizeClientsAdmins]
     public async Task<IActionResult> DeleteMenu([FromRoute] Guid id)
     {
         await _menuAppService.DeleteAsync(id);

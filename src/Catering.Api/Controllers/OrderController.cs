@@ -20,7 +20,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    [AuthorizeCompanyEmployee]
+    [AuthorizeClientsEmployee]
     public async Task<IActionResult> MakeOrderAsync([FromBody] CreateOrderDto createOrder)
     {
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -31,9 +31,9 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{orderId}/cancel")]
-    [CateringAuthorization(IdentityRole.SuperAdministrator,
-        IdentityRole.CompanyAdministrator,
-        IdentityRole.RestourantEmployee)]
+    [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
+        IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
+        IdentityRole.Restourant | IdentityRole.Employee)]
     public async Task<IActionResult> CancelOrderAsync([FromRoute] long orderId)
     {
         await _ordersService.CancelAsync(orderId);
@@ -42,10 +42,9 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{orderId}/confirm")]
-    [CateringAuthorization(
-        IdentityRole.SuperAdministrator,
-        IdentityRole.CompanyAdministrator,
-        IdentityRole.RestourantEmployee)]
+    [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
+        IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
+        IdentityRole.Restourant | IdentityRole.Employee)]
     public async Task<IActionResult> ConfirmOrderAsync([FromRoute] long orderId)
     {
         await _ordersService.ConfirmAsync(orderId);

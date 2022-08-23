@@ -7,25 +7,30 @@ public class Identity : BaseEntity<string>
 {
     public string Email { get; private set; }
     public FullName FullName { get; private set; }
-
-    private readonly List<string> _roles = new();
-    public IReadOnlyList<string> Roles => _roles.AsReadOnly();
+    public IdentityRole Role { get; private set; }
 
     protected Identity() { }
 
     public Identity(
         FullName fullName,
         string email,
-        string startRole)
+        IdentityRole startingRole)
+        : this(email, startingRole)
+    {
+        FullName = fullName;
+    }
+
+    public Identity(
+        string email,
+        IdentityRole startingRole)
     {
         Guard.Against.NullOrWhiteSpace(email);
-        Guard.Against.NullOrWhiteSpace(startRole);
+        Guard.Against.Zero((int)startingRole);
 
         Id = Guid.NewGuid().ToString();
         Email = email;
-        FullName = fullName;
-        _roles.Add(startRole);
-    }
+        Role = startingRole;
+    } 
 
     public void Edit(string email, FullName fullName)
     {
@@ -43,45 +48,28 @@ public class Identity : BaseEntity<string>
             FullName = default;
     }
 
-    protected void EditRoles(IEnumerable<string> newRoles)
-    {
-        Guard.Against.NullOrEmpty(newRoles);
-
-        _roles.Clear();
-
-        _roles.AddRange(newRoles);
-    }
+    protected void ChangeRole(IdentityRole newRole)
+        => Role = newRole;
 
     public void EditOtherIdentity(
         Identity identity,
         string email,
         FullName fullName,
-        IEnumerable<string> newRoles)
+        IdentityRole newRole)
     {
         Guard.Against.Default(identity);
+        Guard.Against.Zero((int)newRole);
 
-        if (!IsAdministrator)
+        if (!Role.IsAdministrator())
             throw new IdentityRestrictionException(Id, nameof(EditOtherIdentity));
 
         identity.Edit(email, fullName);
-        identity.EditRoles(newRoles);
+        identity.ChangeRole(newRole);
     }
 
-    public bool HasRole(string role)
-        => _roles.Contains(role);
+    public bool HasRole(IdentityRole role)
+        => Role.HasFlag(role);
 
-    public bool IsAdministrator => _roles.Any(IdentityRole.IsAdministratorRole);
-
-    public bool IsCompanyEmployee
-        => _roles.Intersect(new[]
-        {
-            IdentityRole.CompanyEmployee,
-            IdentityRole.CompanyAdministrator
-        }).Any();
-
-    public bool IsRestourantEmployee
-        => _roles.Intersect(new[]
-        {
-            IdentityRole.RestourantEmployee
-        }).Any();
+    public bool HasIdenticalRole(IdentityRole role)
+        => (Role & role) != 0;
 }

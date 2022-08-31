@@ -53,14 +53,14 @@ internal class ItemManagementAppService : IItemManagementAppService
         await _itemRepository.UpdateAsync(item);
     }
 
-    public async Task<FilterResult<DetailedItemsInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId)
+    public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId)
     {
-        var result = new FilterResult<DetailedItemsInfoDto>
+        var result = new FilterResult<ItemInfoDto>
         {
             PageIndex = itemFilters.PageIndex,
             PageSize = itemFilters.PageSize,
             TotalNumberOfPages = 0,
-            Result = Enumerable.Empty<DetailedItemsInfoDto>()
+            Result = Enumerable.Empty<ItemInfoDto>()
         };
 
         var request = new GetIdentityForMenuId { IdentityId = requestorId, MenuId = itemFilters.MenuId };
@@ -70,12 +70,12 @@ internal class ItemManagementAppService : IItemManagementAppService
 
         var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
         result.TotalNumberOfPages = totalCount / itemFilters.PageSize;
-        result.Result = _mapper.Map<IEnumerable<DetailedItemsInfoDto>>(items);
+        result.Result = _mapper.Map<IEnumerable<ItemInfoDto>>(items);
 
         return result;
     }
 
-    public async Task<DetailedItemsInfoDto> GetItemByIdAsync(Guid itemId, string requestorId)
+    public async Task<ItemInfoDto> GetItemByIdAsync(Guid itemId, string requestorId)
     {
         var item = await _itemRepository.GetByIdAsync(itemId);
         if (item == default)
@@ -84,7 +84,7 @@ internal class ItemManagementAppService : IItemManagementAppService
         var request = new GetIdentityForMenuId { IdentityId = requestorId, MenuId = item.MenuId };
         var creator = await _publisher.Send(request);
 
-        return creator == default ? default : _mapper.Map<DetailedItemsInfoDto>(item);
+        return creator == default ? default : _mapper.Map<ItemInfoDto>(item);
     }
 
     public async Task<short> GetCustomerRatingForItemAsync(Guid itemId, string customerId)
@@ -114,27 +114,11 @@ internal class ItemManagementAppService : IItemManagementAppService
         if (item == default)
             throw new KeyNotFoundException();
 
-        UpdateItemCategories(item, updateRequest.Categories);
-        UpdateItemIngredients(item, updateRequest.Ingredients);
+        item.UpdateAllCategories(updateRequest.Categories);
+        item.UpdateAllIngredients(updateRequest.Ingredients);
         item.EditGeneralData(updateRequest.Name, updateRequest.Description, updateRequest.Price);
 
         await _itemRepository.UpdateAsync(item);
-    }
-
-    private void UpdateItemCategories(Item item, IEnumerable<string> updateRequestCategories)
-    {
-        var categoriesToRemove = item.Categories.Except(updateRequestCategories);
-        item.RemoveCategories(categoriesToRemove);
-
-        item.AddCategories(updateRequestCategories);
-    }
-
-    private void UpdateItemIngredients(Item item, IEnumerable<string> updateRequestIngredients)
-    {
-        var ingredientsToRemove = item.Ingredients.Except(updateRequestIngredients);
-        item.RemoveIngredients(ingredientsToRemove);
-
-        item.AddIngredients(updateRequestIngredients);
     }
 
     public async Task<List<ItemsLeaderboardDto>> GetMostOrderedFromTheMenuAsync(int top, Guid menuId)

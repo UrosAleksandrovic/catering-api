@@ -1,6 +1,4 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
-
-namespace Catering.Application.Aggregates.Identites.Dtos;
+﻿namespace Catering.Application.Aggregates.Identites.Dtos;
 
 public class IdentityInfoDto
 {
@@ -8,5 +6,5 @@ public class IdentityInfoDto
     public string Email { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public IdentityRole Roles { get; set; }
+    public IEnumerable<string> Roles { get; set; }
 }

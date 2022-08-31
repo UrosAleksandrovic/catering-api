@@ -3,6 +3,7 @@
 public class ItemsFilter : FilterBase
 {
     public IEnumerable<string> Categories { get; set; }
+    public IEnumerable<string> Ingredients { get; set; }
     public decimal? TopPrice { get; set; }
     public decimal? BottomPrice { get; set; }
     public Guid MenuId { get; set; }

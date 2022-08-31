@@ -9,8 +9,6 @@ using System.Security.Claims;
 namespace Catering.Api.Controllers;
 
 [Route("/api/items")]
-//TODO: Correct tests
-//TODO: Make migrations
 public class ItemsController : ControllerBase
 {
     private readonly IItemManagementAppService _itemsAppService;

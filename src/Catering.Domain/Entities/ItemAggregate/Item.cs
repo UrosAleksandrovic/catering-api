@@ -10,14 +10,14 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
     public Guid MenuId { get; private set; }
     public bool IsDeleted { get; private set; }
 
-    private readonly List<string> _ingredients = new();
-    public IReadOnlyList<string> Ingredients => _ingredients.AsReadOnly();
+    private readonly List<ItemIngredient> _ingredients = new();
+    public IReadOnlyList<ItemIngredient> Ingredients => _ingredients.AsReadOnly();
 
     private readonly List<ItemRating> _ratings = new();
     public IReadOnlyList<ItemRating> Ratings => _ratings.AsReadOnly();
 
-    private readonly List<string> _categories = new();
-    public IReadOnlyList<string> Categories => _categories.AsReadOnly();
+    private readonly List<ItemCategory> _categories = new();
+    public IReadOnlyList<ItemCategory> Categories => _categories.AsReadOnly();
 
     protected Item() { }
 
@@ -47,9 +47,10 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
     {
         Guard.Against.Null(newCategories);
 
-        var categoriesToAdd = newCategories.Select(c => c.ToLowerInvariant())
-            .Distinct()
-            .Except(Categories);
+        var newCategoriesWithoutDuplicates = newCategories.Select(c => c.ToLowerInvariant()).Distinct();
+        var categoriesToAdd = newCategoriesWithoutDuplicates
+            .Select(c => new ItemCategory(Id, c))
+            .Except(Categories, new ItemCategoryComparator());
 
         _categories.AddRange(categoriesToAdd);
     }
@@ -61,22 +62,32 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
         if (_categories.Count == 0)
             return;
 
+        var categoriesWithoutDuplicates = categoriesToRemove.Select(c => c.ToLowerInvariant()).Distinct();
         var resultCategories = Categories
-            .Except(categoriesToRemove.Select(c => c.ToLowerInvariant()).Distinct())
+            .Except(categoriesWithoutDuplicates.Select(c => new ItemCategory(Id, c)), new ItemCategoryComparator())
             .ToArray();
 
         _categories.Clear();
         _categories.AddRange(resultCategories);
     }
 
+    public void UpdateAllCategories(IEnumerable<string> listOfCategories)
+    {
+        var categoriesToRemove = Categories.Select(c => c.Id).Except(listOfCategories);
+        RemoveCategories(categoriesToRemove);
+
+        AddCategories(listOfCategories);
+    }
+
     public void AddIngredients(IEnumerable<string> newIngredients)
     {
         Guard.Against.Null(newIngredients);
 
-        var ingredientsToAdd = newIngredients
-            .Select(i => i.ToLowerInvariant())
-            .Distinct()
-            .Except(_ingredients);
+        var newIngredientsWithoutDuplicates = newIngredients.Select(c => c.ToLowerInvariant()).Distinct();
+        var ingredientsToAdd = newIngredientsWithoutDuplicates
+            .Select(c => new ItemIngredient(Id, c))
+            .Except(Ingredients, new ItemIngredientComparator());
+
         _ingredients.AddRange(ingredientsToAdd);
     }
 
@@ -87,12 +98,21 @@ public class Item : BaseEntity<Guid>, ISoftDeletable
         if (_ingredients.Count == 0)
             return;
 
-        var resultIngredients = _ingredients
-            .Except(ingredientsToRemove.Select(c=> c.ToLowerInvariant()).Distinct())
+        var ingredientsWithoutDuplicates = ingredientsToRemove.Select(c => c.ToLowerInvariant()).Distinct();
+        var resultIngredients = Ingredients
+            .Except(ingredientsWithoutDuplicates.Select(c => new ItemIngredient(Id, c)), new ItemIngredientComparator())
             .ToArray();
 
         _ingredients.Clear();
         _ingredients.AddRange(resultIngredients);
+    }
+
+    public void UpdateAllIngredients(IEnumerable<string> listOfIngredients)
+    {
+        var ingredientsToRemove = Ingredients.Select(c => c.Id).Except(listOfIngredients);
+        RemoveIngredients(ingredientsToRemove);
+
+        AddIngredients(listOfIngredients);
     }
 
     public void AddOrChangeRating(string customerId, short rating)

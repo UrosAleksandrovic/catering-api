@@ -8,8 +8,8 @@ public interface IItemManagementAppService
     public Task UpdateItemAsync(Guid itemId, UpdateItemDto updateRequest);
     public Task RateItemAsync(Guid itemId, string customerId, short rating);
     public Task DeleteItemAsync(Guid itemId);
-    public Task<FilterResult<DetailedItemsInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId);
+    public Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId);
     public Task<short> GetCustomerRatingForItemAsync(Guid itemId, string customerId);
-    public Task<DetailedItemsInfoDto> GetItemByIdAsync(Guid itemId, string requestorId);
+    public Task<ItemInfoDto> GetItemByIdAsync(Guid itemId, string requestorId);
     public Task<List<ItemsLeaderboardDto>> GetMostOrderedFromTheMenuAsync(int top, Guid menuId);
 }

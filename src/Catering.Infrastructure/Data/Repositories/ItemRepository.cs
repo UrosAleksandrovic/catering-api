@@ -100,11 +100,18 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
 
     private IQueryable<Item> ApplyFilters(ItemsFilter itemsFilter, IQueryable<Item> queryableItems)
     {
-        queryableItems.AsNoTracking();
+        queryableItems
+            .AsNoTracking()
+            .Include(i => i.Ingredients)
+            .Include(i => i.Categories);
 
-        //TODO: Move to separate table since filtering is not possible...
-        //if (itemsFilter.Categories != null && itemsFilter.Categories.Any())
-        //    queryableItems = queryableItems.Where(i => itemsFilter.Categories.Intersect(i.Categories).Any());
+        if (itemsFilter.Categories != null && itemsFilter.Categories.Any())
+            foreach (var category in itemsFilter.Categories)
+                queryableItems = queryableItems.Where(i => i.Categories.Any(c => c.Id == category));
+
+        if (itemsFilter.Ingredients != null && itemsFilter.Ingredients.Any())
+            foreach (var ingredient in itemsFilter.Ingredients)
+                queryableItems = queryableItems.Where(i => i.Ingredients.Any(c => c.Id == ingredient));
 
         if (itemsFilter.TopPrice != null)
             queryableItems = queryableItems.Where(i => i.Price <= itemsFilter.TopPrice);
@@ -121,7 +128,6 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
 
     private IOrderedQueryable<Item> ApplyOrdering(ItemsFilter itemsFilter, IQueryable<Item> queryableItems)
     {
-
         return (itemsFilter?.OrderBy) switch
         {
             ItemsOrderBy.Price => queryableItems.OrderBy(i => i.Price),

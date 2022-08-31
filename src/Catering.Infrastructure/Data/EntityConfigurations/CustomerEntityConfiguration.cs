@@ -16,7 +16,8 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<Customer>
 
         builder.HasOne(e => e.Identity)
                .WithOne()
-               .HasPrincipalKey<Identity>(e => e.Id);
+               .HasPrincipalKey<Identity>(e => e.Id)
+               .HasForeignKey<Customer>(e => e.IdentityId);
 
         var budgetBuidler = builder.OwnsOne(e => e.Budget);
 

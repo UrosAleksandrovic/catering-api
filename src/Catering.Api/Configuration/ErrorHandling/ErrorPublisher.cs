@@ -19,16 +19,16 @@ public class ErrorPublisher : IErrorPublisher
         if (!CheckValidityOfResolverType(exceptionType, resolverType))
             return null;
 
-        var resolverInstance = (IErrorHttpResolver)Activator.CreateInstance(resolverType.MakeGenericType());
+        var resolverInstance = (IErrorHttpResolver)Activator.CreateInstance(resolverType);
         return resolverInstance.Resolve(e);
     }
 
     public bool TryAddExceptionResolver(Type resolverType)
     {
-        if (!resolverType.IsAssignableTo(typeof(ErrorHttpResolver<>)))
+        if (!resolverType.IsAssignableTo(typeof(IErrorHttpResolver)))
             return false;
 
-        var exceptionType = resolverType.GetGenericArguments().First();
+        var exceptionType = resolverType.BaseType.GetGenericArguments().First();
         if (!exceptionType.IsAssignableTo(typeof(Exception)))
             return false;
 

@@ -15,13 +15,13 @@ public static class RepositoriesExtensions
 {
     public static IServiceCollection AddCateringRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IItemRepository, ItemRepository>();
-        services.AddScoped<ICartRepository, CartRepository>();
-        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IMenuRepository, MenuRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<ICateringIdentitiesRepository, CateringIdentityRepository>();
-        services.AddScoped<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
+        services.AddTransient<IItemRepository, ItemRepository>();
+        services.AddTransient<ICartRepository, CartRepository>();
+        services.AddTransient<ICustomerRepository, CustomerRepository>();
+        services.AddTransient<IMenuRepository, MenuRepository>();
+        services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<ICateringIdentitiesRepository, CateringIdentityRepository>();
+        services.AddTransient<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
 
         return services;
     }

@@ -31,7 +31,7 @@ public class CartsController : ControllerBase
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         await _cartsAppService.AddItemAsync(customerId, addItemDto);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut("items/{itemId}/increment")]
@@ -40,7 +40,7 @@ public class CartsController : ControllerBase
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         await _cartsAppService.IncrementItemAsync(customerId, itemId, quantity);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut("items/{itemId}/decrement")]
@@ -49,7 +49,7 @@ public class CartsController : ControllerBase
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         await _cartsAppService.DecrementItemAsync(customerId, itemId, quantity);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut("items/{itemId}/note")]
@@ -58,6 +58,6 @@ public class CartsController : ControllerBase
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         await _cartsAppService.AddOrEditItemNoteAsync(customerId, itemId, newNote.Note);
 
-        return Ok();
+        return NoContent();
     }
 }

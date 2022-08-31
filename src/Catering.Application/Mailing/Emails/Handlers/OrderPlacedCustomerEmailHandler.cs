@@ -1,6 +1,7 @@
 ﻿using Catering.Application.Aggregates.Identites.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Notifications;
+using Catering.Domain.Entities.IdentityAggregate;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Catering.Application.Mailing.Emails.TemplateNamesConstants;
@@ -13,7 +14,7 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
     private readonly IOrderRepository _orderRepository;
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
-    private readonly ICustomerRepository _customerRepository;
+    private readonly IIdentityRepository<Identity> _identityRepository;
     private readonly ILogger<OrderPlacedCustomerEmailHandler> _logger;
 
     public OrderPlacedCustomerEmailHandler(
@@ -21,15 +22,15 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
         IEmailSender emailSender,
         IOrderRepository orderRepository,
         IEmailBuilder emailBuilder,
-        ICustomerRepository customerRepository,
-        ILogger<OrderPlacedCustomerEmailHandler> logger)
+        ILogger<OrderPlacedCustomerEmailHandler> logger,
+        IIdentityRepository<Identity> identityRepository)
     {
         _emailRepository = emailRepository;
         _emailSender = emailSender;
         _orderRepository = orderRepository;
         _emailBuilder = emailBuilder;
-        _customerRepository = customerRepository;
         _logger = logger;
+        _identityRepository = identityRepository;
     }
 
     public async Task Handle(OrderPlaced notification, CancellationToken cancellationToken)
@@ -57,11 +58,11 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
         {
             var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestourant);
             var order = await _orderRepository.GetByIdAsync(notification.OrderId);
-            var customer = await _customerRepository.GetByIdAsync(order.CustomerId);
+            var customerIdentity = await _identityRepository.GetByIdAsync(order.CustomerId);
 
             _emailBuilder.HasTitle($"Order #{order.Id}");
             _emailBuilder.HasEmailTemplate(template, new { Order = order });
-            _emailBuilder.HasRecepient(customer.Identity.Email);
+            _emailBuilder.HasRecepient(customerIdentity.Email);
 
             generatedEmail = _emailBuilder.Build();
         }

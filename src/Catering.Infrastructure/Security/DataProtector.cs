@@ -48,7 +48,7 @@ internal class DataProtector : IDataProtector
 
         var hashedBytes = hasher.ComputeHash(GetByteArray(data));
 
-        return Encoding.UTF8.GetString(hashedBytes);
+        return Convert.ToBase64String(hashedBytes);
     }
 
     private byte[] GetByteArray(string value)

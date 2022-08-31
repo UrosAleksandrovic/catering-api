@@ -8,4 +8,7 @@ public class ItemInfoDto
     public double TotalRating { get; set; }
     public decimal Price { get; set; }
     public Guid MenuId { get; set; }
+
+    public IEnumerable<string> Categories { get; set; }
+    public IEnumerable<string> Ingredients { get; set; }
 }

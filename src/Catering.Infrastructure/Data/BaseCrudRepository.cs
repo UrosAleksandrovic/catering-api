@@ -8,6 +8,7 @@ internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T>
     where T : class
 {
     protected readonly IDbContextFactory<TContext> _dbContextFactory;
+    protected TContext _dbContext;
 
     protected BaseCrudRepository(IDbContextFactory<TContext> dbContextFactory)
     {
@@ -26,19 +27,19 @@ internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T>
 
     public async Task<T> GetByIdAsync<TKey>(TKey key)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        _dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var result = await dbContext.Set<T>().FindAsync(key);
+        var result = await _dbContext.Set<T>().FindAsync(key);
 
         return result;
     }
 
     public async Task<T> UpdateAsync(T entity)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        var usingDbContext = _dbContext ?? await _dbContextFactory.CreateDbContextAsync();
 
-        dbContext.Update(entity);
-        await dbContext.SaveChangesAsync();
+        usingDbContext.Update(entity);
+        await usingDbContext.SaveChangesAsync();
 
         return entity;
     }

@@ -6,4 +6,5 @@ public interface ICustomerRepository : IBaseCrudRepository<Customer>
 {
     Task<(IEnumerable<Customer>,int)> GetFilteredAsync(CustomersFilter filter);
     Task<Customer> GetByIdentityEmailAsync(string email);
+    Task<Customer> GetFullByIdAsync(string id);
 }

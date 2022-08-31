@@ -31,6 +31,18 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
                 await resultQuery.CountAsync());
     }
 
+    public async Task<Customer> GetFullByIdAsync(string id)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        return await dbContext
+            .Set<Customer>()
+            .AsNoTracking()
+            .Include(c => c.Identity)
+            .Where(c => c.IdentityId == id)
+            .FirstOrDefaultAsync();
+    }
+
     private IQueryable<Customer> ApplyFilters(IQueryable<Customer> customers, CustomersFilter filter)
     {
         var finalFilter = customers;

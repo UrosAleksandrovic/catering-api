@@ -48,14 +48,14 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
 
     public async Task<CustomerInfoDto> GetCustomerInfoAsync(string customerId)
     {
-        var customer = await _customerRepository.GetByIdAsync(customerId);
+        var customer = await _customerRepository.GetFullByIdAsync(customerId);
 
         return _mapper.Map<CustomerInfoDto>(customer);
     }
 
-    private async Task<Customer> GetInitiatorAsync(string initiatorId)
+    private async Task<Identity> GetInitiatorAsync(string initiatorId)
     {
-        var result = await _customerRepository.GetByIdAsync(initiatorId);
+        var result = await _identityRepository.GetByIdAsync(initiatorId);
 
         if (result == default)
             throw new ArgumentException("Initiator does not exist.");
@@ -67,7 +67,7 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
     {
         var initiator = await GetInitiatorAsync(initiatorId);
 
-        if (!initiator.Identity.Role.IsAdministrator())
+        if (!initiator.Role.IsAdministrator())
             throw new IdentityRestrictionException(initiatorId, actionName);
     }
 

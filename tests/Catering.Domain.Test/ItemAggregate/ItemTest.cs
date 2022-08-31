@@ -106,10 +106,10 @@ public class ItemTest
         //Arrange
         var categoriesToBeAdded = new[]
         {
-                "pAsTa",
-                "rissoto",
-                "DRINK"
-            };
+            "pAsTa",
+            "rissoto",
+            "DRINK"
+        };
         var item = new Item("Name", "", 10, Guid.NewGuid());
 
         //Act
@@ -120,8 +120,8 @@ public class ItemTest
         Assert.Equal(item.Categories.Count, categoriesToBeAdded.Length + 1);
 
         foreach (var category in categoriesToBeAdded)
-            Assert.Contains(category.ToLowerInvariant(), item.Categories);
-        Assert.Contains("desert", item.Categories);
+            Assert.Contains(item.Categories, c => c.Id == category.ToLowerInvariant());
+        Assert.Contains(item.Categories, c => c.Id == "desert");
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class ItemTest
 
         //Assert
         Assert.Equal(1, item.Categories.Count);
-        Assert.Equal(initialCategories, item.Categories);
+        Assert.Equal(initialCategories[0], item.Categories.Single().Id);
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class ItemTest
 
         //Assert
         Assert.Equal(2, item.Categories.Count);
-        Assert.DoesNotContain("something", item.Categories);
+        Assert.DoesNotContain(item.Categories, c => c.Id == "something");
     }
 
     [Fact]
@@ -216,8 +216,8 @@ public class ItemTest
         Assert.Equal(item.Ingredients.Count, ingredientsToBeAdded.Length + 1);
 
         foreach (var ingredient in ingredientsToBeAdded)
-            Assert.Contains(ingredient.ToLowerInvariant(), item.Ingredients);
-        Assert.Contains("carrot", item.Ingredients);
+            Assert.Contains(item.Ingredients, c => c.Id == ingredient.ToLowerInvariant());
+        Assert.Contains(item.Ingredients, c => c.Id == "carrot");
     }
 
     [Fact]
@@ -246,7 +246,7 @@ public class ItemTest
 
         //Assert
         Assert.Equal(1, item.Ingredients.Count);
-        Assert.Equal(initialIngredients, item.Ingredients);
+        Assert.Equal(initialIngredients[0], item.Ingredients.Single().Id);
     }
 
     [Fact]
@@ -263,7 +263,7 @@ public class ItemTest
 
         //Assert
         Assert.Equal(2, item.Ingredients.Count);
-        Assert.DoesNotContain("something", item.Ingredients);
+        Assert.DoesNotContain(item.Ingredients, i => i.Id == "something");
     }
 
     [Fact]

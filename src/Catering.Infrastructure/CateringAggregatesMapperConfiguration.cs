@@ -27,21 +27,21 @@ internal class CateringAggregatesMapperConfiguration : Profile
 
         CreateMap<Identity, IdentityInfoDto>()
             .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FullName.FirstName))
-            .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.FullName.LastName));
+            .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.FullName.LastName))
+            .ForMember(d => d.Roles, opt => opt.MapFrom(s => s.Role.GetRoles().Select(r => r.ToString())));
 
         CreateMap<CustomerBudget, CustomerBudgetInfoDto>()
             .ForMember(c => c.ReservedBalance, opt => opt.MapFrom(s => s.ReservedAssets))
             .ForMember(d => d.Budget, opt => opt.MapFrom(s => s.Balance));
 
         CreateMap<Customer, CustomerInfoDto>()
-            .ForMember(d => d.CustomerBudgetInfo, opt => opt.MapFrom(s => s.Budget));
+            .ForMember(d => d.CustomerBudgetInfo, opt => opt.MapFrom(s => s.Budget))
+            .ForMember(d => d.IdentityInfo, opt => opt.MapFrom(s => s.Identity));
 
         CreateMap<Item, ItemInfoDto>()
-            .ForMember(d => d.TotalRating, opt => opt.MapFrom(s => s.TotalRating));
-
-        CreateMap<Item, DetailedItemsInfoDto>()
-            .ForMember(d => d.Ingredients, opt => opt.MapFrom(s => s.Ingredients))
-            .ForMember(d => d.Categories, opt => opt.MapFrom(s => s.Categories));
+            .ForMember(d => d.TotalRating, opt => opt.MapFrom(s => s.TotalRating))
+            .ForMember(d => d.Ingredients, opt => opt.MapFrom(s => s.Ingredients.Select(i => i.DisplayName)))
+            .ForMember(d => d.Categories, opt => opt.MapFrom(s => s.Categories.Select(c => c.DisplayName)));
 
         CreateMap<MenuContact, MenuContactInfoDto>();
         CreateMap<Menu, MenuInfoDto>();

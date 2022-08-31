@@ -6,6 +6,6 @@ public class UpdateItemDto
     public string Description { get; set; }
     public decimal Price { get; set; }
 
-    public IEnumerable<string> Ingredients { get; set; }
-    public IEnumerable<string> Categories { get; set; }
+    public string[] Ingredients { get; set; }
+    public string[] Categories { get; set; }
 }

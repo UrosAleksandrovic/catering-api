@@ -1,6 +1,5 @@
 ﻿using Catering.Domain.Entities.ItemAggregate;
 using Catering.Domain.Entities.MenuAggregate;
-using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -28,26 +27,24 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
             .FindNavigation(nameof(Item.Ratings))
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.Property(e => e.Ingredients)
-            .Metadata
+        builder.OwnsMany(e => e.Ingredients, cfg =>
+        {
+            cfg.HasKey(i => new { i.ItemId, i.Id });
+        });
+
+        builder.Metadata
+            .FindNavigation(nameof(Item.Ingredients))
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.Property(e => e.Ingredients)
-            .HasColumnType("text")
-            .HasConversion<StringReadonlyListConverter>()
-            .Metadata
-            .SetValueComparer(typeof(StringReadonlyListComparer));
+        builder.OwnsMany(e => e.Categories, cfg =>
+        {
+            cfg.HasKey(c => new { c.ItemId, c.Id });
+        });
 
-        builder.Property(e => e.Categories)
-            .Metadata
+        builder.Metadata
+            .FindNavigation(nameof(Item.Categories))
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
-        builder
-            .Property(e => e.Categories)
-            .HasColumnType("text")
-            .HasConversion<StringReadonlyListConverter>()
-            .Metadata
-            .SetValueComparer(typeof(StringReadonlyListComparer));
 
         builder.HasQueryFilter(e => !e.IsDeleted);
 

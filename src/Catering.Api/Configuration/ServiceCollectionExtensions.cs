@@ -57,7 +57,10 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddCateringExceptionHandlling(this IServiceCollection services, Assembly assemblyContiningHandlers)
     {
-        var types = assemblyContiningHandlers.GetTypes().Where(t => typeof(ErrorHttpResolver<>).IsAssignableFrom(t));
+        var types = assemblyContiningHandlers
+            .GetTypes()
+            .Where(t => typeof(IErrorHttpResolver).IsAssignableFrom(t))
+            .Except(new[] {typeof(IErrorHttpResolver), typeof(ErrorHttpResolver<>)});
 
         var publisher = new ErrorPublisher();
         var success = publisher.TryAddExceptionResolvers(types);

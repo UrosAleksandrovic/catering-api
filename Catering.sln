@@ -13,7 +13,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.DependencyInjection", "src\Catering.DependencyInjection\Catering.DependencyInjection.csproj", "{49073A17-455F-4B84-AB1A-98151CDE2CC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catering.Api", "src\Catering.Api\Catering.Api.csproj", "{FE9ACD95-B39A-4375-9E81-FA658C156105}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catering.Api", "src\Catering.Api\Catering.Api.csproj", "{FE9ACD95-B39A-4375-9E81-FA658C156105}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{75388259-E02E-49CE-99AC-F13CB167052A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{F85F9F4C-2F47-43A1-ADCF-A5E87C27F1A5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.env = .env
+		docker-compose.yml = docker-compose.yml
+		.env.sample = .env.sample
+		Dockerfile = Dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7CD3252A-D874-4FDD-9F81-5974CD6B6677}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +61,14 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0555CD43-9375-4A0D-A0FB-1555C9D34D88} = {75388259-E02E-49CE-99AC-F13CB167052A}
+		{CDD45496-5FE3-455D-951F-AF9B8199EFC5} = {7CD3252A-D874-4FDD-9F81-5974CD6B6677}
+		{D33548FF-A8A9-4D54-ADE9-B14F51D62D23} = {75388259-E02E-49CE-99AC-F13CB167052A}
+		{7D1A9036-DD44-4849-8360-F53EDE31C9F0} = {75388259-E02E-49CE-99AC-F13CB167052A}
+		{49073A17-455F-4B84-AB1A-98151CDE2CC4} = {75388259-E02E-49CE-99AC-F13CB167052A}
+		{FE9ACD95-B39A-4375-9E81-FA658C156105} = {75388259-E02E-49CE-99AC-F13CB167052A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {50277E14-E5BF-4352-BA77-88FE1DF623F6}

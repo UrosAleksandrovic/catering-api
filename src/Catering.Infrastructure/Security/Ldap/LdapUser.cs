@@ -23,18 +23,17 @@ internal class LdapUser
             var values = attr.GetValues<string>();
             switch (attr.Name.ToUpperInvariant())
             {
-                case "UID": if (string.IsNullOrEmpty(this.Uid)) { this.Uid = values.First(); } break;
-                case "USERPASSWORD": if (string.IsNullOrEmpty(this.UserPassword)) { this.UserPassword = values.First(); } break;
-                case "GIVENNAME": if (string.IsNullOrEmpty(this.FirstName)) { this.FirstName = values.First(); } break;
-                case "SN": if (string.IsNullOrEmpty(this.LastName)) { this.LastName = values.First(); } break;
-                case "TITLE": if (string.IsNullOrEmpty(this.Title)) { this.Title = values.First(); } break;
-                case "OBJECTCLASS": if (string.IsNullOrEmpty(this.Ojectclass)) { this.Ojectclass = values.First(); } break;
-                case "MOBILE": if (string.IsNullOrEmpty(this.Mobile)) { this.Mobile = values.First(); } break;
-                case "MAIL": if (string.IsNullOrEmpty(this.Mail)) { this.Mail = values.First(); } break;
-                case "CN": if (string.IsNullOrEmpty(this.CN)) { this.CN = values.First(); } break;
-                case "DEPARTMENTNUMBER": if (string.IsNullOrEmpty(this.CN)) { this.DepartmentNumber = values.First(); } break;
-                case "L": if (string.IsNullOrEmpty(this.CN)) { this.L = values.First(); } break;
-
+                case "UID": if (string.IsNullOrEmpty(Uid)) { Uid = values.First(); } break;
+                case "USERPASSWORD": if (string.IsNullOrEmpty(UserPassword)) { UserPassword = values.First(); } break;
+                case "GIVENNAME": if (string.IsNullOrEmpty(FirstName)) { FirstName = values.First(); } break;
+                case "SN": if (string.IsNullOrEmpty(LastName)) { LastName = values.First(); } break;
+                case "TITLE": if (string.IsNullOrEmpty(Title)) { Title = values.First(); } break;
+                case "OBJECTCLASS": if (string.IsNullOrEmpty(Ojectclass)) { Ojectclass = values.First(); } break;
+                case "MOBILE": if (string.IsNullOrEmpty(Mobile)) { Mobile = values.First(); } break;
+                case "MAIL": if (string.IsNullOrEmpty(Mail)) { Mail = values.First(); } break;
+                case "CN": if (string.IsNullOrEmpty(CN)) { CN = values.First(); } break;
+                case "DEPARTMENTNUMBER": if (string.IsNullOrEmpty(CN)) { DepartmentNumber = values.First(); } break;
+                case "L": if (string.IsNullOrEmpty(CN)) { L = values.First(); } break;
             }
         }
     }

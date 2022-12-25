@@ -1,5 +1,6 @@
 ﻿using Catering.Infrastructure.Data;
 using Catering.Infrastructure.Mailing;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ public static class PersistanceExtensions
         services.AddDbContextFactory<CateringDbContext>(options =>
         {
             options.UseNpgsql(settingsSection.Get<CateringDataSettings>().ConnectionString);
+            options.UseSnakeCaseNamingConvention();
         });
 
         return services;
@@ -39,8 +41,29 @@ public static class PersistanceExtensions
         services.AddDbContextFactory<MailingDbContext>(options =>
         {
             options.UseNpgsql(settingsSection.Get<MailingDataSettings>().ConnectionString);
+            options.UseSnakeCaseNamingConvention();
         });
 
         return services;
+    }
+
+    public static IApplicationBuilder ApplyCateringMigrations(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<CateringDbContext>();
+        dbContext.Database.Migrate();
+
+        return app;
+    }
+
+    public static IApplicationBuilder ApplyMailingMigrations(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<MailingDbContext>();
+        dbContext.Database.Migrate();
+
+        return app;
     }
 }

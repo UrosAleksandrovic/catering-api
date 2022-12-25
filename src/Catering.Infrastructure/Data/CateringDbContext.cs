@@ -12,7 +12,7 @@ internal class CateringDbContext : DbContext
 {
     private const string SchemaName = "catering";
 
-    public CateringDbContext(DbContextOptions options) 
+    public CateringDbContext(DbContextOptions<CateringDbContext> options) 
         : base(options) { }
 
     internal DbSet<Item> Items { get; set; }

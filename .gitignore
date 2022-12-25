@@ -354,3 +354,6 @@ MigrationBackup/
 
 #
 **/appsettings.*.json
+
+# Compose Environment file, only sample is exposed
+*.env

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Catering.Infrastructure.Mailing.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,43 +13,43 @@ namespace Catering.Infrastructure.Mailing.Migrations
                 name: "mailing");
 
             migrationBuilder.CreateTable(
-                name: "FailedEmails",
+                name: "failed_emails",
                 schema: "mailing",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Recepiants = table.Column<string>(type: "text", nullable: true),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    GeneratedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    recepiants = table.Column<string>(type: "text", nullable: true),
+                    content = table.Column<string>(type: "text", nullable: false),
+                    generated_on = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FailedEmails", x => x.Id);
+                    table.PrimaryKey("pk_failed_emails", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Templates",
+                name: "templates",
                 schema: "mailing",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    HtmlTemplate = table.Column<string>(type: "text", nullable: true)
+                    name = table.Column<string>(type: "text", nullable: false),
+                    html_template = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Templates", x => x.Name);
+                    table.PrimaryKey("pk_templates", x => x.name);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FailedEmails",
+                name: "failed_emails",
                 schema: "mailing");
 
             migrationBuilder.DropTable(
-                name: "Templates",
+                name: "templates",
                 schema: "mailing");
         }
     }

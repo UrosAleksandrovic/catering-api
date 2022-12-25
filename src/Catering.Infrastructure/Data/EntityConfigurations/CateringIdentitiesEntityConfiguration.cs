@@ -6,7 +6,7 @@ namespace Catering.Infrastructure.Data.EntityConfigurations;
 
 internal class CateringIdentitiesConfiguration : IEntityTypeConfiguration<CateringIdentity>
 {
-    private const string TableName = "CateringIdentities";
+    private const string TableName = "catering_identities";
 
     public void Configure(EntityTypeBuilder<CateringIdentity> builder)
     {

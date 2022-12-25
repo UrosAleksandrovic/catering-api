@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catering.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CateringDbContext))]
-    [Migration("20220825142444_RefactorCategoriesAndIngredients")]
-    partial class RefactorCategoriesAndIngredients
+    [Migration("20221225194623_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,121 +29,157 @@ namespace Catering.Infrastructure.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("customer_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_carts");
 
                     b.HasIndex("CustomerId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_carts_customer_id");
 
-                    b.ToTable("Carts", "catering");
+                    b.ToTable("carts", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Customer", b =>
                 {
                     b.Property<string>("IdentityId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("identity_id");
 
-                    b.HasKey("IdentityId");
+                    b.HasKey("IdentityId")
+                        .HasName("pk_customers");
 
-                    b.ToTable("Customers", "catering");
+                    b.ToTable("customers", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.Identity", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("id");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("email");
 
                     b.Property<int>("Role")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("role");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Identities", "catering");
+                    b.ToTable("identities", "catering");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "super.admin",
+                            Email = "super.admin@catering.test",
+                            Role = 3
+                        });
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.ItemAggregate.Item", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<Guid>("MenuId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("menu_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnName("price");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_items");
 
-                    b.HasIndex("MenuId");
+                    b.HasIndex("MenuId")
+                        .HasDatabaseName("ix_items_menu_id");
 
-                    b.ToTable("Items", "catering");
+                    b.ToTable("items", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.MenuAggregate.Menu", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_menus");
 
-                    b.ToTable("Menus", "catering");
+                    b.ToTable("menus", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.OrderAggregate.Order", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("customer_id");
 
                     b.Property<DateTime>("ExpectedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expected_on");
 
                     b.Property<Guid>("MenuId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("menu_id");
 
                     b.Property<byte>("Status")
-                        .HasColumnType("smallint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("status");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_orders");
 
-                    b.ToTable("Orders", "catering");
+                    b.ToTable("orders", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.IdentityAggregate.CateringIdentity", b =>
@@ -155,7 +191,7 @@ namespace Catering.Infrastructure.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("Password");
 
-                    b.ToTable("CateringIdentities", "catering");
+                    b.ToTable("catering_identities", "catering");
                 });
 
             modelBuilder.Entity("Catering.Domain.Entities.CartAggregate.Cart", b =>
@@ -164,29 +200,36 @@ namespace Catering.Infrastructure.Data.Migrations
                         .WithOne()
                         .HasForeignKey("Catering.Domain.Entities.CartAggregate.Cart", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_carts_customers_customer_temp_id");
 
                     b.OwnsMany("Catering.Domain.Entities.CartAggregate.CartItem", "Items", b1 =>
                         {
                             b1.Property<Guid>("CartId")
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("cart_id");
 
                             b1.Property<Guid>("ItemId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("item_id");
 
                             b1.Property<string>("Note")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("note");
 
                             b1.Property<int>("Quantity")
-                                .HasColumnType("integer");
+                                .HasColumnType("integer")
+                                .HasColumnName("quantity");
 
-                            b1.HasKey("CartId", "ItemId");
+                            b1.HasKey("CartId", "ItemId")
+                                .HasName("pk_cart_item");
 
-                            b1.ToTable("CartItem", "catering");
+                            b1.ToTable("cart_item", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("CartId");
+                                .HasForeignKey("CartId")
+                                .HasConstraintName("fk_cart_item_carts_cart_id");
                         });
 
                     b.Navigation("Items");
@@ -198,25 +241,30 @@ namespace Catering.Infrastructure.Data.Migrations
                         .WithOne()
                         .HasForeignKey("Catering.Domain.Entities.IdentityAggregate.Customer", "IdentityId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_customers_identities_identity_id");
 
                     b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.CustomerBudget", "Budget", b1 =>
                         {
                             b1.Property<string>("CustomerIdentityId")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("identity_id");
 
                             b1.Property<decimal>("Balance")
-                                .HasColumnType("numeric(19,4)");
+                                .HasColumnType("numeric(19,4)")
+                                .HasColumnName("budget_balance");
 
                             b1.Property<decimal>("ReservedAssets")
-                                .HasColumnType("numeric(19,4)");
+                                .HasColumnType("numeric(19,4)")
+                                .HasColumnName("budget_reserved_assets");
 
                             b1.HasKey("CustomerIdentityId");
 
-                            b1.ToTable("Customers", "catering");
+                            b1.ToTable("customers", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("CustomerIdentityId");
+                                .HasForeignKey("CustomerIdentityId")
+                                .HasConstraintName("fk_customers_customers_identity_id");
                         });
 
                     b.Navigation("Budget");
@@ -229,21 +277,25 @@ namespace Catering.Infrastructure.Data.Migrations
                     b.OwnsOne("Catering.Domain.Entities.IdentityAggregate.FullName", "FullName", b1 =>
                         {
                             b1.Property<string>("IdentityId")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("id");
 
                             b1.Property<string>("FirstName")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("full_name_first_name");
 
                             b1.Property<string>("LastName")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("full_name_last_name");
 
                             b1.HasKey("IdentityId");
 
-                            b1.ToTable("Identities", "catering");
+                            b1.ToTable("identities", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("IdentityId");
+                                .HasForeignKey("IdentityId")
+                                .HasConstraintName("fk_identities_identities_id");
                         });
 
                     b.Navigation("FullName");
@@ -255,63 +307,79 @@ namespace Catering.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_items_menus_menu_id");
 
                     b.OwnsMany("Catering.Domain.Entities.ItemAggregate.ItemCategory", "Categories", b1 =>
                         {
                             b1.Property<Guid>("ItemId")
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("item_id");
 
                             b1.Property<string>("Id")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("id");
 
                             b1.Property<string>("DisplayName")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("display_name");
 
-                            b1.HasKey("ItemId", "Id");
+                            b1.HasKey("ItemId", "Id")
+                                .HasName("pk_item_category");
 
-                            b1.ToTable("ItemCategory", "catering");
+                            b1.ToTable("item_category", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("ItemId");
+                                .HasForeignKey("ItemId")
+                                .HasConstraintName("fk_item_category_items_item_id");
                         });
 
                     b.OwnsMany("Catering.Domain.Entities.ItemAggregate.ItemIngredient", "Ingredients", b1 =>
                         {
                             b1.Property<Guid>("ItemId")
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("item_id");
 
                             b1.Property<string>("Id")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("id");
 
                             b1.Property<string>("DisplayName")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("display_name");
 
-                            b1.HasKey("ItemId", "Id");
+                            b1.HasKey("ItemId", "Id")
+                                .HasName("pk_item_ingredient");
 
-                            b1.ToTable("ItemIngredient", "catering");
+                            b1.ToTable("item_ingredient", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("ItemId");
+                                .HasForeignKey("ItemId")
+                                .HasConstraintName("fk_item_ingredient_items_item_id");
                         });
 
                     b.OwnsMany("Catering.Domain.Entities.ItemAggregate.ItemRating", "Ratings", b1 =>
                         {
                             b1.Property<Guid>("ItemId")
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("item_id");
 
                             b1.Property<string>("CustomerId")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("customer_id");
 
                             b1.Property<short>("Rating")
-                                .HasColumnType("smallint");
+                                .HasColumnType("smallint")
+                                .HasColumnName("rating");
 
-                            b1.HasKey("ItemId", "CustomerId");
+                            b1.HasKey("ItemId", "CustomerId")
+                                .HasName("pk_item_rating");
 
-                            b1.ToTable("ItemRating", "catering");
+                            b1.ToTable("item_rating", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("ItemId");
+                                .HasForeignKey("ItemId")
+                                .HasConstraintName("fk_item_rating_items_item_id");
                         });
 
                     b.Navigation("Categories");
@@ -326,33 +394,41 @@ namespace Catering.Infrastructure.Data.Migrations
                     b.OwnsOne("Catering.Domain.Entities.MenuAggregate.MenuContact", "Contact", b1 =>
                         {
                             b1.Property<Guid>("MenuId")
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
 
                             b1.Property<string>("Address")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("contact_address");
 
                             b1.Property<string>("Email")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("contact_email");
 
                             b1.Property<string>("IdentityId")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("contact_identity_id");
 
                             b1.Property<string>("PhoneNumber")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("contact_phone_number");
 
                             b1.HasKey("MenuId");
 
-                            b1.HasIndex("IdentityId");
+                            b1.HasIndex("IdentityId")
+                                .HasDatabaseName("ix_menus_contact_identity_id");
 
-                            b1.ToTable("Menus", "catering");
+                            b1.ToTable("menus", "catering");
 
                             b1.HasOne("Catering.Domain.Entities.IdentityAggregate.Identity", null)
                                 .WithMany()
-                                .HasForeignKey("IdentityId");
+                                .HasForeignKey("IdentityId")
+                                .HasConstraintName("fk_menus_identities_contact_identity_id");
 
                             b1.WithOwner()
-                                .HasForeignKey("MenuId");
+                                .HasForeignKey("MenuId")
+                                .HasConstraintName("fk_menus_menus_id");
                         });
 
                     b.Navigation("Contact");
@@ -363,51 +439,63 @@ namespace Catering.Infrastructure.Data.Migrations
                     b.OwnsOne("Catering.Domain.Entities.OrderAggregate.HomeDeliveryInfo", "HomeDeliveryInfo", b1 =>
                         {
                             b1.Property<long>("OrderId")
-                                .HasColumnType("bigint");
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
 
                             b1.Property<string>("FloorAndAppartment")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("home_delivery_info_floor_and_appartment");
 
                             b1.Property<string>("StreetAndHouse")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("home_delivery_info_street_and_house");
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders", "catering");
+                            b1.ToTable("orders", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("OrderId");
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
                         });
 
                     b.OwnsMany("Catering.Domain.Entities.OrderAggregate.OrderItem", "Items", b1 =>
                         {
                             b1.Property<long>("OrderId")
-                                .HasColumnType("bigint");
+                                .HasColumnType("bigint")
+                                .HasColumnName("order_id");
 
                             b1.Property<Guid>("ItemId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("item_id");
 
                             b1.Property<string>("NameSnapshot")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("name_snapshot");
 
                             b1.Property<string>("Note")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("note");
 
                             b1.Property<decimal>("PriceSnapshot")
-                                .HasColumnType("numeric");
+                                .HasColumnType("numeric")
+                                .HasColumnName("price_snapshot");
 
                             b1.Property<int>("Quantity")
-                                .HasColumnType("integer");
+                                .HasColumnType("integer")
+                                .HasColumnName("quantity");
 
-                            b1.HasKey("OrderId", "ItemId");
+                            b1.HasKey("OrderId", "ItemId")
+                                .HasName("pk_order_item");
 
-                            b1.ToTable("OrderItem", "catering");
+                            b1.ToTable("order_item", "catering");
 
                             b1.WithOwner()
-                                .HasForeignKey("OrderId");
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_order_item_orders_order_id");
                         });
 
                     b.Navigation("HomeDeliveryInfo");
@@ -421,7 +509,8 @@ namespace Catering.Infrastructure.Data.Migrations
                         .WithOne()
                         .HasForeignKey("Catering.Domain.Entities.IdentityAggregate.CateringIdentity", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_catering_identities_identities_id");
                 });
 #pragma warning restore 612, 618
         }

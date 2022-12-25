@@ -1,9 +1,11 @@
-using Catering.Api.Configuration;
+﻿using Catering.Api.Configuration;
 using Catering.Api.Configuration.ErrorHandling;
 using Catering.DependencyInjection;
 using Catering.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -22,11 +24,12 @@ builder.Services.AddCateringDependecies(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Container")
 {
     app.UseCateringSwagger();
+    app.ApplyCateringMigrations();
+    app.ApplyMailingMigrations();
 }
-
 
 app.UseAuthentication();
 app.UseAuthorization();

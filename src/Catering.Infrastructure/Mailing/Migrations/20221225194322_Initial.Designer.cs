@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catering.Infrastructure.Mailing.Migrations
 {
     [DbContext(typeof(MailingDbContext))]
-    [Migration("20220722123152_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221225194322_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("mailing")
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -28,39 +28,48 @@ namespace Catering.Infrastructure.Mailing.Migrations
             modelBuilder.Entity("Catering.Application.Mailing.Emails.EmailTemplate", b =>
                 {
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<string>("HtmlTemplate")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("html_template");
 
-                    b.HasKey("Name");
+                    b.HasKey("Name")
+                        .HasName("pk_templates");
 
-                    b.ToTable("Templates", "mailing");
+                    b.ToTable("templates", "mailing");
                 });
 
             modelBuilder.Entity("Catering.Application.Mailing.Emails.FailedCateringEmail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("content");
 
                     b.Property<DateTime>("GeneratedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("generated_on");
 
                     b.Property<string>("Recepiants")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("recepiants");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_failed_emails");
 
-                    b.ToTable("FailedEmails", "mailing");
+                    b.ToTable("failed_emails", "mailing");
                 });
 #pragma warning restore 612, 618
         }

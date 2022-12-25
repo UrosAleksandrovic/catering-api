@@ -3,37 +3,45 @@ version: '3.9'
 services:
 
   postgres-server:
-    container_name: 'catering-postgres-server'
     image: postgres
     restart: always
     volumes:
       - ${SQL_DATA_PATH}:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
     environment:
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    profiles:
+      - 'persistance'
+      - 'catering-api'
+
+  postgres-portal:
+    image: dpage/pgadmin4
+    restart: on-failure
+    ports: 
+      - 5550:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
 
   ldap-server:
-    container_name: 'catering-ldap-server'
     image: thoteam/slapd-server-mock
     restart: always
     volumes:
       - ${LDAP_CONFIG_PATH}:/bootstrap
-    ports:
-      - 389:389
+    profiles:
+      - 'catering-api'
 
   catering-api:
-    container_name: catering-api
     restart: always
     image: catering-api
-    network_mode: bridge
     build:
-        context: ./
-        dockerfile: Dockerfile
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        MAIN_PORT: 5500
     ports:
       - 5500:5500
-    links:
-      - postgres-server
-      - ldap-server
     environment:
-      ASPNETCORE_ENVIRONMENT: 'Development'
+      ASPNETCORE_ENVIRONMENT: 'Container'
+    profiles:
+      - 'catering-api'

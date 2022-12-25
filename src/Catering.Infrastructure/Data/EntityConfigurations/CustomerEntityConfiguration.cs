@@ -6,7 +6,7 @@ namespace Catering.Infrastructure.Data.EntityConfigurations;
 
 internal class CustomerEntityConfiguration : IEntityTypeConfiguration<Customer>
 {
-    private const string TableName = "Customers";
+    private const string TableName = "customers";
 
     public void Configure(EntityTypeBuilder<Customer> builder)
     {

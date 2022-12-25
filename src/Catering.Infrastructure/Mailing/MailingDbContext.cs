@@ -8,7 +8,7 @@ internal class MailingDbContext : DbContext
 {
     private const string SchemaName = "mailing";
 
-    public MailingDbContext(DbContextOptions options) 
+    public MailingDbContext(DbContextOptions<MailingDbContext> options) 
         : base(options) { }
 
     internal DbSet<EmailTemplate> Templates { get; set; }

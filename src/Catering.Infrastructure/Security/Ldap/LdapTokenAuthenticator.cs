@@ -54,7 +54,7 @@ internal class LdapTokenAuthenticator : ITokenAtuhenticator<Identity>
         var userDn = GetUserBaseDn(username);
         connection.Bind(Native.LdapAuthMechanism.SIMPLE, userDn, password);
 
-        var searchResult = connection.Search(GetUserBaseDn(username), "(objectClass=*)").FirstOrDefault();
+        var searchResult = connection.Search(userDn, "(objectClass=*)").FirstOrDefault();
 
         return new LdapUser(searchResult);
     }

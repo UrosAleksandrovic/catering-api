@@ -131,7 +131,7 @@ internal class OrderManagementAppService : IOrderManagementAppService
             return await _orderRepository.GetOrdersForCustomerAsync(newFilter);
         }
 
-        if (requestorIdentity.Role.IsRestourantEmployee())
+        if (requestorIdentity.Role.IsRestaurantEmployee())
         {
             var newFilter = new OrdersFilter(orderFilters)
             {

@@ -8,33 +8,33 @@ using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
-[Route("/api/items")]
-public class ItemsController : ControllerBase
+[Route("/api/menus")]
+public class MenuItemsController : ControllerBase
 {
     private readonly IItemManagementAppService _itemsAppService;
 
-    public ItemsController(IItemManagementAppService itemsAppService)
+    public MenuItemsController(IItemManagementAppService itemsAppService)
     {
         _itemsAppService = itemsAppService;
     }
 
-    [HttpPost]
+    [HttpPost("{menuId}/items")]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateItemDto createRequest)
+    public async Task<IActionResult> CreateAsync([FromRoute] Guid menuId,[FromBody] CreateItemDto createRequest)
     {
-        var createdId = await _itemsAppService.CreateItemAsync(createRequest);
+        var createdId = await _itemsAppService.CreateItemAsync(menuId, createRequest);
 
         return CreatedAtRoute(GetNameRoute, new { id = createdId }, new { id = createdId });
     }
 
 
     private const string GetNameRoute = "GetItemById";
-    [HttpGet("{id}", Name = GetNameRoute)]
+    [HttpGet("{menuId}/items/{id}", Name = GetNameRoute)]
     [Authorize]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid menuId, [FromRoute] Guid id)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var item = await _itemsAppService.GetItemByIdAsync(id, userId);
+        var item = await _itemsAppService.GetItemByIdAsync(menuId, id, userId);
 
         if (item == default)
             return NotFound();
@@ -42,30 +42,36 @@ public class ItemsController : ControllerBase
         return Ok(item);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{menuId}/items/{id}")]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid menuId, [FromRoute] Guid id)
     {
-        await _itemsAppService.DeleteItemAsync(id);
+        await _itemsAppService.DeleteItemAsync(menuId, id);
 
         return NoContent();
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{menuId}/items/{id}")]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateItemDto updateRequest)
+    public async Task<IActionResult> UpdateAsync(
+        [FromRoute] Guid menuId,
+        [FromRoute] Guid id,
+        [FromBody] UpdateItemDto updateRequest)
     {
-        await _itemsAppService.UpdateItemAsync(id, updateRequest);
+        await _itemsAppService.UpdateItemAsync(menuId, id, updateRequest);
 
         return NoContent();
     }
 
-    [HttpPut("{id}/{rating}")]
+    [HttpPut("{menuId}/items/{id}/{rating}")]
     [AuthorizeClientsEmployee]
-    public async Task<IActionResult> RateItemAsync([FromRoute] Guid id, [FromRoute] short rating)
+    public async Task<IActionResult> RateItemAsync(
+        [FromRoute] Guid menuId,
+        [FromRoute] Guid id,
+        [FromRoute] short rating)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _itemsAppService.RateItemAsync(id, userId, rating);
+        await _itemsAppService.RateItemAsync(menuId, id, userId, rating);
 
         return NoContent();
     }

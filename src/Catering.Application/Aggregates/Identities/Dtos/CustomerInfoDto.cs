@@ -1,4 +1,4 @@
-﻿namespace Catering.Application.Aggregates.Identites.Dtos;
+﻿namespace Catering.Application.Aggregates.Identities.Dtos;
 
 public class CustomerInfoDto
 {

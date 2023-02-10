@@ -30,7 +30,7 @@ public class Menu : BaseEntity<Guid>, ISoftDeletable
         string phoneNumber,
         string email,
         string address,
-        string indentityId = null)
+        string identityId = null)
     {
         if (Contact != default)
         {
@@ -38,7 +38,7 @@ public class Menu : BaseEntity<Guid>, ISoftDeletable
             return;
         }
 
-        Contact = new MenuContact(phoneNumber, email, address, indentityId);
+        Contact = new MenuContact(phoneNumber, email, address, identityId);
     }
 
     public bool HasContact(string identityId)

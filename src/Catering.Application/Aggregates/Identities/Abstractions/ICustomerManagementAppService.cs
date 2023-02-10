@@ -1,6 +1,6 @@
-﻿using Catering.Application.Aggregates.Identites.Dtos;
+﻿using Catering.Application.Aggregates.Identities.Dtos;
 
-namespace Catering.Application.Aggregates.Identites.Abstractions;
+namespace Catering.Application.Aggregates.Identities.Abstractions;
 
 public interface ICustomerManagementAppService
 {

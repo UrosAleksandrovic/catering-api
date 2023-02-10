@@ -1,5 +1,5 @@
 ﻿using Catering.Application.Aggregates.Carts.Abstractions;
-using Catering.Application.Aggregates.Identites.Abstractions;
+using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;

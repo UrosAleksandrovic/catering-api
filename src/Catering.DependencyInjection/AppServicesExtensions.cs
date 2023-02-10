@@ -1,7 +1,8 @@
 ﻿using Catering.Application.Aggregates.Carts;
 using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Identites;
-using Catering.Application.Aggregates.Identites.Abstractions;
+using Catering.Application.Aggregates.Identities;
+using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus;
@@ -26,7 +27,7 @@ public static class AppServicesExtensions
         services.AddScoped<IItemManagementAppService, ItemManagementAppService>();
         services.AddScoped<ICartManagementAppService, CartManagementAppService>();
         services.AddScoped<ICustomerManagementAppService, CustomerManagementAppService>();
-        services.AddScoped<ICateringIdentititesManagementAppService, CateringIdentitiesManagementAppService>();
+        services.AddScoped<ICateringIdentitiesManagementAppService, CateringIdentitiesManagementAppService>();
         services.AddScoped<IMenuManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
 

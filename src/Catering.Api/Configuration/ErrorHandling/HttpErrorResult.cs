@@ -2,8 +2,8 @@
 
 public struct HttpErrorResult
 {
-    public int HttpStatusCode { get; private set; }
-    public string Message { get; private set; }
+    public int HttpStatusCode { get; }
+    public string Message { get; }
 
     public HttpErrorResult(int statusCode, string message)
     {

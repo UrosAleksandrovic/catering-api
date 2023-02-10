@@ -1,6 +1,6 @@
-﻿namespace Catering.Application.Aggregates.Identites.Dtos;
+﻿namespace Catering.Application.Aggregates.Identities.Dtos;
 
-public class CreateRestourantDto
+public class CreateRestaurantDto
 {
     public string Email { get; set; }
     public string InitialPassword { get; set; }

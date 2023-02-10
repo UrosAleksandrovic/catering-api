@@ -17,7 +17,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => identity.Edit(invalidEmail, new FullName("Test", "Test"));
@@ -33,7 +33,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => identity.Edit(null, new FullName("Test", "Test"));
@@ -50,7 +50,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         identity.Edit(expectedValue, new FullName(expectedValue, expectedValue));
@@ -77,7 +77,7 @@ public class IdentityTest
             null,
             expectedValue,
             new FullName(expectedValue, expectedValue),
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Assert
         Assert.Throws<ArgumentException>(a);
@@ -99,7 +99,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
@@ -126,7 +126,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName(expectedValue, expectedValue),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
@@ -153,7 +153,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
@@ -180,7 +180,7 @@ public class IdentityTest
         var identity = new Identity(
             new FullName("Test", "Test"),
             "SomeEmail",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => admin.EditOtherIdentity(
@@ -200,7 +200,7 @@ public class IdentityTest
         var expectedValue = "New Value";
 
         var admin = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientAdministrator());
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetRestourantEmployee());
+        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         admin.EditOtherIdentity(

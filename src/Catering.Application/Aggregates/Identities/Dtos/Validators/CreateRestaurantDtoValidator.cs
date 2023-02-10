@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Catering.Application.Aggregates.Identites.Dtos.Validators;
+namespace Catering.Application.Aggregates.Identities.Dtos.Validators;
 
-internal class CreateRestourantDtoValidator : AbstractValidator<CreateRestourantDto>
+internal class CreateRestaurantDtoValidator : AbstractValidator<CreateRestaurantDto>
 {
-    public CreateRestourantDtoValidator()
+    public CreateRestaurantDtoValidator()
     {
         RuleFor(e => e.Email).NotEmpty().EmailAddress();
         RuleFor(e => e.InitialPassword).NotEmpty();

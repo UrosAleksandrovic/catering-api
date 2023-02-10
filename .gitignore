@@ -358,5 +358,5 @@ MigrationBackup/
 # Compose Environment file, only sample is exposed
 *.env
 
-# Rider Files
+# Exclude Rider files
 .idea/*

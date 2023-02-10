@@ -24,13 +24,11 @@ public class ErrorHandlingMiddleware
         {
             logger.LogError(e, e.Message);
 
-            var resolvedError = errorPublisher.Publish(e);
-            if (resolvedError == null)
-                resolvedError = HttpErrorResult.DefaultResult;
+            var resolvedError = errorPublisher.Publish(e) ?? HttpErrorResult.DefaultResult;
 
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = resolvedError.Value.HttpStatusCode;
-            await context.Response.WriteAsJsonAsync(new { message = resolvedError.Value.Message });
+            context.Response.StatusCode = resolvedError.HttpStatusCode;
+            await context.Response.WriteAsJsonAsync(new { message = resolvedError.Message });
         }
     }
 }

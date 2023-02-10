@@ -9,7 +9,7 @@ using Catering.Infrastructure.Data.Repositories;
 using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Catering.Infrastructure.DependencyInjection;
+namespace Catering.DependencyInjection;
 
 public static class RepositoriesExtensions
 {

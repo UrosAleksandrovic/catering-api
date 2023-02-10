@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Catering.Infrastructure.DependencyInjection;
+namespace Catering.DependencyInjection;
 
-public static class PersistanceExtensions
+public static class PersistenceExtensions
 {
-    public static IServiceCollection AddCateringPersistance(
+    public static IServiceCollection AddCateringPersistence(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -28,7 +28,7 @@ public static class PersistanceExtensions
         return services;
     }
 
-    public static IServiceCollection AddMailingPersistance(
+    public static IServiceCollection AddMailingPersistence(
         this IServiceCollection services,
         IConfiguration configuration)
     {

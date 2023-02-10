@@ -4,7 +4,7 @@ namespace Catering.Infrastructure.Mailing;
 
 public class MailingDataSettings
 {
-    public const string Position = "Persistance:Mailing";
+    public const string Position = "Persistence:Mailing";
 
     [Required]
     public string ConnectionString { get; set; }

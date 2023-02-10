@@ -1,16 +1,15 @@
-﻿using Catering.Application.Security;
+﻿using System.Text;
+using Catering.Application.Security;
 using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Infrastructure.Security;
 using Catering.Infrastructure.Security.Ldap;
 using Catering.Infrastructure.Security.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
-namespace Catering.Infrastructure.DependencyInjection;
+namespace Catering.DependencyInjection;
 
 public static class SecurityExtensions
 {

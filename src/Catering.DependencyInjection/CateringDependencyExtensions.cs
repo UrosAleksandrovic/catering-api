@@ -1,5 +1,4 @@
-﻿using Catering.Infrastructure.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Catering.DependencyInjection;
@@ -10,8 +9,8 @@ public static class CateringDependencyExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddCateringPersistance(configuration);
-        services.AddMailingPersistance(configuration);
+        services.AddCateringPersistence(configuration);
+        services.AddMailingPersistence(configuration);
 
         services.AddCateringRepositories();
         services.AddMailingRepositories();

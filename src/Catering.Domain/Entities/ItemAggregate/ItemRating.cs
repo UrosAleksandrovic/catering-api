@@ -9,7 +9,7 @@ public class ItemRating
 
     public Guid ItemId { get; private set; }
     public short Rating { get; private set; }
-    public string CustomerId { get; set; }
+    public string CustomerId { get; private set; }
 
     private ItemRating() { }
 

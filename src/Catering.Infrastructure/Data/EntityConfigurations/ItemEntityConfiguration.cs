@@ -10,7 +10,7 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
 
     public void Configure(EntityTypeBuilder<Item> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => new {e.MenuId, e.Id});
 
         builder.Property(e => e.Price)
             .HasColumnType("DECIMAL(19,4)");

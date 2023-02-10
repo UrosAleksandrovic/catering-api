@@ -2,8 +2,9 @@
 
 namespace Catering.Domain.Entities.MenuAggregate;
 
-public class Menu : BaseEntity<Guid>, ISoftDeletable
+public class Menu : ISoftDeletable
 {
+    public Guid Id { get; private set; }
     public string Name { get; private set; }
     public MenuContact Contact { get; private set; }
 

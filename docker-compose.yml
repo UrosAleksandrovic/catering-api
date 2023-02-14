@@ -45,3 +45,12 @@ services:
       ASPNETCORE_ENVIRONMENT: 'Container'
     profiles:
       - 'catering-api'
+  
+  nginx-local-proxy:
+    image: nginx:latest
+    restart: always
+    volumes: 
+      - ${LOCAL_PROXY_CONFIG_PATH}:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+      - 443:443

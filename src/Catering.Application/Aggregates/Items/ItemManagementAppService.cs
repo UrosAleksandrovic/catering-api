@@ -3,7 +3,6 @@ using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
 using Catering.Application.Aggregates.Items.Requests;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.ItemAggregate;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Items;
@@ -24,10 +23,10 @@ internal class ItemManagementAppService : IItemManagementAppService
         _publisher = publisher;
     }
 
-    public async Task<Guid> CreateItemAsync(CreateItemDto createRequest)
+    public async Task<Guid> CreateItemAsync(Guid menuId, CreateItemDto createRequest)
     {
         var itemToCreate = new ItemBuilder()
-            .HasMenu(createRequest.MenuId)
+            .HasMenu(menuId)
             .HasIngredients(createRequest.Ingredients)
             .HasCategories(createRequest.Categories)
             .HasGeneralData(createRequest.Name, createRequest.Description, createRequest.Price)
@@ -38,9 +37,9 @@ internal class ItemManagementAppService : IItemManagementAppService
         return createdItem.Id;
     }
 
-    public async Task DeleteItemAsync(Guid itemId)
+    public async Task DeleteItemAsync(Guid menuId, Guid itemId)
     {
-        var item = await _itemRepository.GetByIdAsync(itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
@@ -53,7 +52,7 @@ internal class ItemManagementAppService : IItemManagementAppService
         await _itemRepository.UpdateAsync(item);
     }
 
-    public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requestorId)
+    public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requesterId)
     {
         var result = new FilterResult<ItemInfoDto>
         {
@@ -63,9 +62,9 @@ internal class ItemManagementAppService : IItemManagementAppService
             Result = Enumerable.Empty<ItemInfoDto>()
         };
 
-        var request = new GetIdentityForMenuId { IdentityId = requestorId, MenuId = itemFilters.MenuId };
-        var requestor = await _publisher.Send(request);
-        if (requestor == default)
+        var request = new GetIdentityForMenuId { IdentityId = requesterId, MenuId = itemFilters.MenuId };
+        var requester = await _publisher.Send(request);
+        if (requester == default)
             return result;
 
         var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
@@ -75,32 +74,32 @@ internal class ItemManagementAppService : IItemManagementAppService
         return result;
     }
 
-    public async Task<ItemInfoDto> GetItemByIdAsync(Guid itemId, string requestorId)
+    public async Task<ItemInfoDto> GetItemByIdAsync(Guid menuId, Guid itemId, string requesterId)
     {
-        var item = await _itemRepository.GetByIdAsync(itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             return default;
 
-        var request = new GetIdentityForMenuId { IdentityId = requestorId, MenuId = item.MenuId };
+        var request = new GetIdentityForMenuId { IdentityId = requesterId, MenuId = item.MenuId };
         var creator = await _publisher.Send(request);
 
         return creator == default ? default : _mapper.Map<ItemInfoDto>(item);
     }
 
-    public async Task<short> GetCustomerRatingForItemAsync(Guid itemId, string customerId)
+    public async Task<short> GetCustomerRatingForItemAsync(Guid menuId, Guid itemId, string customerId)
     {
-        var item = await _itemRepository.GetByIdAsync(itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
         var customerRating = item.Ratings.SingleOrDefault(r => r.CustomerId == customerId);
 
-        return customerRating == default ? (short)0 : customerRating.Rating;
+        return customerRating?.Rating ?? 0;
     }
 
-    public async Task RateItemAsync(Guid itemId, string customerId, short rating)
+    public async Task RateItemAsync(Guid menuId, Guid itemId, string customerId, short rating)
     {
-        var item = await _itemRepository.GetByIdAsync(itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
@@ -108,9 +107,9 @@ internal class ItemManagementAppService : IItemManagementAppService
         await _itemRepository.UpdateAsync(item);
     }
 
-    public async Task UpdateItemAsync(Guid itemId, UpdateItemDto updateRequest)
+    public async Task UpdateItemAsync(Guid menuId, Guid itemId, UpdateItemDto updateRequest)
     {
-        var item = await _itemRepository.GetByIdAsync(itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
@@ -125,10 +124,11 @@ internal class ItemManagementAppService : IItemManagementAppService
     {
         var result = await _itemRepository.GetMostOrderedFromTheMenuAsync(top, menuId);
 
-        List<ItemsLeaderboardDto> dtoResult = new();
-        foreach (var item in result)
-            dtoResult.Add(new ItemsLeaderboardDto { ItemInfo = _mapper.Map<ItemInfoDto>(item.item), EvaluatedValue = item.numOfOrders });
-
-        return dtoResult;
+        return result.Select(item => new ItemsLeaderboardDto
+            {
+                ItemInfo = _mapper.Map<ItemInfoDto>(item.item),
+                EvaluatedValue = item.numOfOrders
+            })
+            .ToList();
     }
 }

@@ -13,6 +13,20 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
         : base(dbContextFactory)
     { }
 
+    public async Task<Item> GetByMenuAndIdAsync(Guid menuId, Guid itemId)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var result = await dbContext
+            .Set<Item>()
+            .AsQueryable()
+            .Where(i => i.Id == itemId)
+            .Where(i => i.MenuId == menuId)
+            .SingleOrDefaultAsync();
+
+        return result;
+    }
+
     public async Task<(List<Item> items, int totalCount)> GetFilteredAsync(ItemsFilter itemsFilter)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();

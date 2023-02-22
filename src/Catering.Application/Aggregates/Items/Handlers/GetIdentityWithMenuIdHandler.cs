@@ -1,4 +1,4 @@
-﻿using Catering.Application.Aggregates.Identites.Abstractions;
+﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items.Requests;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Domain.Entities.IdentityAggregate;
@@ -32,7 +32,7 @@ internal class GetIdentityWithMenuIdHandler : IRequestHandler<GetIdentityForMenu
         if (menu == default)
             return default;
 
-        if (identity.Role.IsRestourantEmployee())
+        if (identity.Role.IsRestaurantEmployee())
             return menu.HasContact(identity.Id) ? identity : default;
 
         return default;

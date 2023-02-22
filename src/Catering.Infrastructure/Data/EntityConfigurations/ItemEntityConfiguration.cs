@@ -38,7 +38,7 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
 
         builder.OwnsMany(e => e.Categories, cfg =>
         {
-            cfg.HasKey(c => new { c.ItemId, c.Id });
+            cfg.HasKey(i => new { i.ItemId, i.Id });
         });
 
         builder.Metadata

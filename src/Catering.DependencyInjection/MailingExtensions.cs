@@ -3,7 +3,7 @@ using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Catering.Infrastructure.DependencyInjection;
+namespace Catering.DependencyInjection;
 
 public static class MailingExtensions
 {

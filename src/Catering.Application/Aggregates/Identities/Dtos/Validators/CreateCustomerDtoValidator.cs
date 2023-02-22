@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Catering.Application.Aggregates.Identites.Dtos.Validators;
+namespace Catering.Application.Aggregates.Identities.Dtos.Validators;
 
 internal class CreateCustomerDtoValidator : AbstractValidator<CreateCustomerDto>
 {

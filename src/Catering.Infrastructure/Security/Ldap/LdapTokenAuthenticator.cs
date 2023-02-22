@@ -1,11 +1,11 @@
-﻿using Catering.Application.Aggregates.Identites.Abstractions;
-using Catering.Application.Security;
+﻿using Catering.Application.Security;
 using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Infrastructure.Security.Settings;
 using LdapForNet;
 using LdapForNet.Native;
 using Microsoft.Extensions.Options;
 using System.Security.Authentication;
+using Catering.Application.Aggregates.Identities.Abstractions;
 
 namespace Catering.Infrastructure.Security.Ldap;
 

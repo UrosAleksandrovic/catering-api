@@ -7,22 +7,22 @@ using static Catering.Application.Mailing.Emails.TemplateNamesConstants;
 
 namespace Catering.Application.Mailing.Emails.Handlers;
 
-internal class OrderPlacedRestourantEmailHandler : INotificationHandler<OrderPlaced>
+internal class OrderPlacedRestaurantEmailHandler : INotificationHandler<OrderPlaced>
 {
     private readonly IEmailRepository _emailRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
     private readonly IMenuRepository _menuRepository;
-    private readonly ILogger<OrderPlacedRestourantEmailHandler> _logger;
+    private readonly ILogger<OrderPlacedRestaurantEmailHandler> _logger;
 
-    public OrderPlacedRestourantEmailHandler(
+    public OrderPlacedRestaurantEmailHandler(
         IEmailRepository emailRepository,
         IEmailSender emailSender,
         IOrderRepository orderRepository,
         IEmailBuilder emailBuilder,
         IMenuRepository menuRepository,
-        ILogger<OrderPlacedRestourantEmailHandler> logger)
+        ILogger<OrderPlacedRestaurantEmailHandler> logger)
     {
         _emailRepository = emailRepository;
         _emailSender = emailSender;
@@ -55,7 +55,7 @@ internal class OrderPlacedRestourantEmailHandler : INotificationHandler<OrderPla
         CateringEmail generatedEmail;
         try
         {
-            var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestourant);
+            var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestaurant);
             var order = await _orderRepository.GetByIdAsync(notification.OrderId);
             var menu = await _menuRepository.GetByIdAsync(order.MenuId);
 

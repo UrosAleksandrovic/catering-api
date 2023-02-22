@@ -1,6 +1,6 @@
 ﻿using Catering.Domain.Entities.IdentityAggregate;
 
-namespace Catering.Application.Aggregates.Identites;
+namespace Catering.Application.Aggregates.Identities;
 
 public class CustomersFilter : FilterBase
 {

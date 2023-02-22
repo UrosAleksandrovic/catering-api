@@ -8,7 +8,7 @@ public enum IdentityRole
     Super = 1,
     Administrator = 2,
     Client = 4,
-    Restourant = 8,
+    Restaurant = 8,
     Employee = 16,
 }
 
@@ -20,8 +20,8 @@ public static class IdentityRoleExtensions
     public static bool IsClientEmployee(this IdentityRole role)
         => role.HasFlag(IdentityRole.Client) && role.HasFlag(IdentityRole.Employee);
 
-    public static bool IsRestourantEmployee(this IdentityRole role)
-        => role.HasFlag(IdentityRole.Restourant) && role.HasFlag(IdentityRole.Employee);
+    public static bool IsRestaurantEmployee(this IdentityRole role)
+        => role.HasFlag(IdentityRole.Restaurant) && role.HasFlag(IdentityRole.Employee);
 
     public static bool IsSuperAdmin(this IdentityRole role)
         => role.HasFlag(IdentityRole.Super) && role.HasFlag(IdentityRole.Administrator);
@@ -33,7 +33,7 @@ public static class IdentityRoleExtensions
 
     public static IdentityRole GetSuperAdministrator() => IdentityRole.Super | IdentityRole.Administrator;
 
-    public static IdentityRole GetRestourantEmployee() => IdentityRole.Restourant | IdentityRole.Employee;
+    public static IdentityRole GetRestaurantEmployee() => IdentityRole.Restaurant | IdentityRole.Employee;
     public static IdentityRole GetClientEmployee() => IdentityRole.Client | IdentityRole.Employee;
 
     public static string ToIdentityString(this IdentityRole input)

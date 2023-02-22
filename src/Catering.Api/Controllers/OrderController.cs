@@ -33,7 +33,7 @@ public class OrdersController : ControllerBase
     [HttpPut("{orderId}/cancel")]
     [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
         IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-        IdentityRole.Restourant | IdentityRole.Employee)]
+        IdentityRole.Restaurant | IdentityRole.Employee)]
     public async Task<IActionResult> CancelOrderAsync([FromRoute] long orderId)
     {
         await _ordersService.CancelAsync(orderId);
@@ -44,7 +44,7 @@ public class OrdersController : ControllerBase
     [HttpPut("{orderId}/confirm")]
     [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
         IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-        IdentityRole.Restourant | IdentityRole.Employee)]
+        IdentityRole.Restaurant | IdentityRole.Employee)]
     public async Task<IActionResult> ConfirmOrderAsync([FromRoute] long orderId)
     {
         await _ordersService.ConfirmAsync(orderId);
@@ -57,8 +57,8 @@ public class OrdersController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long orderId)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var order = await _ordersService.GetByIdAsync(orderId, requestorId);
+        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var order = await _ordersService.GetByIdAsync(orderId, requesterId);
 
         if (order == default)
             return NotFound();
@@ -69,8 +69,8 @@ public class OrdersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetFilteredOrdersAsync([FromQuery] OrdersFilter filter)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var orders = await _ordersService.GetFilteredAsync(filter, requestorId);
+        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var orders = await _ordersService.GetFilteredAsync(filter, requesterId);
 
         return Ok(orders);
     }

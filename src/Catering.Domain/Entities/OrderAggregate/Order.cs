@@ -3,8 +3,9 @@ using Catering.Domain.Exceptions;
 
 namespace Catering.Domain.Entities.OrderAggregate;
 
-public class Order : BaseEntity<long>
+public class Order
 {
+    public long Id { get; set; }
     public string CustomerId { get; set; }
     public DateTime ExpectedOn { get; set; }
     public DateTime CreatedOn { get; set; }

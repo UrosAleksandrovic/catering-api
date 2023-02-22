@@ -3,8 +3,9 @@ using Catering.Domain.Exceptions;
 
 namespace Catering.Domain.Entities.IdentityAggregate;
 
-public class Identity : BaseEntity<string>
+public class Identity
 {
+    public string Id { get; private set; }
     public string Email { get; private set; }
     public FullName FullName { get; private set; }
     public IdentityRole Role { get; private set; }

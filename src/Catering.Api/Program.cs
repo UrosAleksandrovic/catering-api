@@ -1,7 +1,6 @@
 ﻿using Catering.Api.Configuration;
 using Catering.Api.Configuration.ErrorHandling;
 using Catering.DependencyInjection;
-using Catering.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,4 +1,4 @@
-﻿using Catering.Application.Aggregates.Identites.Abstractions;
+﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Notifications;
 using Catering.Domain.Entities.IdentityAggregate;
@@ -56,7 +56,7 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
         CateringEmail generatedEmail;
         try
         {
-            var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestourant);
+            var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestaurant);
             var order = await _orderRepository.GetByIdAsync(notification.OrderId);
             var customerIdentity = await _identityRepository.GetByIdAsync(order.CustomerId);
 

@@ -18,7 +18,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         var result = externalIdentity.ComparePassword(invalidPassword);
@@ -36,7 +36,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             password,
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         var result = externalIdentity.ComparePassword(string.Join("", Enumerable.Repeat('s', password.Length)));
@@ -54,7 +54,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             password,
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         password = "somePassword@123";
@@ -73,7 +73,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             password,
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         var result = externalIdentity.ComparePassword(password);
@@ -92,7 +92,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => externalIdentity.EditPassword(invalidPassword);
@@ -109,7 +109,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         void a() => externalIdentity.EditPassword(null);
@@ -127,7 +127,7 @@ public class ExternalIdentityTest
             "Some Email",
             new FullName("Test", "Test"),
             "SomePassword@123",
-            IdentityRoleExtensions.GetRestourantEmployee());
+            IdentityRoleExtensions.GetRestaurantEmployee());
 
         //Act
         externalIdentity.EditPassword(newPassword);

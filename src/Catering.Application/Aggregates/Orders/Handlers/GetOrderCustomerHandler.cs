@@ -1,4 +1,4 @@
-﻿using Catering.Application.Aggregates.Identites.Abstractions;
+﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Orders.Requests;
 using Catering.Domain.Entities.IdentityAggregate;
 using MediatR;

@@ -20,16 +20,23 @@ public class ErrorPublisher : IErrorPublisher
             return null;
 
         var resolverInstance = (IErrorHttpResolver)Activator.CreateInstance(resolverType);
-        return resolverInstance.Resolve(e);
+
+        return resolverInstance?.Resolve(e);
     }
 
     public bool TryAddExceptionResolver(Type resolverType)
     {
+        if (resolverType == null)
+            return false;
+        
         if (!resolverType.IsAssignableTo(typeof(IErrorHttpResolver)))
             return false;
 
-        var exceptionType = resolverType.BaseType.GetGenericArguments().First();
-        if (!exceptionType.IsAssignableTo(typeof(Exception)))
+        if (resolverType.BaseType == null)
+            return false;
+        
+        var exceptionType = resolverType.BaseType.GetGenericArguments().FirstOrDefault();
+        if (exceptionType == null || !exceptionType.IsAssignableTo(typeof(Exception)))
             return false;
 
         return _exceptionResolvers.TryAdd(exceptionType, resolverType);

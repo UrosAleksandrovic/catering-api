@@ -2,8 +2,9 @@
 
 namespace Catering.Domain.Entities.ItemAggregate;
 
-public class ItemIngredient : BaseEntity<string>
+public class ItemIngredient
 {
+    public string Id { get; private set; }
     public Guid ItemId { get; private set; }
     public string DisplayName { get; private set; }
 

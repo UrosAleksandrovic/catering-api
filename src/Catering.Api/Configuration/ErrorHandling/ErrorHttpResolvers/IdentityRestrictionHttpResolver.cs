@@ -1,9 +1,9 @@
 ﻿using Catering.Api.Configuration.ErrorHandling.Abstractions;
 using Catering.Domain.Exceptions;
 
-namespace Catering.Api.Configuration.ErrorHandling.Handlers;
+namespace Catering.Api.Configuration.ErrorHandling.ErrorHttpResolvers;
 
-public class IndentityRestrictionHttpResolver : ErrorHttpResolver<IdentityRestrictionException>
+public class IdentityRestrictionHttpResolver : ErrorHttpResolver<IdentityRestrictionException>
 {
     public override HttpErrorResult Resolve(object error)
         => CheckTypeOfError(error)

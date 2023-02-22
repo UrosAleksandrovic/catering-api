@@ -1,13 +1,13 @@
 ﻿using Catering.Api.Configuration.Authorization;
-using Catering.Application.Aggregates.Identites;
-using Catering.Application.Aggregates.Identites.Abstractions;
-using Catering.Application.Aggregates.Identites.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Catering.Application.Aggregates.Identities;
+using Catering.Application.Aggregates.Identities.Abstractions;
+using Catering.Application.Aggregates.Identities.Dtos;
 
 namespace Catering.Api.Controllers;
 
-[Route("/api/clientEmployee")]
+[Route("/api/clientEmployees")]
 public class ClientEmployeesController : ControllerBase
 {
     private readonly ICustomerManagementAppService _customerAppService;
@@ -21,8 +21,8 @@ public class ClientEmployeesController : ControllerBase
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> RegisterAsync(CreateCustomerDto createRequest)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _customerAppService.CreateClientsCustomerAsync(createRequest, requestorId);
+        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        await _customerAppService.CreateClientsCustomerAsync(createRequest, requesterId);
 
         return NoContent();
     }
@@ -31,8 +31,8 @@ public class ClientEmployeesController : ControllerBase
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetBudgetInfoAsync()
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var budget = await _customerAppService.GetCustomerBudgetInfoAsync(requestorId);
+        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var budget = await _customerAppService.GetCustomerBudgetInfoAsync(requesterId);
 
         if (budget != null)
             return Ok(budget);
@@ -53,8 +53,8 @@ public class ClientEmployeesController : ControllerBase
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetProfileAsync()
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var customerInfoDto = await _customerAppService.GetCustomerInfoAsync(requestorId);
+        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var customerInfoDto = await _customerAppService.GetCustomerInfoAsync(requesterId);
 
         if (customerInfoDto != null)
             return Ok(customerInfoDto);

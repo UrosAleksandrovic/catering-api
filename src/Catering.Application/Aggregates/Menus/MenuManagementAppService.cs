@@ -62,7 +62,7 @@ internal class MenuManagementAppService : IMenuManagementAppService
 
         var requestor = await _publisher.Send(new GetIdentityById { Id = requestorId });
 
-        if (!requestor.Role.IsRestourantEmployee())
+        if (!requestor.Role.IsRestaurantEmployee())
             return _mapper.Map<MenuInfoDto>(menu);
 
         return menu.HasContact(requestorId) ? _mapper.Map<MenuInfoDto>(menu) : null;

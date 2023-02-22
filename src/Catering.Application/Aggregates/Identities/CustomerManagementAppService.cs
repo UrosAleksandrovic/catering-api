@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using Catering.Application.Aggregates.Identites.Abstractions;
-using Catering.Application.Aggregates.Identites.Dtos;
+using Catering.Application.Aggregates.Identities.Abstractions;
+using Catering.Application.Aggregates.Identities.Dtos;
 using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Domain.Exceptions;
 
-namespace Catering.Application.Aggregates.Identites;
+namespace Catering.Application.Aggregates.Identities;
 
 internal class CustomerManagementAppService : ICustomerManagementAppService
 {

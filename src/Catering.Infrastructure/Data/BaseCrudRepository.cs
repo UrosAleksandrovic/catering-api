@@ -25,7 +25,7 @@ internal class BaseCrudRepository<T, TContext> : IBaseCrudRepository<T>
         return entity;
     }
 
-    public async Task<T> GetByIdAsync<TKey>(TKey key)
+    public async Task<T> GetByIdAsync(params object[] key)
     {
         _dbContext = await _dbContextFactory.CreateDbContextAsync();
 

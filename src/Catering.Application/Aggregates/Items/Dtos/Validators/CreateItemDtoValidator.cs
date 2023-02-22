@@ -12,8 +12,5 @@ internal class CreateItemDtoValidator : AbstractValidator<CreateItemDto>
 
         RuleFor(dto => dto.Price)
             .GreaterThanOrEqualTo(0);
-
-        RuleFor(dto => dto.MenuId)
-            .NotEmpty();
     }
 }

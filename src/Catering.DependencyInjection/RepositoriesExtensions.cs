@@ -1,5 +1,5 @@
 ﻿using Catering.Application.Aggregates.Carts.Abstractions;
-using Catering.Application.Aggregates.Identites.Abstractions;
+using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
@@ -9,7 +9,7 @@ using Catering.Infrastructure.Data.Repositories;
 using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Catering.Infrastructure.DependencyInjection;
+namespace Catering.DependencyInjection;
 
 public static class RepositoriesExtensions
 {

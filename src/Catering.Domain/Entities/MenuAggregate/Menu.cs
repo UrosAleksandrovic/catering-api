@@ -2,8 +2,9 @@
 
 namespace Catering.Domain.Entities.MenuAggregate;
 
-public class Menu : BaseEntity<Guid>, ISoftDeletable
+public class Menu : ISoftDeletable
 {
+    public Guid Id { get; private set; }
     public string Name { get; private set; }
     public MenuContact Contact { get; private set; }
 
@@ -30,7 +31,7 @@ public class Menu : BaseEntity<Guid>, ISoftDeletable
         string phoneNumber,
         string email,
         string address,
-        string indentityId = null)
+        string identityId = null)
     {
         if (Contact != default)
         {
@@ -38,7 +39,7 @@ public class Menu : BaseEntity<Guid>, ISoftDeletable
             return;
         }
 
-        Contact = new MenuContact(phoneNumber, email, address, indentityId);
+        Contact = new MenuContact(phoneNumber, email, address, identityId);
     }
 
     public bool HasContact(string identityId)

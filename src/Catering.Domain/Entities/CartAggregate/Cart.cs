@@ -3,8 +3,9 @@ using Catering.Domain.Exceptions;
 
 namespace Catering.Domain.Entities.CartAggregate;
 
-public class Cart : BaseEntity<Guid>
+public class Cart
 {
+    public Guid Id { get; private set; }
     public string CustomerId { get; private set; }
 
     private readonly List<CartItem> _items = new();

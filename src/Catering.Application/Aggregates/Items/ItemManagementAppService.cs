@@ -3,7 +3,6 @@ using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
 using Catering.Application.Aggregates.Items.Requests;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.ItemAggregate;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Items;
@@ -40,7 +39,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task DeleteItemAsync(Guid menuId, Guid itemId)
     {
-        var item = await _itemRepository.GetByIdAsync(menuId, itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
@@ -77,7 +76,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task<ItemInfoDto> GetItemByIdAsync(Guid menuId, Guid itemId, string requesterId)
     {
-        var item = await _itemRepository.GetByIdAsync(menuId, itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             return default;
 
@@ -89,7 +88,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task<short> GetCustomerRatingForItemAsync(Guid menuId, Guid itemId, string customerId)
     {
-        var item = await _itemRepository.GetByIdAsync(menuId, itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
@@ -100,7 +99,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task RateItemAsync(Guid menuId, Guid itemId, string customerId, short rating)
     {
-        var item = await _itemRepository.GetByIdAsync(menuId, itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 
@@ -110,7 +109,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task UpdateItemAsync(Guid menuId, Guid itemId, UpdateItemDto updateRequest)
     {
-        var item = await _itemRepository.GetByIdAsync(menuId, itemId);
+        var item = await _itemRepository.GetByMenuAndIdAsync(menuId, itemId);
         if (item == default)
             throw new KeyNotFoundException();
 

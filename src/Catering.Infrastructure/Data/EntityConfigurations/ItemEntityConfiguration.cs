@@ -10,7 +10,7 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
 
     public void Configure(EntityTypeBuilder<Item> builder)
     {
-        builder.HasKey(e => new {e.MenuId, e.Id});
+        builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Price)
             .HasColumnType("DECIMAL(19,4)");
@@ -38,7 +38,7 @@ internal class ItemEntityConfiguration : IEntityTypeConfiguration<Item>
 
         builder.OwnsMany(e => e.Categories, cfg =>
         {
-            cfg.HasKey(c => new { c.ItemId, c.Id });
+            cfg.HasKey(i => new { i.ItemId, i.Id });
         });
 
         builder.Metadata

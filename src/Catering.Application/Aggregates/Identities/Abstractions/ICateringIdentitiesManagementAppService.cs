@@ -4,5 +4,6 @@ namespace Catering.Application.Aggregates.Identities.Abstractions;
 
 public interface ICateringIdentitiesManagementAppService
 {
-    public Task<string> CreateRestaurantAsync(CreateRestaurantDto createRequest);
+    Task SendIdentityInvitationAsync(string creatorId, CreateIdentityInvitationDto createRequest);
+    Task AcceptInvitationAsync(string invitationId, string newPassword);
 }

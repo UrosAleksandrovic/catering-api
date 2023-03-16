@@ -76,7 +76,7 @@ public class MenuItemsController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet]
+    [HttpGet("items")]
     [Authorize]
     public async Task<IActionResult> GetPageAsync([FromQuery] ItemsFilter filter)
     {

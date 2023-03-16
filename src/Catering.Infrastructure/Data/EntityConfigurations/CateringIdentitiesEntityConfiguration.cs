@@ -14,7 +14,7 @@ internal class CateringIdentitiesConfiguration : IEntityTypeConfiguration<Cateri
 
         builder
             .Property("_password")
-            .HasColumnName("Password")
+            .HasColumnName("password")
             .IsRequired();
     }
 }

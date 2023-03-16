@@ -21,6 +21,7 @@ internal class CateringDbContext : DbContext
     internal DbSet<Order> Orders { get; set; }
     internal DbSet<Identity> Identities { get; set; }
     internal DbSet<CateringIdentity> CateringIdentities { get; set; }
+    internal DbSet<IdentityInvitation> IdentityInvitations { get; set; }
     internal DbSet<Customer> Customers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,5 +35,6 @@ internal class CateringDbContext : DbContext
         new IdentityEntityConfiguration().Configure(modelBuilder.Entity<Identity>());
         new CateringIdentitiesConfiguration().Configure(modelBuilder.Entity<CateringIdentity>());
         new CustomerEntityConfiguration().Configure(modelBuilder.Entity<Customer>());
+        new IdentityInvitationEntityConfiguration().Configure(modelBuilder.Entity<IdentityInvitation>());
     }
 }

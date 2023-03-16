@@ -5,10 +5,10 @@ namespace Catering.Application.Aggregates.Menus.Abstractions;
 
 public interface IMenuManagementAppService
 {
-    public Task<Guid> CreateAsync(CreateMenuDto createMenu);
-    public Task UpdateAsync(Guid id, UpdateMenuDto updateMenu);
-    public Task DeleteAsync(Guid id);
-    public Task<MenuInfoDto> GetByIdAsync(Guid id);
-    public Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId);
-    public Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter);
+    Task<Guid> CreateAsync(CreateMenuDto createMenu);
+    Task UpdateAsync(Guid id, UpdateMenuDto updateMenu);
+    Task DeleteAsync(Guid id);
+    Task<MenuInfoDto> GetByIdAsync(Guid id);
+    Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId);
+    Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter);
 }

@@ -20,7 +20,7 @@ public class MenusController : ControllerBase
 
     [HttpPost]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> CreateMenuAsync([FromBody]CreateMenuDto createRequest)
+    public async Task<IActionResult> CreateMenuAsync([FromBody] CreateMenuDto createRequest)
     {
         var createdId = await _menuAppService.CreateAsync(createRequest);
 
@@ -41,7 +41,7 @@ public class MenusController : ControllerBase
         return Ok(menu);
     }
 
-    [HttpGet]
+    [HttpGet("page")]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
     {

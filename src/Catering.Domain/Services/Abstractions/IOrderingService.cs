@@ -6,9 +6,9 @@ namespace Catering.Domain.Services.Abstractions;
 
 public interface IOrderingService
 {
-    public Order PlaceOrder(ICustomer customer, IBuilder<Order> orderBuilder);
+    Order PlaceOrder(ICustomer customer, IBuilder<Order> orderBuilder);
 
-    public void ConfirmOrder(ICustomer customer, Order order);
+    void ConfirmOrder(ICustomer customer, Order order);
 
-    public void CancelOrder(ICustomer customer, Order order);
+    void CancelOrder(ICustomer customer, Order order);
 }

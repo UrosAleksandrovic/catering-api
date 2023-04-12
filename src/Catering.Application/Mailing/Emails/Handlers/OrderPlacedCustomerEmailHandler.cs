@@ -60,9 +60,9 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
             var order = await _orderRepository.GetByIdAsync(notification.OrderId);
             var customerIdentity = await _identityRepository.GetByIdAsync(order.CustomerId);
 
-            _emailBuilder.HasTitle($"Order #{order.Id}");
-            _emailBuilder.HasEmailTemplate(template, new { Order = order });
-            _emailBuilder.HasRecepient(customerIdentity.Email);
+            _emailBuilder.HasTitle($"Order #{order.Id}")
+                .HasEmailTemplate(template, new { Order = order })
+                .HasRecepient(customerIdentity.Email);
 
             generatedEmail = _emailBuilder.Build();
         }

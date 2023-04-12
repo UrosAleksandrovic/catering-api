@@ -6,6 +6,7 @@ using LdapForNet.Native;
 using Microsoft.Extensions.Options;
 using System.Security.Authentication;
 using Catering.Application.Aggregates.Identities.Abstractions;
+using Catering.Domain.Exceptions;
 
 namespace Catering.Infrastructure.Security.Ldap;
 
@@ -52,7 +53,15 @@ internal class LdapTokenAuthenticator : ITokenAtuhenticator<Identity>
         connection.Connect(_ldapOptions.Server, _ldapOptions.PortNumber);
 
         var userDn = GetUserBaseDn(username);
-        connection.Bind(Native.LdapAuthMechanism.SIMPLE, userDn, password);
+
+        try
+        {
+            connection.Bind(Native.LdapAuthMechanism.SIMPLE, userDn, password);
+        }
+        catch (LdapInvalidCredentialsException exception)
+        {
+            throw new InvalidCredentialsException(username, exception);
+        }
 
         var searchResult = connection.Search(userDn, "(objectClass=*)").FirstOrDefault();
 

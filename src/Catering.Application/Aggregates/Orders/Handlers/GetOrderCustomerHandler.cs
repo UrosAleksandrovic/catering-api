@@ -15,5 +15,5 @@ internal class GetOrderCustomerHandler : IRequestHandler<GetOrderCustomer, Custo
     }
 
     public Task<Customer> Handle(GetOrderCustomer request, CancellationToken cancellationToken)
-        => _customerRepository.GetByIdAsync(request.CustomerId);
+        => _customerRepository.GetFullByIdAsync(request.CustomerId);
 }

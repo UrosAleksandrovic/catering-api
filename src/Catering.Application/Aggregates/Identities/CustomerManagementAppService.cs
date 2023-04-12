@@ -73,16 +73,10 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
 
     public async Task<FilterResult<CustomerInfoDto>> GetFilteredAsync(CustomersFilter filter)
     {
-        var result = new FilterResult<CustomerInfoDto>
-        {
-            PageIndex = filter.PageIndex,
-            PageSize = filter.PageSize,
-            TotalNumberOfPages = 0,
-            Result = Enumerable.Empty<CustomerInfoDto>()
-        };
+        var result = FilterResult<CustomerInfoDto>.GetEmpty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
 
         var (items, totalCount) = await _customerRepository.GetFilteredAsync(filter);
-        result.TotalNumberOfPages = totalCount / filter.PageSize;
+        result.TotalNumberOfElements = totalCount;
         result.Result = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
 
         return result;

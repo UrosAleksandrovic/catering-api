@@ -70,16 +70,10 @@ internal class MenuManagementAppService : IMenuManagementAppService
 
     public async Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter)
     {
-        var result = new FilterResult<MenuInfoDto>
-        {
-            PageIndex = menusFilter.PageIndex,
-            PageSize = menusFilter.PageSize,
-            TotalNumberOfPages = 0,
-            Result = Enumerable.Empty<MenuInfoDto>()
-        };
+        var result = FilterResult<MenuInfoDto>.GetEmpty<MenuInfoDto>(menusFilter.PageIndex, menusFilter.PageSize);
 
         var (menus, totalCount) = await _menuRepository.GetFilteredAsync(menusFilter);
-        result.TotalNumberOfPages = totalCount / menusFilter.PageSize;
+        result.TotalNumberOfElements = totalCount;
         result.Result = _mapper.Map<IEnumerable<MenuInfoDto>>(menus);
 
         return result;

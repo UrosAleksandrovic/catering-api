@@ -54,13 +54,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requesterId)
     {
-        var result = new FilterResult<ItemInfoDto>
-        {
-            PageIndex = itemFilters.PageIndex,
-            PageSize = itemFilters.PageSize,
-            TotalNumberOfPages = 0,
-            Result = Enumerable.Empty<ItemInfoDto>()
-        };
+        var result = FilterResult<ItemInfoDto>.GetEmpty<ItemInfoDto>(itemFilters.PageIndex, itemFilters.PageSize);
 
         var request = new GetIdentityForMenuId { IdentityId = requesterId, MenuId = itemFilters.MenuId };
         var requester = await _publisher.Send(request);
@@ -68,7 +62,7 @@ internal class ItemManagementAppService : IItemManagementAppService
             return result;
 
         var (items, totalCount) = await _itemRepository.GetFilteredAsync(itemFilters);
-        result.TotalNumberOfPages = totalCount / itemFilters.PageSize;
+        result.TotalNumberOfElements = totalCount;
         result.Result = _mapper.Map<IEnumerable<ItemInfoDto>>(items);
 
         return result;

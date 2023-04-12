@@ -1,6 +1,8 @@
-﻿using Catering.Application.Aggregates.Orders;
+﻿using Catering.Application.Aggregates.Items;
+using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Entities.ItemAggregate;
 using Catering.Domain.Entities.MenuAggregate;
 using Catering.Domain.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +43,7 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         var filterableOrders = ApplyFilters(filters, dbContext.Set<Order>());
+        filterableOrders = ApplyOrdering(filters, filterableOrders);
 
         return (await filterableOrders.ToListAsync(), await filterableOrders.CountAsync());
     }
@@ -89,14 +92,43 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
     {
         queryableOrders.AsNoTracking();
 
+        queryableOrders = queryableOrders.Include(e => e.Items);
+
         if (ordersFilter.CustomerId != null)
             queryableOrders = queryableOrders.Where(o => o.CustomerId == ordersFilter.CustomerId);
 
         if (ordersFilter.MenuId != null)
             queryableOrders = queryableOrders.Where(o => o.MenuId == ordersFilter.MenuId);
 
+        if (ordersFilter.TopPrice != null)
+            queryableOrders = queryableOrders.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) <=  ordersFilter.TopPrice);
+
+        if (ordersFilter.BottomPrice != null)
+            queryableOrders = queryableOrders.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) >= ordersFilter.BottomPrice);
+
+        if (ordersFilter.Statuses != null && ordersFilter.Statuses.Any())
+            queryableOrders = queryableOrders.Where(o => ordersFilter.Statuses.Contains(o.Status));
+
+        if (ordersFilter.DeliveredOn.HasValue)
+            queryableOrders = queryableOrders.Where(o => o.ExpectedOn.DayOfYear == ordersFilter.DeliveredOn.Value.DayOfYear)
+                                             .Where(o => o.ExpectedOn.Year == ordersFilter.DeliveredOn.Value.Year);
+
+        if (ordersFilter.IsHomeDelivery.HasValue && ordersFilter.IsHomeDelivery.Value)
+            queryableOrders = queryableOrders.Where(o => o.HomeDeliveryInfo != null);
+
         return queryableOrders
             .Skip((ordersFilter.PageIndex - 1) * ordersFilter.PageSize)
             .Take(ordersFilter.PageSize);
+    }
+
+    private IOrderedQueryable<Order> ApplyOrdering(OrdersFilter ordersFilter, IQueryable<Order> queryableOrders)
+    {
+        return (ordersFilter?.OrderBy) switch
+        {
+            OrdersOrderBy.TotalPrice => queryableOrders.OrderBy(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity)),
+            OrdersOrderBy.Status => queryableOrders.OrderBy(o => o.Status),
+            OrdersOrderBy.ExpectedOn => queryableOrders.OrderBy(o => o.ExpectedOn),
+            _ => queryableOrders.OrderByDescending(o => o.Id),
+        };
     }
 }

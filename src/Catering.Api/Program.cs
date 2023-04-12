@@ -30,10 +30,10 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Conta
     app.ApplyMailingMigrations();
 }
 
+app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 

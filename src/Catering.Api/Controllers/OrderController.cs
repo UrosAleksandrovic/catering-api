@@ -25,9 +25,9 @@ public class OrdersController : ControllerBase
     {
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        var id = await _ordersService.PlaceOrderAsync(customerId, createOrder);
+        var orderId = await _ordersService.PlaceOrderAsync(customerId, createOrder);
 
-        return CreatedAtRoute(GetNameRoute, new { orderId = id }, new { orderId = id });
+        return CreatedAtRoute(GetNameRoute, new { id = orderId }, new { id = orderId });
     }
 
     [HttpPut("{orderId}/cancel")]
@@ -53,12 +53,12 @@ public class OrdersController : ControllerBase
     }
 
     private const string GetNameRoute = "GetOrderById";
-    [HttpGet("{orderId}", Name = GetNameRoute)]
+    [HttpGet("{id}", Name = GetNameRoute)]
     [Authorize]
-    public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long orderId)
+    public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long id)
     {
         var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var order = await _ordersService.GetByIdAsync(orderId, requesterId);
+        var order = await _ordersService.GetByIdAsync(id, requesterId);
 
         if (order == default)
             return NotFound();
@@ -67,6 +67,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetFilteredOrdersAsync([FromQuery] OrdersFilter filter)
     {
         var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

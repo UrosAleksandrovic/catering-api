@@ -76,6 +76,18 @@ public class MenuItemsController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("{menuId}/items/{id}/rating")]
+    [AuthorizeClientsEmployee]
+    public async Task<IActionResult> GetItemRatingAsync(
+        [FromRoute] Guid menuId,
+        [FromRoute] Guid id)
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var result = await _itemsAppService.GetCustomerRatingForItemAsync(menuId, id, userId);
+
+        return Ok(result);
+    }
+
     [HttpGet("items")]
     [Authorize]
     public async Task<IActionResult> GetPageAsync([FromQuery] ItemsFilter filter)

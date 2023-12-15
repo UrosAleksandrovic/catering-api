@@ -25,7 +25,7 @@ public class OrderTest
             new Item("Chocolate", "Some description", 10, menuId),
         };
         var cart = new Cart(Guid.NewGuid().ToString());
-        cart.AddItem(items[0].Id, 1);
+        cart.AddItem(menuId, items[0].Id, 1);
 
         return new OrderBuilder()
             .HasDateOfDelivery(DateTime.Today)
@@ -159,7 +159,7 @@ public class OrderTest
 
         var cart = new Cart(Guid.NewGuid().ToString());
         foreach (var item in items)
-            cart.AddItem(item.Id, itemQuantity);
+            cart.AddItem(menuId, item.Id, itemQuantity);
 
         var order = _orderBuilder
             .HasCart(cart)

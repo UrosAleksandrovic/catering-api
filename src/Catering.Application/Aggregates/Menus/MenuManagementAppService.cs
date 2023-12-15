@@ -51,11 +51,6 @@ internal class MenuManagementAppService : IMenuManagementAppService
         await _publisher.Publish(new MenuDeleted { MenuId = menu.Id });
     }
 
-    public async Task<MenuInfoDto> GetByIdAsync(Guid id)
-    {
-        return _mapper.Map<MenuInfoDto>(await _menuRepository.GetByIdAsync(id));
-    }
-
     public async Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId)
     {
         var menu = await _menuRepository.GetByIdAsync(id);
@@ -70,17 +65,39 @@ internal class MenuManagementAppService : IMenuManagementAppService
 
     public async Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter)
     {
-        var result = new FilterResult<MenuInfoDto>
-        {
-            PageIndex = menusFilter.PageIndex,
-            PageSize = menusFilter.PageSize,
-            TotalNumberOfPages = 0,
-            Result = Enumerable.Empty<MenuInfoDto>()
-        };
+        var result = FilterResult<MenuInfoDto>.GetEmpty<MenuInfoDto>(menusFilter.PageIndex, menusFilter.PageSize);
 
         var (menus, totalCount) = await _menuRepository.GetFilteredAsync(menusFilter);
-        result.TotalNumberOfPages = totalCount / menusFilter.PageSize;
+        result.TotalNumberOfElements = totalCount;
         result.Result = _mapper.Map<IEnumerable<MenuInfoDto>>(menus);
+
+        return result;
+    }
+
+    public async Task<FilterResult<MenuContactDetailedInfoDto>> GetRestaurantContactsAsync(MenusFilter menusFilter)
+    {
+        var result = FilterResult<MenuContactDetailedInfoDto>.GetEmpty<MenuContactDetailedInfoDto>(
+            menusFilter.PageIndex,
+            menusFilter.PageSize);
+
+        var (menus, totalCount) = await _menuRepository.GetFilteredAsync(menusFilter);
+        var identities = new List<MenuContactDetailedInfoDto>();
+
+        foreach (var menu in menus)
+        {
+            var menuIdentity = await _publisher.Send(new GetIdentityInfoForMenuContactRequest
+            {
+                IdentityId = menu.Contact.IdentityId,
+                MenuId = menu.Id,
+                MenuName = menu.Name
+            });
+
+            if (menuIdentity != null)
+                identities.Add(menuIdentity);
+        }
+
+        result.TotalNumberOfElements = totalCount;
+        result.Result = identities;
 
         return result;
     }

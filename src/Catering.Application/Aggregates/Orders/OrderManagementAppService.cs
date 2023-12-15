@@ -53,16 +53,16 @@ internal class OrderManagementAppService : IOrderManagementAppService
         _ = _publisher.Publish(new OrderConfirmed { CustomerId = customer.IdentityId, OrderId = order.Id });
     }
 
-    public async Task<FilterResult<OrderInfoDto>> GetFilteredAsync(OrdersFilter orderFilters, string requestorId)
+    public async Task<FilterResult<ListOrderInfoDto>> GetFilteredAsync(OrdersFilter orderFilters, string requestorId)
     {
         var orders = await GetFilteredOrdersBasedOnRequestorAsync(orderFilters, requestorId);
 
-        return new FilterResult<OrderInfoDto>
+        return new FilterResult<ListOrderInfoDto>
         {
             PageIndex = orderFilters.PageIndex,
             PageSize = orderFilters.PageSize,
-            Result = _mapper.Map<IEnumerable<OrderInfoDto>>(orders.Item1),
-            TotalNumberOfPages = orders.Item2,
+            Result = _mapper.Map<IEnumerable<ListOrderInfoDto>>(orders.Item1),
+            TotalNumberOfElements = orders.Item2,
         };
     }
 

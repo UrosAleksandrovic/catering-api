@@ -21,14 +21,48 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
             .FirstOrDefaultAsync();
     }
 
-    public async Task<(IEnumerable<Customer>, int)> GetFilteredAsync(CustomersFilter filter)
+    public async Task<(IEnumerable<Customer>, int)> GetFilteredInternalCustomersAsync(CustomersFilter filter)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var resultQuery = ApplyFilters(dbContext.Customers.AsNoTracking().Include(c => c.Identity), filter);
+        var queryable = dbContext
+            .Customers
+            .AsNoTracking()
+            .Include(c => c.Identity)
+            .GroupJoin(
+                dbContext.CateringIdentities,
+                customer => customer.IdentityId,
+                cateringIdentity => cateringIdentity.Id,
+                (customer, cateringIdentity) => new { Customer = customer, CateringIdentity = cateringIdentity })
+            .SelectMany(
+                r => r.CateringIdentity.DefaultIfEmpty(),
+                (r, cateringIdentity) => new { r.Customer, CateringIdentity = cateringIdentity })
+            .Where(c => c.CateringIdentity == null)
+            .Select(c => c.Customer);
+
+        var resultQuery = ApplyFilters(queryable, filter);
 
         return (await resultQuery.ToListAsync(),
                 await resultQuery.CountAsync());
+    }
+
+    public async Task<(IEnumerable<Customer>, int)> GetFilteredExternalCustomersAsync(CustomersFilter filter)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var queryable = dbContext
+            .Customers
+            .AsNoTracking()
+            .Join(dbContext.CateringIdentities,
+                customer => customer.IdentityId,
+                cateringIdentity => cateringIdentity.Id,
+                (customer, cateringIdentity) => customer)
+            .Include(c => c.Identity);
+
+        var resultQuery = ApplyFilters(queryable, filter);
+
+        return (await queryable.ToListAsync(),
+                await queryable.CountAsync());
     }
 
     public async Task<Customer> GetFullByIdAsync(string id)

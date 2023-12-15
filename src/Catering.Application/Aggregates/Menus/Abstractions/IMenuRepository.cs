@@ -6,5 +6,5 @@ public interface IMenuRepository : IBaseCrudRepository<Menu>
 {
     Task<Menu> GetByContactIdAsync(string contactId);
 
-    Task<(List<Menu> menus, int totalCount)> GetFilteredAsync(MenusFilter menusFilter);
+    Task<(List<Menu> Menus, int TotalCount)> GetFilteredAsync(MenusFilter menusFilter);
 }

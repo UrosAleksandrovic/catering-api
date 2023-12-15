@@ -34,29 +34,38 @@ public class CartsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("items/{itemId}/increment")]
-    public async Task<IActionResult> IncrementAsync([FromRoute] Guid itemId, [FromQuery] int quantity = 1)
+    [HttpPut("items/{itemMenuId}/{itemId}/increment")]
+    public async Task<IActionResult> IncrementAsync(
+        [FromRoute] Guid itemId,
+        [FromRoute] Guid itemMenuId,
+        [FromQuery] int quantity = 1)
     {
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.IncrementItemAsync(customerId, itemId, quantity);
+        await _cartsAppService.IncrementItemAsync(customerId, itemMenuId, itemId, quantity);
 
         return NoContent();
     }
 
-    [HttpPut("items/{itemId}/decrement")]
-    public async Task<IActionResult> DecrementAsync([FromRoute] Guid itemId, [FromQuery] int quantity = 1)
+    [HttpPut("items/{itemMenuId}/{itemId}/decrement")]
+    public async Task<IActionResult> DecrementAsync(
+        [FromRoute] Guid itemId,
+        [FromRoute] Guid itemMenuId,
+        [FromQuery] int quantity = 1)
     {
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.DecrementItemAsync(customerId, itemId, quantity);
+        await _cartsAppService.DecrementItemAsync(customerId, itemMenuId, itemId, quantity);
 
         return NoContent();
     }
 
-    [HttpPut("items/{itemId}/note")]
-    public async Task<IActionResult> ChangeNoteAsync([FromRoute] Guid itemId, [FromBody] CartItemNoteDto newNote)
+    [HttpPut("items/{itemMenuId}/{itemId}/note")]
+    public async Task<IActionResult> ChangeNoteAsync(
+        [FromRoute] Guid itemId, 
+        [FromRoute] Guid itemMenuId,
+        [FromBody] CartItemNoteDto newNote)
     {
         var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.AddOrEditItemNoteAsync(customerId, itemId, newNote.Note);
+        await _cartsAppService.AddOrEditItemNoteAsync(customerId, itemMenuId, itemId, newNote.Note);
 
         return NoContent();
     }

@@ -142,11 +142,17 @@ internal class ItemRepository : BaseCrudRepository<Item, CateringDbContext>, IIt
 
     private IOrderedQueryable<Item> ApplyOrdering(ItemsFilter itemsFilter, IQueryable<Item> queryableItems)
     {
-        return (itemsFilter?.OrderBy) switch
+        return itemsFilter switch
         {
-            ItemsOrderBy.Price => queryableItems.OrderBy(i => i.Price),
-            ItemsOrderBy.Name => queryableItems.OrderBy(i => i.Name),
-            ItemsOrderBy.Rating => queryableItems.OrderBy(i => i.Ratings.Average(r => r.Rating)),
+            { OrderBy: ItemsOrderBy.Price, IsOrderByDescending: false } => queryableItems.OrderBy(i => i.Price),
+            { OrderBy: ItemsOrderBy.Price, IsOrderByDescending: true } => queryableItems.OrderByDescending(i => i.Price),
+
+            { OrderBy: ItemsOrderBy.Name, IsOrderByDescending: false } => queryableItems.OrderBy(i => i.Name),
+            { OrderBy: ItemsOrderBy.Name, IsOrderByDescending: true } => queryableItems.OrderByDescending(i => i.Name),
+
+            { OrderBy: ItemsOrderBy.Rating, IsOrderByDescending: false } => queryableItems.OrderBy(i => i.Ratings.Average(r => r.Rating)),
+            { OrderBy: ItemsOrderBy.Rating, IsOrderByDescending: true } => queryableItems.OrderByDescending(i => i.Ratings.Average(r => r.Rating)),
+
             _ => queryableItems.OrderBy(i => i.Name),
         };
     }

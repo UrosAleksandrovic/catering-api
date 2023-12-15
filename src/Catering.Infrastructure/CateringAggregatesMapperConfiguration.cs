@@ -50,6 +50,11 @@ internal class CateringAggregatesMapperConfiguration : Profile
         CreateMap<HomeDeliveryInfo, HomeDeliveryInfoDto>();
         CreateMap<Order, OrderInfoDto>()
             .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items))
-            .ForMember(d => d.TotalSumToPay, opt => opt.MapFrom(s => s.TotalPrice));
+            .ForMember(d => d.TotalSumToPay, opt => opt.MapFrom(s => s.TotalPrice))
+            .ForMember(d => d.OrderedAt, opt => opt.MapFrom(s => s.CreatedOn));
+
+        CreateMap<Order, ListOrderInfoDto>()
+            .ForMember(d => d.TotalSumToPay, opt => opt.MapFrom(s => s.TotalPrice))
+            .ForMember(d => d.IsHomeDelivery, opt => opt.MapFrom(s => s.IsForHomeDelivery));
     }
 }

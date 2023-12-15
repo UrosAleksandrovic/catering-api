@@ -20,7 +20,7 @@ internal class MenuRepository : BaseCrudRepository<Menu, CateringDbContext>, IMe
             .FirstOrDefaultAsync();
     }
 
-    public async Task<(List<Menu> menus, int totalCount)> GetFilteredAsync(MenusFilter menusFilter)
+    public async Task<(List<Menu> Menus, int TotalCount)> GetFilteredAsync(MenusFilter menusFilter)
     {
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 

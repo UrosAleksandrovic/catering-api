@@ -67,4 +67,10 @@ public class MenusController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("contacts")]
+    public async Task<IActionResult> GetRestaurantContacts([FromQuery] MenusFilter filter)
+    {
+        return Ok(await _menuAppService.GetRestaurantContactsAsync(filter));
+    }
 }

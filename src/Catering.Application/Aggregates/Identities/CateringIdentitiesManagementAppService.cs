@@ -1,4 +1,5 @@
-﻿using Catering.Application.Aggregates.Identities.Abstractions;
+﻿using AutoMapper;
+using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
 using Catering.Application.Aggregates.Identities.Notifications;
 using Catering.Application.Security;
@@ -16,19 +17,22 @@ internal class CateringIdentitiesManagementAppService : ICateringIdentitiesManag
     private readonly IMediator _publisher;
     private readonly IDataProtector _dataProtector;
     private readonly ICustomerRepository _customerRepository;
+    private readonly IMapper _mapper;
 
     public CateringIdentitiesManagementAppService(
         ICateringIdentitiesRepository cateringIdentitiesRepository,
         IMediator publisher,
         IIdentityRepository<Identity> identityRepository,
         IDataProtector dataProtector,
-        ICustomerRepository customerRepository)
+        ICustomerRepository customerRepository,
+        IMapper mapper)
     {
         _cateringIdentitiesRepository = cateringIdentitiesRepository;
         _publisher = publisher;
         _identityRepository = identityRepository;
         _dataProtector = dataProtector;
         _customerRepository = customerRepository;
+        _mapper = mapper;
     }
 
     public async Task SendIdentityInvitationAsync(string creatorId, CreateIdentityInvitationDto createRequest)
@@ -65,5 +69,23 @@ internal class CateringIdentitiesManagementAppService : ICateringIdentitiesManag
             await _customerRepository.CreateAsync(customer);
 
         await _cateringIdentitiesRepository.RemoveInvitationAsync(invitation);
+    }
+
+    public async Task<IdentityInfoDto> GetIdentityInfoAsync(string identityId)
+    {
+        var identity = await _identityRepository.GetByIdAsync(identityId);
+
+        return _mapper.Map<IdentityInfoDto>(identity);
+    }
+
+    public async Task<IdentityPermissionsDto> GetIdentityPermissionsAsync(string identityId)
+    {
+        var identity = await _identityRepository.GetByIdAsync(identityId);
+
+        return new IdentityPermissionsDto
+        {
+            Permissions = identity.Role.GetFromRole(),
+            Role = identity.Role
+        };
     }
 }

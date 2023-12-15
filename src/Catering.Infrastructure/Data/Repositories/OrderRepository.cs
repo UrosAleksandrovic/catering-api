@@ -43,6 +43,9 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         var filterableOrders = ApplyFilters(filters, dbContext.Set<Order>());
+        if (!filters.OrderBy.HasValue)
+            return (await filterableOrders.ToListAsync(), await filterableOrders.CountAsync());
+
         filterableOrders = ApplyOrdering(filters, filterableOrders);
 
         return (await filterableOrders.ToListAsync(), await filterableOrders.CountAsync());
@@ -123,12 +126,18 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
 
     private IOrderedQueryable<Order> ApplyOrdering(OrdersFilter ordersFilter, IQueryable<Order> queryableOrders)
     {
-        return (ordersFilter?.OrderBy) switch
+        return ordersFilter switch
         {
-            OrdersOrderBy.TotalPrice => queryableOrders.OrderBy(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity)),
-            OrdersOrderBy.Status => queryableOrders.OrderBy(o => o.Status),
-            OrdersOrderBy.ExpectedOn => queryableOrders.OrderBy(o => o.ExpectedOn),
-            _ => queryableOrders.OrderByDescending(o => o.Id),
+            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: false } => queryableOrders.OrderBy(i => OrdersOrderBy.TotalPrice),
+            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: true } => queryableOrders.OrderByDescending(i => OrdersOrderBy.TotalPrice),
+
+            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: false } => queryableOrders.OrderBy(i => i.Status),
+            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: true } => queryableOrders.OrderByDescending(i => i.Status),
+
+            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: false } => queryableOrders.OrderBy(i => i.ExpectedOn),
+            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: true } => queryableOrders.OrderByDescending(i => i.ExpectedOn),
+
+            _ => queryableOrders.OrderByDescending(i => i.ExpectedOn),
         };
     }
 }

@@ -28,25 +28,25 @@ internal class CartManagementAppService : ICartManagementAppService
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.AddItem(addItemDto.ItemId, addItemDto.Quantity, addItemDto.Note);
+        cart.AddItem(addItemDto.MenuId, addItemDto.ItemId, addItemDto.Quantity, addItemDto.Note);
 
         await _cartRepository.UpdateAsync(cart);
     }
 
-    public async Task AddOrEditItemNoteAsync(string customerId, Guid itemId, string note)
+    public async Task AddOrEditItemNoteAsync(string customerId, Guid itemMenuId, Guid itemId, string note)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.AddOrEditNoteToItem(itemId, note);
+        cart.AddOrEditNoteToItem(itemMenuId, itemId, note);
 
         await _cartRepository.UpdateAsync(cart);
     }
 
-    public async Task DecrementItemAsync(string customerId, Guid itemId, int quantity = 1)
+    public async Task DecrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.DecrementOrDeleteItem(itemId, quantity);
+        cart.DecrementOrDeleteItem(itemMenuId, itemId, quantity);
 
         await _cartRepository.UpdateAsync(cart);
         await _cartRepository.CleanUpDeletedItemsAsync(cart);
@@ -63,11 +63,11 @@ internal class CartManagementAppService : ICartManagementAppService
         return resultCart;
     }
 
-    public async Task IncrementItemAsync(string customerId, Guid itemId, int quantity = 1)
+    public async Task IncrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.IncrementItem(itemId, quantity);
+        cart.IncrementItem(itemMenuId, itemId, quantity);
 
         await _cartRepository.UpdateAsync(cart);
     }

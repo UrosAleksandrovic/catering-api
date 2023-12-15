@@ -8,7 +8,7 @@ public interface IMenuManagementAppService
     Task<Guid> CreateAsync(CreateMenuDto createMenu);
     Task UpdateAsync(Guid id, UpdateMenuDto updateMenu);
     Task DeleteAsync(Guid id);
-    Task<MenuInfoDto> GetByIdAsync(Guid id);
     Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId);
     Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter);
+    Task<FilterResult<MenuContactDetailedInfoDto>> GetRestaurantContactsAsync(MenusFilter menusFilter);
 }

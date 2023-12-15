@@ -11,4 +11,7 @@ public class CustomersFilter : FilterBase
     public IdentityRole? Role { get; set; }
     public decimal? MaxBalance { get; set; }
     public decimal? MinBalance { get; set; }
+
+    public bool IsExternal { get; set; }
+    public bool IsInternal { get; set; }
 }

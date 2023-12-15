@@ -8,4 +8,5 @@ public class ItemsFilter : FilterBase
     public decimal? BottomPrice { get; set; }
     public Guid MenuId { get; set; }
     public ItemsOrderBy? OrderBy { get; set; }
+    public bool IsOrderByDescending { get; set; }
 }

@@ -13,6 +13,7 @@ public class OrdersFilter : FilterBase
     public bool? IsHomeDelivery { get; set; }
 
     public OrdersOrderBy? OrderBy { get; set; }
+    public bool IsOrderByDescending { get; set; }
 
     public OrdersFilter() { }
 

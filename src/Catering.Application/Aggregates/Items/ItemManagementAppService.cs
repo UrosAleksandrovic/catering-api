@@ -54,7 +54,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
     public async Task<FilterResult<ItemInfoDto>> GetFilteredAsync(ItemsFilter itemFilters, string requesterId)
     {
-        var result = FilterResult<ItemInfoDto>.GetEmpty<ItemInfoDto>(itemFilters.PageIndex, itemFilters.PageSize);
+        var result = FilterResult<ItemInfoDto>.GetEmpty<ItemInfoDto>(itemFilters.PageSize, itemFilters.PageIndex);
 
         var request = new GetIdentityForMenuId { IdentityId = requesterId, MenuId = itemFilters.MenuId };
         var requester = await _publisher.Send(request);

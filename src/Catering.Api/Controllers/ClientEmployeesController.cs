@@ -19,7 +19,7 @@ public class ClientEmployeesController : ControllerBase
 
     [HttpPost]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> RegisterAsync(CreateCustomerDto createRequest)
+    public async Task<IActionResult> RegisterAsync([FromBody] CreateCustomerDto createRequest)
     {
         var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         await _customerAppService.CreateClientsCustomerAsync(createRequest, requesterId);
@@ -40,15 +40,6 @@ public class ClientEmployeesController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet]
-    [AuthorizeClientsAdmins]
-    public async Task<IActionResult> GetClientsEmployeesAsync([FromQuery] CustomersFilter filter)
-    {
-        var result = await _customerAppService.GetFilteredAsync(filter);
-
-        return Ok(result);
-    }
-
     [HttpGet("profile")]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetProfileAsync()
@@ -60,5 +51,23 @@ public class ClientEmployeesController : ControllerBase
             return Ok(customerInfoDto);
 
         return NotFound();
+    }
+
+    [HttpGet("internal")]
+    [AuthorizeClientsAdmins]
+    public async Task<IActionResult> GetInternalClientsEmployeesAsync([FromQuery] CustomersFilter filter)
+    {
+        var result = await _customerAppService.GetFilteredInternalAsync(filter);
+
+        return Ok(result);
+    }
+
+    [HttpGet("external")]
+    [AuthorizeClientsAdmins]
+    public async Task<IActionResult> GetExternalClientEmployeesAsync([FromQuery] CustomersFilter filter)
+    {
+        var result = await _customerAppService.GetFilteredExternalAsync(filter);
+
+        return Ok(result);
     }
 }

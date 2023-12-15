@@ -71,11 +71,22 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
             throw new IdentityRestrictionException(initiatorId, actionName);
     }
 
-    public async Task<FilterResult<CustomerInfoDto>> GetFilteredAsync(CustomersFilter filter)
+    public async Task<FilterResult<CustomerInfoDto>> GetFilteredInternalAsync(CustomersFilter filter)
     {
         var result = FilterResult<CustomerInfoDto>.GetEmpty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
 
-        var (items, totalCount) = await _customerRepository.GetFilteredAsync(filter);
+        var (items, totalCount) = await _customerRepository.GetFilteredInternalCustomersAsync(filter);
+        result.TotalNumberOfElements = totalCount;
+        result.Result = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
+
+        return result;
+    }
+
+    public async Task<FilterResult<CustomerInfoDto>> GetFilteredExternalAsync(CustomersFilter filter)
+    {
+        var result = FilterResult<CustomerInfoDto>.GetEmpty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
+
+        var (items, totalCount) = await _customerRepository.GetFilteredExternalCustomersAsync(filter);
         result.TotalNumberOfElements = totalCount;
         result.Result = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
 

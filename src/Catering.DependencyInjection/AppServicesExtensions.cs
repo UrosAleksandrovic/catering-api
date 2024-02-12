@@ -1,5 +1,7 @@
 ﻿using Catering.Application.Aggregates.Carts;
 using Catering.Application.Aggregates.Carts.Abstractions;
+using Catering.Application.Aggregates.Expenses;
+using Catering.Application.Aggregates.Expenses.Abstractions;
 using Catering.Application.Aggregates.Identities;
 using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items;
@@ -29,6 +31,7 @@ public static class AppServicesExtensions
         services.AddScoped<ICateringIdentitiesManagementAppService, CateringIdentitiesManagementAppService>();
         services.AddScoped<IMenuManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
+        services.AddScoped<IExpensesManagementAppService, ExpensesManagementAppService>();
 
         return services;
     }

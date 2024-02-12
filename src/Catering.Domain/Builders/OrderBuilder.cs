@@ -24,7 +24,11 @@ public class OrderBuilder : IBuilder<Order>
 
     public void Reset()
     {
-        throw new NotImplementedException();
+        _customerId = default;
+        _expectedOn = default;
+        _homeDeliveryInfo = default;
+        _cart = default;
+        _items = default;
     }
 
     public OrderBuilder HasDateOfDelivery(DateTime expectedOn)

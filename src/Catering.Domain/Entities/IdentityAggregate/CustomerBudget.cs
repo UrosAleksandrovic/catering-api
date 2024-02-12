@@ -46,4 +46,11 @@ public class CustomerBudget
         ReservedAssets -= amountToRemove;
         Balance -= amountToRemove;
     }
+
+    public void Add(decimal amountToAdd)
+    {
+        Guard.Against.Negative(amountToAdd);
+
+        Balance += amountToAdd;
+    }
 }

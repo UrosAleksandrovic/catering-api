@@ -1,4 +1,5 @@
 ﻿using Catering.Application.Aggregates.Carts.Abstractions;
+using Catering.Application.Aggregates.Expenses.Abstractions;
 using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
@@ -20,6 +21,7 @@ public static class RepositoriesExtensions
         services.AddTransient<ICustomerRepository, CustomerRepository>();
         services.AddTransient<IMenuRepository, MenuRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<IExpensesRepository, ExpensesRepository>();
         services.AddTransient<ICateringIdentitiesRepository, CateringIdentityRepository>();
         services.AddTransient<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
 

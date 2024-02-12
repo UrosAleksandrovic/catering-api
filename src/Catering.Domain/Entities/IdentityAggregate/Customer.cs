@@ -24,6 +24,9 @@ public class Customer : ICustomer
     public void ProcessPayment(decimal amountToPay)
         => Budget.Remove(amountToPay);
 
+    public void RevertPayment(decimal amountToPlay)
+        => Budget.Add(amountToPlay);
+
     public void CancelPayment(decimal amountToCancel)
         => Budget.CancelReservation(amountToCancel);
 }

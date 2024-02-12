@@ -1,4 +1,5 @@
 ﻿using Catering.Domain.Entities.CartAggregate;
+using Catering.Domain.Entities.ExpenseAggregate;
 using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Domain.Entities.ItemAggregate;
 using Catering.Domain.Entities.MenuAggregate;
@@ -23,6 +24,7 @@ internal class CateringDbContext : DbContext
     internal DbSet<CateringIdentity> CateringIdentities { get; set; }
     internal DbSet<IdentityInvitation> IdentityInvitations { get; set; }
     internal DbSet<Customer> Customers { get; set; }
+    internal DbSet<Expense> Expenses { get; set; } 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

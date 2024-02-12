@@ -13,8 +13,7 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
 {
     public OrderRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
         : base(dbContextFactory)
-    {
-    }
+    { }
 
     public async Task CreateOrderForCustomerAsync(Customer customer, Order order)
     {
@@ -91,53 +90,53 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         await dbContext.SaveChangesAsync();
     }
 
-    private IQueryable<Order> ApplyFilters(OrdersFilter ordersFilter, IQueryable<Order> queryableOrders)
+    private IQueryable<Order> ApplyFilters(OrdersFilter filters, IQueryable<Order> query)
     {
-        queryableOrders.AsNoTracking();
+        query.AsNoTracking();
 
-        queryableOrders = queryableOrders.Include(e => e.Items);
+        query = query.Include(e => e.Items);
 
-        if (ordersFilter.CustomerId != null)
-            queryableOrders = queryableOrders.Where(o => o.CustomerId == ordersFilter.CustomerId);
+        if (filters.CustomerId != null)
+            query = query.Where(o => o.CustomerId == filters.CustomerId);
 
-        if (ordersFilter.MenuId != null)
-            queryableOrders = queryableOrders.Where(o => o.MenuId == ordersFilter.MenuId);
+        if (filters.MenuId != null)
+            query = query.Where(o => o.MenuId == filters.MenuId);
 
-        if (ordersFilter.TopPrice != null)
-            queryableOrders = queryableOrders.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) <=  ordersFilter.TopPrice);
+        if (filters.TopPrice != null)
+            query = query.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) <=  filters.TopPrice);
 
-        if (ordersFilter.BottomPrice != null)
-            queryableOrders = queryableOrders.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) >= ordersFilter.BottomPrice);
+        if (filters.BottomPrice != null)
+            query = query.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) >= filters.BottomPrice);
 
-        if (ordersFilter.Statuses != null && ordersFilter.Statuses.Any())
-            queryableOrders = queryableOrders.Where(o => ordersFilter.Statuses.Contains(o.Status));
+        if (filters.Statuses != null && filters.Statuses.Any())
+            query = query.Where(o => filters.Statuses.Contains(o.Status));
 
-        if (ordersFilter.DeliveredOn.HasValue)
-            queryableOrders = queryableOrders.Where(o => o.ExpectedOn.DayOfYear == ordersFilter.DeliveredOn.Value.DayOfYear)
-                                             .Where(o => o.ExpectedOn.Year == ordersFilter.DeliveredOn.Value.Year);
+        if (filters.DeliveredOn.HasValue)
+            query = query.Where(o => o.ExpectedOn.DayOfYear == filters.DeliveredOn.Value.DayOfYear)
+                                             .Where(o => o.ExpectedOn.Year == filters.DeliveredOn.Value.Year);
 
-        if (ordersFilter.IsHomeDelivery.HasValue && ordersFilter.IsHomeDelivery.Value)
-            queryableOrders = queryableOrders.Where(o => o.HomeDeliveryInfo != null);
+        if (filters.IsHomeDelivery.HasValue && filters.IsHomeDelivery.Value)
+            query = query.Where(o => o.HomeDeliveryInfo != null);
 
-        return queryableOrders
-            .Skip((ordersFilter.PageIndex - 1) * ordersFilter.PageSize)
-            .Take(ordersFilter.PageSize);
+        return query
+            .Skip((filters.PageIndex - 1) * filters.PageSize)
+            .Take(filters.PageSize);
     }
 
-    private IOrderedQueryable<Order> ApplyOrdering(OrdersFilter ordersFilter, IQueryable<Order> queryableOrders)
+    private IOrderedQueryable<Order> ApplyOrdering(OrdersFilter filters, IQueryable<Order> query)
     {
-        return ordersFilter switch
+        return filters switch
         {
-            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: false } => queryableOrders.OrderBy(i => OrdersOrderBy.TotalPrice),
-            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: true } => queryableOrders.OrderByDescending(i => OrdersOrderBy.TotalPrice),
+            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: false } => query.OrderBy(i => i.TotalPrice),
+            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: true } => query.OrderByDescending(i => i.TotalPrice),
 
-            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: false } => queryableOrders.OrderBy(i => i.Status),
-            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: true } => queryableOrders.OrderByDescending(i => i.Status),
+            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: false } => query.OrderBy(i => i.Status),
+            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: true } => query.OrderByDescending(i => i.Status),
 
-            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: false } => queryableOrders.OrderBy(i => i.ExpectedOn),
-            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: true } => queryableOrders.OrderByDescending(i => i.ExpectedOn),
+            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: false } => query.OrderBy(i => i.ExpectedOn),
+            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: true } => query.OrderByDescending(i => i.ExpectedOn),
 
-            _ => queryableOrders.OrderByDescending(i => i.ExpectedOn),
+            _ => query.OrderByDescending(i => i.ExpectedOn),
         };
     }
 }

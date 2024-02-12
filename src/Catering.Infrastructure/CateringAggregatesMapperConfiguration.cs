@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Catering.Application.Aggregates.Carts.Dtos;
+using Catering.Application.Aggregates.Expenses.Dtos;
 using Catering.Application.Aggregates.Identities.Dtos;
 using Catering.Application.Aggregates.Items.Dtos;
 using Catering.Application.Aggregates.Menus.Dtos;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Dtos.Menu;
 using Catering.Domain.Entities.CartAggregate;
+using Catering.Domain.Entities.ExpenseAggregate;
 using Catering.Domain.Entities.IdentityAggregate;
 using Catering.Domain.Entities.ItemAggregate;
 using Catering.Domain.Entities.MenuAggregate;
@@ -56,5 +58,7 @@ internal class CateringAggregatesMapperConfiguration : Profile
         CreateMap<Order, ListOrderInfoDto>()
             .ForMember(d => d.TotalSumToPay, opt => opt.MapFrom(s => s.TotalPrice))
             .ForMember(d => d.IsHomeDelivery, opt => opt.MapFrom(s => s.IsForHomeDelivery));
+
+        CreateMap<Expense, ExpenseInfoDto>();
     }
 }

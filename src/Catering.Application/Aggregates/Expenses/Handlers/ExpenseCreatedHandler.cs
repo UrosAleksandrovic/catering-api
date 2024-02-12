@@ -17,7 +17,7 @@ internal class ExpenseCreatedHandler : INotificationHandler<ExpenseCreated>
     {
         var customer = await _customerRepository.GetByIdAsync(notification.CustomerId);
 
-        customer.ProcessPayment(notification.Price);
+        customer.ProcessExpense(notification.Price);
         await _customerRepository.UpdateAsync(customer);
     }
 }

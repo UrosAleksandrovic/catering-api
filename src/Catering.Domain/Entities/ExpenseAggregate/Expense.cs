@@ -7,15 +7,15 @@ public class Expense
     public Guid Id { get; private set; }
     public Guid MenuId { get; private set; }
     public string CustomerId { get; private set; }
-    public DateTimeOffset CreatedOn { get; private set; }
-    public DateTimeOffset DeliveredOn { get; private set; }
+    public DateTime CreatedOn { get; private set; }
+    public DateTime DeliveredOn { get; private set; }
     public decimal Price { get; private set; }
     public string Note { get; private set; }
 
     public Expense(
         Guid menuId,
         string customerId,
-        DateTimeOffset deliveredOn,
+        DateTime deliveredOn,
         decimal price)
     {
         Guard.Against.Default(menuId);
@@ -24,7 +24,7 @@ public class Expense
         Guard.Against.NegativeOrZero(price);
 
         Id = Guid.NewGuid();
-        CreatedOn = DateTime.Now;
+        CreatedOn = DateTime.UtcNow;
         MenuId = menuId;
         CustomerId = customerId;
         DeliveredOn = deliveredOn;
@@ -43,7 +43,7 @@ public class Expense
         Price = newPrice;
     }
 
-    public void UpdateDeliveredOn(DateTimeOffset newDeliveredOn)
+    public void UpdateDeliveredOn(DateTime newDeliveredOn)
     {
         Guard.Against.Default(newDeliveredOn);
 

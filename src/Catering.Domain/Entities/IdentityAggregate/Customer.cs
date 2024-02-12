@@ -24,6 +24,9 @@ public class Customer : ICustomer
     public void ProcessPayment(decimal amountToPay)
         => Budget.Remove(amountToPay);
 
+    public void ProcessExpense(decimal amountToPay)
+        => Budget.RemoveDirect(amountToPay);
+
     public void RevertPayment(decimal amountToPlay)
         => Budget.Add(amountToPlay);
 

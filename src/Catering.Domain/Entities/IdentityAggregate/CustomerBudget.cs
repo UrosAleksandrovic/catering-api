@@ -53,4 +53,11 @@ public class CustomerBudget
 
         Balance += amountToAdd;
     }
+
+    public void RemoveDirect(decimal amountToRemove)
+    {
+        Guard.Against.Negative(amountToRemove);
+
+        Balance -= amountToRemove;
+    }
 }

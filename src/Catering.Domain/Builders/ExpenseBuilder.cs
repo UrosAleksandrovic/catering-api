@@ -6,7 +6,7 @@ namespace Catering.Domain.Builders
     {
         private string _customerId;
         private Guid _menuId;
-        private DateTimeOffset _deliveredOn;
+        private DateTime _deliveredOn;
         private decimal _price;
         private string _note;
 
@@ -28,7 +28,7 @@ namespace Catering.Domain.Builders
             return this;
         }
 
-        public ExpenseBuilder HasPriceAndDate(decimal price, DateTimeOffset deliveredOn)
+        public ExpenseBuilder HasPriceAndDate(decimal price, DateTime deliveredOn)
         {
             _deliveredOn = deliveredOn;
             _price = price;

@@ -50,7 +50,7 @@ internal class ExpensesManagementAppService : IExpensesManagementAppService
 
         var requestor = await _publisher.Send(new GetIdentityById { Id = requestorId });
 
-        if (!requestor.Role.IsAdministrator())
+        if (requestor.Role.IsAdministrator())
             return _mapper.Map<ExpenseInfoDto>(expense);
 
         return expense.CustomerId == requestorId ? _mapper.Map<ExpenseInfoDto>(expense) : null;

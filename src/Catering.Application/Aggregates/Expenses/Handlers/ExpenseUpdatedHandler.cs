@@ -18,7 +18,7 @@ namespace Catering.Application.Aggregates.Expenses.Handlers
             var customer = await _customerRepository.GetByIdAsync(notification.CustomerId);
 
             customer.RevertPayment(notification.PreviousPrice);
-            customer.ProcessPayment(notification.NewPrice);
+            customer.ProcessExpense(notification.NewPrice);
 
             await _customerRepository.UpdateAsync(customer);
         }

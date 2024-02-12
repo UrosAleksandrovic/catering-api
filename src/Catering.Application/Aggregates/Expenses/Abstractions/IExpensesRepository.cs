@@ -1,10 +1,8 @@
-﻿using Catering.Application.Aggregates.Menus;
-using Catering.Domain.Entities.ExpenseAggregate;
+﻿using Catering.Domain.Entities.ExpenseAggregate;
 
-namespace Catering.Application.Aggregates.Expenses.Abstractions
+namespace Catering.Application.Aggregates.Expenses.Abstractions;
+
+public interface IExpensesRepository : IBaseCrudRepository<Expense>
 {
-    public interface IExpensesRepository : IBaseCrudRepository<Expense>
-    {
-        Task<(List<Expense> Expenses, int TotalCount)> GetFilteredAsync(ExpensesFilter expensesFilter);
-    }
+    Task<(List<Expense> Expenses, int TotalCount)> GetFilteredAsync(ExpensesFilter expensesFilter);
 }

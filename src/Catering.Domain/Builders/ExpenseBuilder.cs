@@ -1,54 +1,53 @@
 ﻿using Catering.Domain.Entities.ExpenseAggregate;
 
-namespace Catering.Domain.Builders
+namespace Catering.Domain.Builders;
+
+public class ExpenseBuilder : IBuilder<Expense>
 {
-    public class ExpenseBuilder : IBuilder<Expense>
+    private string _customerId;
+    private Guid _menuId;
+    private DateTime _deliveredOn;
+    private decimal _price;
+    private string _note;
+
+    public Expense Build()
     {
-        private string _customerId;
-        private Guid _menuId;
-        private DateTime _deliveredOn;
-        private decimal _price;
-        private string _note;
+        var expense = new Expense(_menuId, _customerId, _deliveredOn, _price);
 
-        public Expense Build()
-        {
-            var expense = new Expense(_menuId, _customerId, _deliveredOn, _price);
+        if (!string.IsNullOrWhiteSpace(_note))
+            expense.AddNote(_note);
 
-            if (!string.IsNullOrWhiteSpace(_note))
-                expense.AddNote(_note);
+        return expense;
+    }
 
-            return expense;
-        }
+    public ExpenseBuilder HasMenuAndCustomer(Guid menuId, string customerId)
+    {
+        _customerId = customerId;
+        _menuId = menuId;
 
-        public ExpenseBuilder HasMenuAndCustomer(Guid menuId, string customerId)
-        {
-            _customerId = customerId;
-            _menuId = menuId;
+        return this;
+    }
 
-            return this;
-        }
+    public ExpenseBuilder HasPriceAndDate(decimal price, DateTime deliveredOn)
+    {
+        _deliveredOn = deliveredOn;
+        _price = price;
 
-        public ExpenseBuilder HasPriceAndDate(decimal price, DateTime deliveredOn)
-        {
-            _deliveredOn = deliveredOn;
-            _price = price;
+        return this;
+    }
 
-            return this;
-        }
+    public ExpenseBuilder HasNote(string note)
+    {
+        _note = note;
 
-        public ExpenseBuilder HasNote(string note)
-        {
-            _note = note;
+        return this;
+    }
 
-            return this;
-        }
-
-        public void Reset()
-        {
-            _customerId = _note = default;
-            _menuId = default;
-            _deliveredOn = default;
-            _price = default;
-        }
+    public void Reset()
+    {
+        _customerId = _note = default;
+        _menuId = default;
+        _deliveredOn = default;
+        _price = default;
     }
 }

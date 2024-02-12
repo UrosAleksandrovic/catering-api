@@ -1,4 +1,5 @@
-﻿using Catering.Application.Aggregates.Identities;
+﻿using System.Runtime.CompilerServices;
+using Catering.Application.Aggregates.Identities;
 using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Domain.Entities.IdentityAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,18 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
             .Include(c => c.Identity)
             .Where(c => c.IdentityId == id)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task ResetBudgetAsync(double newBudget)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var sqlCommand = $"UPDATE catering.customers SET (budget_balance,budget_reserved_assets) = ({newBudget}, 0);";
+
+        var customers = await dbContext.Database
+            .ExecuteSqlInterpolatedAsync(FormattableStringFactory.Create(sqlCommand));
+
+        await dbContext.SaveChangesAsync();
     }
 
     private IQueryable<Customer> ApplyFilters(IQueryable<Customer> customers, CustomersFilter filter)

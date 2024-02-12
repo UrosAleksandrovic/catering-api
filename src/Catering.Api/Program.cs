@@ -28,6 +28,7 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Conta
     app.UseCateringSwagger();
     app.ApplyCateringMigrations();
     app.ApplyMailingMigrations();
+    app.ApplySchedulingMigrations();
 }
 
 app.UseCors();

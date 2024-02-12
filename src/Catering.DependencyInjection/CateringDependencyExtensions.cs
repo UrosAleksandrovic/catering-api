@@ -11,9 +11,12 @@ public static class CateringDependencyExtensions
     {
         services.AddCateringPersistence(configuration);
         services.AddMailingPersistence(configuration);
+        services.AddJobSchedulingPersistance(configuration);
 
         services.AddCateringRepositories();
         services.AddMailingRepositories();
+        
+        services.AddJobScheduling(configuration);
 
         services.AddAuthenticators(configuration);
         services.AddDataProtection(configuration);

@@ -1,5 +1,7 @@
 ﻿using Catering.Infrastructure.Data;
 using Catering.Infrastructure.Mailing;
+using Catering.Infrastructure.Scheduling;
+using Catering.Infrastructure.Scheduling.BudgetReset;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +35,7 @@ public static class PersistenceExtensions
         IConfiguration configuration)
     {
         var settingsSection = configuration.GetSection(MailingDataSettings.Position);
-        services.AddOptions<CateringDataSettings>()
+        services.AddOptions<MailingDataSettings>()
             .Bind(settingsSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
@@ -41,6 +43,26 @@ public static class PersistenceExtensions
         services.AddDbContextFactory<MailingDbContext>(options =>
         {
             options.UseNpgsql(settingsSection.Get<MailingDataSettings>().ConnectionString);
+            options.UseSnakeCaseNamingConvention();
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddJobSchedulingPersistance(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var settingsSection = configuration.GetSection(BudetResetJobSettings.Position);
+        services.AddOptions<BudetResetJobSettings>()
+            .Bind(settingsSection)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        settingsSection = configuration.GetSection(SchedulingDataSettings.Position);
+        services.AddDbContextFactory<SchedulingDbContext>(options =>
+        {
+            options.UseNpgsql(settingsSection.Get<SchedulingDataSettings>().ConnectionString);
             options.UseSnakeCaseNamingConvention();
         });
 
@@ -62,6 +84,16 @@ public static class PersistenceExtensions
         using var scope = app.ApplicationServices.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<MailingDbContext>();
+        dbContext.Database.Migrate();
+
+        return app;
+    }
+
+    public static IApplicationBuilder ApplySchedulingMigrations(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<SchedulingDbContext>();
         dbContext.Database.Migrate();
 
         return app;

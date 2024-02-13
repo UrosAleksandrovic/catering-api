@@ -9,7 +9,4 @@ public class ItemMenuNotValidException : CateringException
 
     public ItemMenuNotValidException(Guid cartMenuId, Guid itemMenuId)
         : base($"Cart has menu ({cartMenuId}) that does not align with item menu ({itemMenuId})") { }
-
-    protected ItemMenuNotValidException(SerializationInfo info, StreamingContext context) 
-        : base(info, context) { }
 }

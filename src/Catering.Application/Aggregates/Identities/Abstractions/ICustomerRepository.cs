@@ -8,5 +8,5 @@ public interface ICustomerRepository : IBaseCrudRepository<Customer>
     Task<Customer> GetFullByIdAsync(string id);
     Task<(IEnumerable<Customer>, int)> GetFilteredInternalCustomersAsync(CustomersFilter filter);
     Task<(IEnumerable<Customer>, int)> GetFilteredExternalCustomersAsync(CustomersFilter filter);
-    Task ResetBudgetAsync(double newBudget);
+    Task ResetBudgetAsync(decimal newBudget);
 }

@@ -22,6 +22,7 @@ public static class RepositoriesExtensions
         services.AddTransient<IMenuRepository, MenuRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddTransient<IExpensesRepository, ExpensesRepository>();
+        services.AddTransient<ICustomerReportsRepository, CustomerReportsRepository>();
         services.AddTransient<ICateringIdentitiesRepository, CateringIdentityRepository>();
         services.AddTransient<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
 

@@ -17,7 +17,6 @@ using Catering.Domain.Services.Abstractions;
 using Catering.Infrastructure;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Catering.DependencyInjection;
@@ -33,6 +32,7 @@ public static class AppServicesExtensions
         services.AddScoped<IMenuManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
         services.AddScoped<IExpensesManagementAppService, ExpensesManagementAppService>();
+        services.AddScoped<ICustomerReportsAppService, CustomerReportsAppService>();
 
         return services;
     }

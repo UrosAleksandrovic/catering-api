@@ -1,9 +1,8 @@
 ﻿using MediatR;
 
-namespace Catering.Application.Scheduling.BudgetReset.Requests
+namespace Catering.Application.Scheduling.BudgetReset.Requests;
+
+public class ResetCustomerBudgets : IRequest
 {
-    public class ResetCustomerBudgets : IRequest
-    {
-        public double NewBudget { get; set; }
-    }
+    public decimal NewBudget { get; set; }
 }

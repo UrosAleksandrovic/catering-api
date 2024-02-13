@@ -15,6 +15,7 @@ using Catering.Application.Security.Handlers;
 using Catering.Domain.Services;
 using Catering.Domain.Services.Abstractions;
 using Catering.Infrastructure;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,16 +46,21 @@ public static class AppServicesExtensions
 
     public static IServiceCollection AddCateringMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(LoginLdapIdentity));
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssemblyContaining<LoginLdapIdentity>();
+        });
+
         return services;
     }
 
     public static IServiceCollection AddFluentValidation(this IServiceCollection services)
     {
-        services.AddMvc().AddFluentValidation(fv =>
+        services.AddValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
+
+        services.AddFluentValidationAutoValidation().AddFluentValidationAutoValidation(cfg =>
         {
-            fv.DisableDataAnnotationsValidation = true;
-            fv.RegisterValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
+            cfg.DisableDataAnnotationsValidation = true;
         });
 
         return services;

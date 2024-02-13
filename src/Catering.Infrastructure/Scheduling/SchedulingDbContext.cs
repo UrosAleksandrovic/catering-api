@@ -2,22 +2,21 @@
 using Catering.Infrastructure.Scheduling.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catering.Infrastructure.Scheduling
+namespace Catering.Infrastructure.Scheduling;
+
+internal class SchedulingDbContext : DbContext
 {
-    internal class SchedulingDbContext : DbContext
+    private const string SchemaName = "scheduling";
+
+    public SchedulingDbContext(DbContextOptions<SchedulingDbContext> options)
+        : base(options) { }
+
+    internal DbSet<JobLog> JobLogs { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        private const string SchemaName = "scheduling";
+        modelBuilder.HasDefaultSchema(SchemaName);
 
-        public SchedulingDbContext(DbContextOptions<SchedulingDbContext> options)
-            : base(options) { }
-
-        internal DbSet<JobLog> JobLogs { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.HasDefaultSchema(SchemaName);
-
-            new JobLogEntityConfiguration().Configure(modelBuilder.Entity<JobLog>());
-        }
+        new JobLogEntityConfiguration().Configure(modelBuilder.Entity<JobLog>());
     }
 }

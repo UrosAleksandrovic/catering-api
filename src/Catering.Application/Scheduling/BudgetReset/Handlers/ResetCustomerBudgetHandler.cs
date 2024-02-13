@@ -2,22 +2,19 @@
 using Catering.Application.Scheduling.BudgetReset.Requests;
 using MediatR;
 
-namespace Catering.Application.Scheduling.BudgetReset.Handlers
+namespace Catering.Application.Scheduling.BudgetReset.Handlers;
+
+internal class ResetCustomerBudgetHandler : IRequestHandler<ResetCustomerBudgets>
 {
-    internal class ResetCustomerBudgetHandler : IRequestHandler<ResetCustomerBudgets>
+    private readonly ICustomerRepository _customerRepository;
+
+    public ResetCustomerBudgetHandler(ICustomerRepository customerRepository)
     {
-        private readonly ICustomerRepository _customerRepository;
+        _customerRepository = customerRepository;
+    }
 
-        public ResetCustomerBudgetHandler(ICustomerRepository customerRepository)
-        {
-            _customerRepository = customerRepository;
-        }
-
-        public async Task<Unit> Handle(ResetCustomerBudgets request, CancellationToken cancellationToken)
-        {
-            await _customerRepository.ResetBudgetAsync(request.NewBudget);
-            
-            return Unit.Value;
-        }
+    public async Task Handle(ResetCustomerBudgets request, CancellationToken cancellationToken)
+    {
+        await _customerRepository.ResetBudgetAsync(request.NewBudget);
     }
 }

@@ -1,39 +1,38 @@
 ﻿using Catering.Application.Scheduling;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catering.Infrastructure.Scheduling
+namespace Catering.Infrastructure.Scheduling;
+
+internal class JobLogRepository : IJobLogRepository
 {
-    internal class JobLogRepository : IJobLogRepository
+    private readonly IDbContextFactory<SchedulingDbContext> _dbContextFactory;
+
+    public JobLogRepository(IDbContextFactory<SchedulingDbContext> dbContextFactory)
     {
-        private readonly IDbContextFactory<SchedulingDbContext> _dbContextFactory;
+        _dbContextFactory = dbContextFactory;
+    }
 
-        public JobLogRepository(IDbContextFactory<SchedulingDbContext> dbContextFactory)
+    public async Task<JobLog> CreateAsync(string jobName)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var entityToSave = new JobLog
         {
-            _dbContextFactory = dbContextFactory;
-        }
+            IsSuccessful = false,
+            JobName = jobName
+        };
 
-        public async Task<JobLog> CreateAsync(string jobName)
-        {
-            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        await dbContext.AddAsync(entityToSave);
+        await dbContext.SaveChangesAsync();
 
-            var entityToSave = new JobLog
-            {
-                IsSuccessful = false,
-                JobName = jobName
-            };
+        return entityToSave;
+    }
 
-            await dbContext.AddAsync(entityToSave);
-            await dbContext.SaveChangesAsync();
+    public async Task UpdateAsync(JobLog logToUpdate)
+    {
+        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-            return entityToSave;
-        }
-
-        public async Task UpdateAsync(JobLog logToUpdate)
-        {
-            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-            dbContext.Update(logToUpdate);
-            await dbContext.SaveChangesAsync();
-        }
+        dbContext.Update(logToUpdate);
+        await dbContext.SaveChangesAsync();
     }
 }

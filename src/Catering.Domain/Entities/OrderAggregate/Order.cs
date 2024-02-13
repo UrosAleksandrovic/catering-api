@@ -13,7 +13,7 @@ public class Order
     public HomeDeliveryInfo HomeDeliveryInfo { get; private set; }
     public Guid MenuId { get; private set; }
 
-    private readonly List<OrderItem> _items = new();
+    private readonly List<OrderItem> _items = [];
     public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 
     protected Order() { }
@@ -59,7 +59,7 @@ public class Order
         Status = OrderStatus.Canceled;
     }
 
-    public decimal TotalPrice => _items.Any() ? _items.Sum(i => i.PriceSnapshot * i.Quantity) : 0;
+    public decimal TotalPrice => _items.Count > 0 ? _items.Sum(i => i.PriceSnapshot * i.Quantity) : 0;
 
     private void AddItems(IEnumerable<OrderItem> items)
     {

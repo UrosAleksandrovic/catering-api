@@ -111,7 +111,7 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
             finalFilter = finalFilter.Where(c => c.Budget.Balance < filter.MinBalance);
 
         if (filter.Role != default)
-            finalFilter = finalFilter.Where(c => c.Identity.Role.HasFlag(filter.Role));
+            finalFilter = finalFilter.Where(c => c.Identity.Role.HasFlag(filter.Role.Value));
 
         return finalFilter.Skip((filter.PageIndex - 1) * filter.PageSize)
                           .Take(filter.PageSize);

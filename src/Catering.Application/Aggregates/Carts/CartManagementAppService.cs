@@ -4,6 +4,7 @@ using Catering.Application.Aggregates.Carts.Dtos;
 using Catering.Application.Aggregates.Carts.Requests;
 using Catering.Domain.Aggregates.Cart;
 using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Exceptions;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Carts;
@@ -33,23 +34,13 @@ internal class CartManagementAppService : ICartManagementAppService
         await _cartRepository.UpdateAsync(cart);
     }
 
-    public async Task AddOrEditItemNoteAsync(string customerId, Guid itemMenuId, Guid itemId, string note)
+    public async Task AddOrEditItemNoteAsync(string customerId, Guid itemId, string note)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.AddOrEditNoteToItem(itemMenuId, itemId, note);
+        cart.AddOrEditNoteToItem(itemId, note);
 
         await _cartRepository.UpdateAsync(cart);
-    }
-
-    public async Task DecrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1)
-    {
-        var cart = await GetOrCreteCartForCustomerAsync(customerId);
-
-        cart.DecrementOrDeleteItem(itemMenuId, itemId, quantity);
-
-        await _cartRepository.UpdateAsync(cart);
-        await _cartRepository.CleanUpDeletedItemsAsync(cart);
     }
 
     public async Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId)
@@ -63,13 +54,30 @@ internal class CartManagementAppService : ICartManagementAppService
         return resultCart;
     }
 
-    public async Task IncrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1)
+    public async Task IncrementItemAsync(string customerId, Guid itemId, int quantity = 1)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.IncrementItem(itemMenuId, itemId, quantity);
+        cart.IncrementItem(itemId, quantity);
 
         await _cartRepository.UpdateAsync(cart);
+    }
+
+    public async Task ChangeQuantity(string customerId, Guid itemId, int quantity)
+    {
+        var cart = await GetOrCreteCartForCustomerAsync(customerId);
+
+        var currentQuantity = cart.GetItemQuantity(itemId);
+        if (currentQuantity == 0)
+            throw new ItemNotInCartException(itemId, cart.Id);
+
+        if (quantity > currentQuantity)
+            cart.IncrementItem(itemId, quantity - currentQuantity);
+        else
+            cart.DecrementOrDeleteItem(itemId, currentQuantity - quantity);
+
+        await _cartRepository.UpdateAsync(cart);
+        await _cartRepository.CleanUpDeletedItemsAsync(cart);
     }
 
     private async Task<Cart> GetOrCreteCartForCustomerAsync(string customerId)

@@ -12,6 +12,12 @@ internal class CustomerReportsAppService : ICustomerReportsAppService
         _customerReportsRepository = customerReportsRepository;
     }
 
-    public Task<List<CustomerMonthlySpendingDto>> GetMonthlySendingAsync(int month, int year)
-        => _customerReportsRepository.GetMonthlySendingReportAsync(month, year);
+    public Task<List<CustomerMonthlySpendingDto>> GetMonthlySendingAsync(int? month = null, int? year = null)
+    {
+        var today = DateTimeOffset.UtcNow;
+        month ??= today.Month;
+        year ??= today.Year;
+
+        return _customerReportsRepository.GetMonthlySendingReportAsync(month.Value, year.Value);
+    }
 }

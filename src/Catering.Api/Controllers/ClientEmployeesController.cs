@@ -8,31 +8,24 @@ using Catering.Application.Aggregates.Identities.Dtos;
 namespace Catering.Api.Controllers;
 
 [Route("/api/clientEmployees")]
-public class ClientEmployeesController : ControllerBase
+public class ClientEmployeesController(ICustomerManagementAppService customerAppService) : ControllerBase
 {
-    private readonly ICustomerManagementAppService _customerAppService;
-
-    public ClientEmployeesController(ICustomerManagementAppService customerAppService)
-    {
-        _customerAppService = customerAppService;
-    }
+    private readonly ICustomerManagementAppService _customerAppService = customerAppService;
 
     [HttpPost]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> RegisterAsync([FromBody] CreateCustomerDto createRequest)
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _customerAppService.CreateClientsCustomerAsync(createRequest, requesterId);
+        await _customerAppService.CreateClientsCustomerAsync(createRequest, this.GetUserId());
 
         return NoContent();
     }
 
-    [HttpGet("budget")]
+    [HttpGet("profiles/budget")]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetBudgetInfoAsync()
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var budget = await _customerAppService.GetCustomerBudgetInfoAsync(requesterId);
+        var budget = await _customerAppService.GetCustomerBudgetInfoAsync(this.GetUserId());
 
         if (budget != null)
             return Ok(budget);
@@ -40,12 +33,11 @@ public class ClientEmployeesController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("profile")]
+    [HttpGet("profiles")]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetProfileAsync()
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var customerInfoDto = await _customerAppService.GetCustomerInfoAsync(requesterId);
+        var customerInfoDto = await _customerAppService.GetCustomerInfoAsync(this.GetUserId());
 
         if (customerInfoDto != null)
             return Ok(customerInfoDto);
@@ -53,7 +45,7 @@ public class ClientEmployeesController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("internal")]
+    [HttpGet("/api/internal/clientEmployees")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> GetInternalClientsEmployeesAsync([FromQuery] CustomersFilter filter)
     {
@@ -62,7 +54,7 @@ public class ClientEmployeesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("external")]
+    [HttpGet("/api/external/clientEmployees")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> GetExternalClientEmployeesAsync([FromQuery] CustomersFilter filter)
     {

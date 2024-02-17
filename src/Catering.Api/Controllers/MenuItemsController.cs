@@ -9,16 +9,11 @@ using System.Security.Claims;
 namespace Catering.Api.Controllers;
 
 [Route("/api/menus")]
-public class MenuItemsController : ControllerBase
+public class MenuItemsController(IItemManagementAppService itemsAppService) : ControllerBase
 {
-    private readonly IItemManagementAppService _itemsAppService;
+    private readonly IItemManagementAppService _itemsAppService = itemsAppService;
 
-    public MenuItemsController(IItemManagementAppService itemsAppService)
-    {
-        _itemsAppService = itemsAppService;
-    }
-
-    [HttpPost("{menuId}/items")]
+    [HttpPost("{menuId:Guid}/items")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateAsync([FromRoute] Guid menuId,[FromBody] CreateItemDto createRequest)
     {
@@ -29,12 +24,11 @@ public class MenuItemsController : ControllerBase
 
 
     private const string GetNameRoute = "GetItemById";
-    [HttpGet("{menuId}/items/{id}", Name = GetNameRoute)]
+    [HttpGet("{menuId:Guid}/items/{itemId:Guid}", Name = GetNameRoute)]
     [Authorize]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid menuId, [FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid menuId, [FromRoute] Guid itemId)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var item = await _itemsAppService.GetItemByIdAsync(menuId, id, userId);
+        var item = await _itemsAppService.GetItemByIdAsync(menuId, itemId, this.GetUserId());
 
         if (item == default)
             return NotFound();
@@ -42,48 +36,46 @@ public class MenuItemsController : ControllerBase
         return Ok(item);
     }
 
-    [HttpDelete("{menuId}/items/{id}")]
+    [HttpDelete("{menuId:Guid}/items/{itemId:Guid}")]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> DeleteAsync([FromRoute] Guid menuId, [FromRoute] Guid id)
+    public async Task<IActionResult> DeleteAsync([FromRoute] Guid menuId, [FromRoute] Guid itemId)
     {
-        await _itemsAppService.DeleteItemAsync(menuId, id);
+        await _itemsAppService.DeleteItemAsync(menuId, itemId);
 
         return NoContent();
     }
 
-    [HttpPut("{menuId}/items/{id}")]
+    [HttpPut("{menuId:Guid}/items/{itemId:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateAsync(
         [FromRoute] Guid menuId,
-        [FromRoute] Guid id,
+        [FromRoute] Guid itemId,
         [FromBody] UpdateItemDto updateRequest)
     {
-        await _itemsAppService.UpdateItemAsync(menuId, id, updateRequest);
+        await _itemsAppService.UpdateItemAsync(menuId, itemId, updateRequest);
 
         return NoContent();
     }
 
-    [HttpPut("{menuId}/items/{id}/{rating}")]
+    [HttpPut("{menuId:Guid}/items/{itemId:Guid}/ratings/{rating}")]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> RateItemAsync(
         [FromRoute] Guid menuId,
-        [FromRoute] Guid id,
+        [FromRoute] Guid itemId,
         [FromRoute] short rating)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _itemsAppService.RateItemAsync(menuId, id, userId, rating);
+        await _itemsAppService.RateItemAsync(menuId, itemId, this.GetUserId(), rating);
 
         return NoContent();
     }
 
-    [HttpGet("{menuId}/items/{id}/rating")]
+    [HttpGet("{menuId:Guid}/items/{itemId:Guid}/ratings")]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetItemRatingAsync(
         [FromRoute] Guid menuId,
-        [FromRoute] Guid id)
+        [FromRoute] Guid itemId)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var result = await _itemsAppService.GetCustomerRatingForItemAsync(menuId, id, userId);
+        var result = await _itemsAppService.GetCustomerRatingForItemAsync(menuId, itemId, this.GetUserId());
 
         return Ok(result);
     }
@@ -92,14 +84,12 @@ public class MenuItemsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetPageAsync([FromQuery] ItemsFilter filter)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        var result = await _itemsAppService.GetFilteredAsync(filter, userId);
+        var result = await _itemsAppService.GetFilteredAsync(filter, this.GetUserId());
 
         return Ok(result);
     }
 
-    [HttpGet("{menuId}/topOrdered")]
+    [HttpGet("{menuId:Guid}/top-orders")]
     [Authorize]
     public async Task<IActionResult> GetTopOrdered([FromRoute] Guid menuId, [FromQuery] int top = 10)
     {

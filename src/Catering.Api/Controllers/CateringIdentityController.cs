@@ -8,30 +8,27 @@ using Microsoft.AspNetCore.Mvc;
 namespace Catering.Api.Controllers;
 
 [Route("/api/cateringIdentities")]
-public class CateringIdentityController : ControllerBase
+public class CateringIdentityController(ICateringIdentitiesManagementAppService identitiesService) : ControllerBase
 {
-    private readonly ICateringIdentitiesManagementAppService _identitiesService;
+    private readonly ICateringIdentitiesManagementAppService _identitiesService = identitiesService;
 
-    public CateringIdentityController(ICateringIdentitiesManagementAppService identitiesService)
-    {
-        _identitiesService = identitiesService;
-    }
-
-    [HttpPost("invite")]
+    [HttpPost("invitations")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> SendInvitation([FromBody] CreateIdentityInvitationDto invitationRequest)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _identitiesService.SendIdentityInvitationAsync(requestorId, invitationRequest);
+        await _identitiesService.SendIdentityInvitationAsync(this.GetUserId(), invitationRequest);
 
         return NoContent();
     }
 
-    [HttpPost("invitation/{id}/accept")]
+    [HttpPost("invitations/{id}")]
     [AllowAnonymous]
-    public async Task<IActionResult> AcceptInvitation([FromRoute] string id, [FromBody] AcceptInvitationDto acceptInvitationDto)
+    public async Task<IActionResult> AcceptInvitation(
+        [FromRoute] string id, 
+        [FromBody] AcceptInvitationDto acceptInvitationDto)
     {
-        await _identitiesService.AcceptInvitationAsync(id, acceptInvitationDto.NewPassword);
+        if (acceptInvitationDto.HasAccepted)
+            await _identitiesService.AcceptInvitationAsync(id, acceptInvitationDto.NewPassword);
 
         return NoContent();
     }
@@ -40,8 +37,7 @@ public class CateringIdentityController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetIdentityInfo()
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var identityInfoDto = await _identitiesService.GetIdentityInfoAsync(requesterId);
+        var identityInfoDto = await _identitiesService.GetIdentityInfoAsync(this.GetUserId());
 
         if (identityInfoDto != null)
             return Ok(identityInfoDto);
@@ -53,7 +49,6 @@ public class CateringIdentityController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetPermissions()
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        return Ok(await _identitiesService.GetIdentityPermissionsAsync(requesterId));
+        return Ok(await _identitiesService.GetIdentityPermissionsAsync(this.GetUserId()));
     }
 }

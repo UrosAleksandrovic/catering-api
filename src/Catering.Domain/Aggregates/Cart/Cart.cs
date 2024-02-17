@@ -37,10 +37,8 @@ public class Cart
         _items.Add(new CartItem(itemId, quantity, note));
     }
 
-    public void IncrementItem(Guid menuId, Guid itemId, int quantity = 1)
+    public void IncrementItem(Guid itemId, int quantity = 1)
     {
-        CheckIfMenuIsValid(menuId, itemId);
-
         var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
         if (existingItem == default)
             throw new ItemNotInCartException(Id, itemId);
@@ -48,10 +46,8 @@ public class Cart
         existingItem.IncrementQuantity(quantity);
     }
 
-    public void DecrementOrDeleteItem(Guid menuId, Guid itemId, int quantity = 1)
+    public void DecrementOrDeleteItem(Guid itemId, int quantity = 1)
     {
-        CheckIfMenuIsValid(menuId, itemId);
-
         var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
         if (existingItem == default)
             throw new ItemNotInCartException(Id, itemId);
@@ -60,6 +56,13 @@ public class Cart
             RemoveItem(existingItem);
         else
             existingItem.DecrementQuantity(quantity);
+    }
+
+    public int GetItemQuantity(Guid itemId)
+    {
+        var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
+
+        return existingItem == default ? 0 : existingItem.Quantity;
     }
 
     public void RemoveItem(Guid menuId, Guid itemId)
@@ -73,10 +76,8 @@ public class Cart
         RemoveItem(existingItem);
     }
 
-    public void AddOrEditNoteToItem(Guid menuId, Guid itemId, string note)
+    public void AddOrEditNoteToItem(Guid itemId, string note)
     {
-        CheckIfMenuIsValid(menuId, itemId);
-
         var existingItem = _items.SingleOrDefault(x => x.ItemId == itemId);
         if (existingItem == default)
             throw new ItemNotInCartException(Id, itemId);

@@ -3,62 +3,53 @@ using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Order;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/orders")]
-public class OrdersController : ControllerBase
+public class OrdersController(IOrderManagementAppService ordersService) : ControllerBase
 {
-    private readonly IOrderManagementAppService _ordersService;
-
-    public OrdersController(IOrderManagementAppService ordersService)
-    {
-        _ordersService = ordersService;
-    }
+    private readonly IOrderManagementAppService _ordersService = ordersService;
 
     [HttpPost]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> MakeOrderAsync([FromBody] CreateOrderDto createOrder)
     {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        var orderId = await _ordersService.PlaceOrderAsync(customerId, createOrder);
+        var orderId = await _ordersService.PlaceOrderAsync(this.GetUserId(), createOrder);
 
         return CreatedAtRoute(GetNameRoute, new { id = orderId }, new { id = orderId });
     }
 
-    [HttpPut("{orderId}/cancel")]
+    [HttpPut("{id:long}/status")]
     [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
         IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
         IdentityRole.Restaurant | IdentityRole.Employee)]
-    public async Task<IActionResult> CancelOrderAsync([FromRoute] long orderId)
+    public async Task<IActionResult> ChangeStatusAsync([FromRoute] long id, [FromBody] ChangeOrderStatusDto newStatus)
     {
-        await _ordersService.CancelAsync(orderId);
-
-        return NoContent();
-    }
-
-    [HttpPut("{orderId}/confirm")]
-    [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
-        IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-        IdentityRole.Restaurant | IdentityRole.Employee)]
-    public async Task<IActionResult> ConfirmOrderAsync([FromRoute] long orderId)
-    {
-        await _ordersService.ConfirmAsync(orderId);
+        switch (newStatus.NewStatus)
+        {
+            case OrderStatus.Canceled:
+                await _ordersService.CancelAsync(id);
+                break;
+            case OrderStatus.Confirmed:
+                await _ordersService.ConfirmAsync(id);
+                break;
+            default:
+                return BadRequest();
+        }
 
         return NoContent();
     }
 
     private const string GetNameRoute = "GetOrderById";
-    [HttpGet("{id}", Name = GetNameRoute)]
+    [HttpGet("{id:long}", Name = GetNameRoute)]
     [Authorize]
     public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long id)
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var order = await _ordersService.GetByIdAsync(id, requesterId);
+        var order = await _ordersService.GetByIdAsync(id, this.GetUserId());
 
         if (order == default)
             return NotFound();
@@ -70,8 +61,7 @@ public class OrdersController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetFilteredOrdersAsync([FromQuery] OrdersFilter filter)
     {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var orders = await _ordersService.GetFilteredAsync(filter, requesterId);
+        var orders = await _ordersService.GetFilteredAsync(filter, this.GetUserId());
 
         return Ok(orders);
     }

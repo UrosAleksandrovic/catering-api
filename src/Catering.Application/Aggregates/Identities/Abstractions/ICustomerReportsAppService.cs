@@ -4,5 +4,5 @@ namespace Catering.Application.Aggregates.Identities.Abstractions;
 
 public interface ICustomerReportsAppService
 {
-    Task<List<CustomerMonthlySpendingDto>> GetMonthlySendingAsync(int month, int year);
+    Task<List<CustomerMonthlySpendingDto>> GetMonthlySendingAsync(int? month = null, int? year = null);
 }

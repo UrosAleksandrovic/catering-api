@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Catering.Api.Configuration.Authorization;
+﻿using Catering.Api.Configuration.Authorization;
 using Catering.Application.Aggregates.Expenses;
 using Catering.Application.Aggregates.Expenses.Abstractions;
 using Catering.Application.Aggregates.Expenses.Dtos;
@@ -7,17 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
-[Route("api/expenses/")]
-public class ExpensesController : ControllerBase
+[Route("api/expenses")]
+public class ExpensesController(IExpensesManagementAppService expensesService) : ControllerBase
 {
-    private readonly IExpensesManagementAppService _expensesService;
+    private readonly IExpensesManagementAppService _expensesService = expensesService;
 
     private const string GetNameRoute = "GetExpenseById";
-
-    public ExpensesController(IExpensesManagementAppService expensesService)
-    {
-        _expensesService = expensesService;
-    }
 
     [HttpPost]
     [AuthorizeClientsAdmins]
@@ -41,8 +35,7 @@ public class ExpensesController : ControllerBase
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var expense = await _expensesService.GetByIdAsync(id, userId);
+        var expense = await _expensesService.GetByIdAsync(id, this.GetUserId());
 
         if (expense == default)
             return NotFound();
@@ -54,7 +47,6 @@ public class ExpensesController : ControllerBase
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> GetFiltered([FromQuery] ExpensesFilter filter)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         var expenses = await _expensesService.GetFilteredAsync(filter);
 
         return Ok(expenses);

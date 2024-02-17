@@ -6,14 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
-public class AuthController : ControllerBase
+public class AuthController(IMediator publisher) : ControllerBase
 {
-    private readonly IMediator _publisher;
-
-    public AuthController(IMediator publisher)
-    {
-        _publisher = publisher;
-    }
+    private readonly IMediator _publisher = publisher;
 
     [HttpPost("/api/auth/ldap/login")]
     [AllowAnonymous]

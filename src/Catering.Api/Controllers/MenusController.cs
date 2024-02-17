@@ -4,19 +4,13 @@ using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/menus")]
-public class MenusController : ControllerBase
+public class MenusController(IMenuManagementAppService menuAppService) : ControllerBase
 {
-    private readonly IMenuManagementAppService _menuAppService;
-
-    public MenusController(IMenuManagementAppService menuAppService)
-    {
-        _menuAppService = menuAppService;
-    }
+    private readonly IMenuManagementAppService _menuAppService = menuAppService;
 
     [HttpPost]
     [AuthorizeClientsAdmins]
@@ -28,12 +22,11 @@ public class MenusController : ControllerBase
     }
 
     const string GetNameRoute = "GetMenuById";
-    [HttpGet("{id}", Name = GetNameRoute)]
+    [HttpGet("{id:Guid}", Name = GetNameRoute)]
     [Authorize]
     public async Task<IActionResult> GetMenuByIdAsync(Guid id)
     {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var menu = await _menuAppService.GetByIdAsync(id, requestorId);
+        var menu = await _menuAppService.GetByIdAsync(id, this.GetUserId());
 
         if (menu == null)
             return NotFound();
@@ -41,7 +34,7 @@ public class MenusController : ControllerBase
         return Ok(menu);
     }
 
-    [HttpGet("page")]
+    [HttpGet]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
     {
@@ -50,7 +43,7 @@ public class MenusController : ControllerBase
         return Ok(result);
     } 
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateMenu([FromRoute] Guid id, [FromBody] UpdateMenuDto updateRequest)
     {
@@ -59,7 +52,7 @@ public class MenusController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> DeleteMenu([FromRoute] Guid id)
     {

@@ -67,11 +67,10 @@ public class CartTest
     public void IncrementItem_ItemIsNotInCart_ItemNotInCartException()
     {
         //Arrange
-        var cartMenuId = Guid.NewGuid();
         var cart = new Cart(Guid.NewGuid().ToString());
 
         //Act
-        void a() => cart.IncrementItem(cartMenuId, Guid.NewGuid());
+        void a() => cart.IncrementItem(Guid.NewGuid());
 
         //Assert
         Assert.Throws<ItemNotInCartException>(a);
@@ -90,27 +89,12 @@ public class CartTest
         cart.AddItem(menuId, itemId, itemQuantity);
 
         //Act
-        cart.IncrementItem(menuId, itemId, incrementValue);
+        cart.IncrementItem(itemId, incrementValue);
 
         //Assert
         Assert.Equal(
             itemQuantity + incrementValue,
             cart.Items.Single(i => i.ItemId == itemId).Quantity);
-    }
-
-    [Fact]
-    public void IncrementItem_ItemInCartDifferentMenu_ItemMenuNotValidException()
-    {
-        //Arrange
-        var cart = new Cart(Guid.NewGuid().ToString());
-        var itemId = Guid.NewGuid();
-        cart.AddItem(Guid.NewGuid(), itemId, 1);
-
-        //Act
-        void a() => cart.IncrementItem(Guid.NewGuid(), itemId, 1);
-
-        //Assert
-        Assert.Throws<ItemMenuNotValidException>(a);
     }
 
     [Fact]
@@ -120,25 +104,10 @@ public class CartTest
         var cart = new Cart(Guid.NewGuid().ToString());
 
         //Act
-        void a() => cart.DecrementOrDeleteItem(Guid.NewGuid(), Guid.NewGuid());
+        void a() => cart.DecrementOrDeleteItem(Guid.NewGuid());
 
         //Assert
         Assert.Throws<ItemNotInCartException>(a);
-    }
-
-    [Fact]
-    public void DecrementOrDeleteItem_ItemInCartDifferentMenu_ItemMenuNotValidException()
-    {
-        //Arrange
-        var cart = new Cart(Guid.NewGuid().ToString());
-        var itemId = Guid.NewGuid();
-        cart.AddItem(Guid.NewGuid(), itemId, 1);
-
-        //Act
-        void a() => cart.DecrementOrDeleteItem(Guid.NewGuid(), itemId, 1);
-
-        //Assert
-        Assert.Throws<ItemMenuNotValidException>(a);
     }
 
     [Theory]
@@ -154,7 +123,7 @@ public class CartTest
         cart.AddItem(menuId, itemId, itemQuantity);
 
         //Act
-        cart.DecrementOrDeleteItem(menuId, itemId, value);
+        cart.DecrementOrDeleteItem(itemId, value);
 
         //Assert
         Assert.Equal(
@@ -176,7 +145,7 @@ public class CartTest
         cart.AddItem(menuId, itemId, itemQuantity);
 
         //Act
-        cart.DecrementOrDeleteItem(menuId, itemId, value);
+        cart.DecrementOrDeleteItem(itemId, value);
 
         //Assert
         Assert.DoesNotContain(cart.Items, i => i.ItemId == itemId);
@@ -190,25 +159,10 @@ public class CartTest
         var cart = new Cart(Guid.NewGuid().ToString());
 
         //Act
-        void a() => cart.AddOrEditNoteToItem(Guid.NewGuid(), Guid.NewGuid(), "Some Note");
+        void a() => cart.AddOrEditNoteToItem(Guid.NewGuid(), "Some Note");
 
         //Assert
         Assert.Throws<ItemNotInCartException>(a);
-    }
-
-    [Fact]
-    public void AddOrEditNoteToItem_ItemInCartDifferentMenu_ItemMenuNotValidException()
-    {
-        //Arrange
-        var cart = new Cart(Guid.NewGuid().ToString());
-        var itemId = Guid.NewGuid();
-        cart.AddItem(Guid.NewGuid(), itemId, 1);
-
-        //Act
-        void a() => cart.AddOrEditNoteToItem(Guid.NewGuid(), itemId, "new note");
-
-        //Assert
-        Assert.Throws<ItemMenuNotValidException>(a);
     }
 
     [Theory]
@@ -226,7 +180,7 @@ public class CartTest
         cart.AddItem(menuId, itemId, 1, initialNote);
 
         //Act
-        cart.AddOrEditNoteToItem(menuId, itemId, newNote);
+        cart.AddOrEditNoteToItem(itemId, newNote);
 
         //Assert
         Assert.Equal(newNote, cart.Items.Single(i => i.ItemId == itemId).Note);

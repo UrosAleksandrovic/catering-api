@@ -6,7 +6,7 @@ public class ExpenseBuilder : IBuilder<Expense>
 {
     private string _customerId;
     private Guid _menuId;
-    private DateTime _deliveredOn;
+    private DateTimeOffset _deliveredOn;
     private decimal _price;
     private string _note;
 
@@ -28,7 +28,7 @@ public class ExpenseBuilder : IBuilder<Expense>
         return this;
     }
 
-    public ExpenseBuilder HasPriceAndDate(decimal price, DateTime deliveredOn)
+    public ExpenseBuilder HasPriceAndDate(decimal price, DateTimeOffset deliveredOn)
     {
         _deliveredOn = deliveredOn;
         _price = price;

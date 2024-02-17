@@ -15,11 +15,6 @@ internal class FailedEmailEntityConfiguration : IEntityTypeConfiguration<FailedC
 
         builder.Property(e => e.Content).IsRequired();
 
-        builder.Property(e => e.GeneratedOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
-
         builder.Property(e => e.Recepiants)
             .HasConversion<StringEnumerableConverter>()
             .Metadata

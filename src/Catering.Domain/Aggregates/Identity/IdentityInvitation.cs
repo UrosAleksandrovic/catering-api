@@ -9,8 +9,8 @@ public class IdentityInvitation
     public string Id { get; private set; }
     public string Email { get; private set; }
     public FullName FullName { get; private set; }
-    public DateTime CreatedOn { get; private set; }
-    public DateTime ExpiredOn { get; private set; }
+    public DateTimeOffset CreatedOn { get; private set; }
+    public DateTimeOffset ExpiredOn { get; private set; }
     public IdentityRole FutureRole { get; private set; }
     public bool IsCustomer { get; private set; }
 
@@ -32,14 +32,14 @@ public class IdentityInvitation
         FullName = fullName;
         FutureRole = futureRole;
 
-        CreatedOn = DateTime.Now;
+        CreatedOn = DateTimeOffset.UtcNow;
         ExpiredOn = CreatedOn.AddDays(daysToExpire);
         IsCustomer = isCustomer;
     }
 
     public (Identity identity, Customer customer) AcceptInvitation(string password)
     {
-        if (DateTime.Now.CompareTo(ExpiredOn) > 0)
+        if (DateTimeOffset.UtcNow.CompareTo(ExpiredOn) > 0)
             throw new CateringException(IdentityErrorCodes.INVITATION_EXPIRED);
 
         var identity = new CateringIdentity(Email, FullName, password, FutureRole);

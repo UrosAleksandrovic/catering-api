@@ -15,15 +15,5 @@ internal class IdentityInvitationEntityConfiguration : IEntityTypeConfiguration<
 
         var fullNameBuilder = builder.OwnsOne(e => e.FullName);
         fullNameBuilder.Property(e => e.FirstName).IsRequired();
-
-        builder.Property(e => e.CreatedOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
-
-        builder.Property(e => e.ExpiredOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
     }
 }

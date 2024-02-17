@@ -27,7 +27,7 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
             claims: claims,
             issuer: _options.Issuer,
             audience: _options.Audience,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromDays(_options.ExpirationInDays)),
+            expires: DateTimeOffset.UtcNow.Add(TimeSpan.FromDays(_options.ExpirationInDays)).DateTime,
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -35,19 +35,18 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
 
     private List<Claim> GenerateClaims<T>(T identity) where T : Identity
     {
-        var expirationTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString();
+        var expirationTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, identity.Id),
-            new Claim(JwtRegisteredClaimNames.Email, identity.Email),
-            new Claim(JwtRegisteredClaimNames.Iss, _options.Issuer),
-            new Claim(JwtRegisteredClaimNames.Iat, expirationTime),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Aud, _options.Audience)
+            new(JwtRegisteredClaimNames.Sub, identity.Id),
+            new(JwtRegisteredClaimNames.Email, identity.Email),
+            new(JwtRegisteredClaimNames.Iss, _options.Issuer),
+            new(JwtRegisteredClaimNames.Iat, expirationTime),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Aud, _options.Audience),
+            new(ClaimTypes.Role, identity.Role.ToIdentityString())
         };
-
-        claims.Add(new Claim(ClaimTypes.Role, identity.Role.ToIdentityString()));
 
         return claims;
     }

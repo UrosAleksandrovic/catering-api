@@ -7,8 +7,8 @@ public class Order
 {
     public long Id { get; set; }
     public string CustomerId { get; set; }
-    public DateTime ExpectedOn { get; set; }
-    public DateTime CreatedOn { get; set; }
+    public DateTimeOffset ExpectedOn { get; set; }
+    public DateTimeOffset CreatedOn { get; set; }
     public OrderStatus Status { get; private set; }
     public HomeDeliveryInfo HomeDeliveryInfo { get; private set; }
     public Guid MenuId { get; private set; }
@@ -22,14 +22,14 @@ public class Order
         IEnumerable<OrderItem> items,
         Guid menuId,
         string customerId,
-        DateTime expectedOn,
+        DateTimeOffset expectedOn,
         HomeDeliveryInfo homeDelivery = null)
     {
         Guard.Against.Default(menuId);
         Guard.Against.NullOrWhiteSpace(customerId);
         Guard.Against.Default(expectedOn);
 
-        CreatedOn = DateTime.Now;
+        CreatedOn = DateTimeOffset.UtcNow;
         Status = OrderStatus.Subbmited;
 
         MenuId = menuId;

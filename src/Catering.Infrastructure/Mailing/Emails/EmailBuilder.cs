@@ -9,7 +9,7 @@ internal class EmailBuilder : IEmailBuilder
     private string _title;
     private string _content;
     private string _templateName;
-    private readonly List<string> _recepients = new();
+    private readonly List<string> _recepients = [];
 
     public IEmailBuilder HasEmailTemplate(EmailTemplate template, object root)
     {
@@ -47,7 +47,7 @@ internal class EmailBuilder : IEmailBuilder
     {
         return new CateringEmail
         {
-            GeneratedOn = DateTime.Now,
+            GeneratedOn = DateTimeOffset.UtcNow,
             Recepiants = _recepients,
             Title = _title,
             TemplateName = _templateName,

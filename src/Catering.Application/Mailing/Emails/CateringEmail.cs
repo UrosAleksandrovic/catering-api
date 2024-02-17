@@ -6,5 +6,5 @@ public class CateringEmail : IMail
     public string TemplateName { get; set; }
     public IEnumerable<string> Recepiants { get; set; }
     public string Content { get; set; }
-    public DateTime GeneratedOn { get; set; }
+    public DateTimeOffset GeneratedOn { get; set; }
 }

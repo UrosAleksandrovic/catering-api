@@ -2,6 +2,6 @@
 
 public class CreateOrderDto
 {
-    public DateTime ExpectedTimeOfDelivery { get; set; }
+    public DateTimeOffset ExpectedTimeOfDelivery { get; set; }
     public HomeDeliveryInfoDto HomeDeliveryInfo { get; set; }
 }

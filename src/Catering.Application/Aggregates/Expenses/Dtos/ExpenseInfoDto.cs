@@ -7,5 +7,5 @@ public class ExpenseInfoDto
     public Guid MenuId { get; set; }
     public decimal Price { get; set; }
     public string Note { get; set; }
-    public DateTime DeliveredOn { get; set; }
+    public DateTimeOffset DeliveredOn { get; set; }
 }

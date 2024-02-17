@@ -9,7 +9,7 @@ namespace Catering.Domain.Builders;
 public class OrderBuilder : IBuilder<Order>
 {
     private string _customerId;
-    private DateTime _expectedOn;
+    private DateTimeOffset _expectedOn;
     private HomeDeliveryInfo _homeDeliveryInfo;
     private Cart _cart;
     private IEnumerable<Item> _items;
@@ -31,7 +31,7 @@ public class OrderBuilder : IBuilder<Order>
         _items = default;
     }
 
-    public OrderBuilder HasDateOfDelivery(DateTime expectedOn)
+    public OrderBuilder HasDateOfDelivery(DateTimeOffset expectedOn)
     {
         _expectedOn = expectedOn;
 

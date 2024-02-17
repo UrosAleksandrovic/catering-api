@@ -28,7 +28,7 @@ public class OrderTest
         cart.AddItem(menuId, items[0].Id, 1);
 
         return new OrderBuilder()
-            .HasDateOfDelivery(DateTime.Today)
+            .HasDateOfDelivery(DateTimeOffset.UtcNow)
             .HasItems(items)
             .HasCart(cart);
     }

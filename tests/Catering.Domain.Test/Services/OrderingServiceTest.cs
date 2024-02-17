@@ -53,7 +53,7 @@ public class OrderingServiceTest
             },
             Guid.NewGuid(),
             "someid",
-            DateTime.Now));
+            DateTimeOffset.UtcNow));
 
         //Act
         var resultOrder = orderingService.PlaceOrder(customer, orderBuilder);
@@ -108,7 +108,7 @@ public class OrderingServiceTest
             },
             Guid.NewGuid(),
             "someid",
-            DateTime.Now));
+            DateTimeOffset.UtcNow));
         var order = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Act
@@ -166,7 +166,7 @@ public class OrderingServiceTest
             },
             Guid.NewGuid(),
             "someid",
-            DateTime.Now));
+            DateTimeOffset.UtcNow));
         var order = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Act

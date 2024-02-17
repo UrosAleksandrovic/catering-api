@@ -1,5 +1,5 @@
 ﻿using Catering.Application.Aggregates.Carts.Abstractions;
-using Catering.Domain.Entities.CartAggregate;
+using Catering.Domain.Aggregates.Cart;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;

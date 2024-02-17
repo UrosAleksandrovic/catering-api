@@ -1,6 +1,6 @@
 ﻿using Catering.Application.Aggregates.Expenses;
 using Catering.Application.Aggregates.Expenses.Abstractions;
-using Catering.Domain.Entities.ExpenseAggregate;
+using Catering.Domain.Aggregates.Expense;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;

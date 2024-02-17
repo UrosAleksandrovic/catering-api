@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.CartAggregate;
+﻿using Catering.Domain.Aggregates.Cart;
 
 namespace Catering.Application.Aggregates.Carts.Abstractions;
 

@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Order;
 
 namespace Catering.Application.Aggregates.Orders;
 

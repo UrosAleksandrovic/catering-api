@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
 using Catering.Infrastructure.Security.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

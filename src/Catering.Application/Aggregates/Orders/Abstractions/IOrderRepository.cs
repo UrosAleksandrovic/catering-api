@@ -1,7 +1,6 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.MenuAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Menu;
+using Catering.Domain.Aggregates.Order;
 
 namespace Catering.Application.Aggregates.Orders.Abstractions;
 

@@ -1,6 +1,6 @@
 ﻿using Catering.Application.Aggregates.Menus;
 using Catering.Application.Aggregates.Menus.Abstractions;
-using Catering.Domain.Entities.MenuAggregate;
+using Catering.Domain.Aggregates.Menu;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;

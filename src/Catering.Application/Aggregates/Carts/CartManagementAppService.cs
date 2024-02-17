@@ -2,8 +2,8 @@
 using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Carts.Dtos;
 using Catering.Application.Aggregates.Carts.Requests;
-using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ItemAggregate;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Item;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Carts;

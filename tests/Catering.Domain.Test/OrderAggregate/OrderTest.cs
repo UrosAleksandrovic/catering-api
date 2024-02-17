@@ -1,9 +1,9 @@
-﻿using Catering.Domain.Builders;
-using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+﻿using System;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Aggregates.Order;
+using Catering.Domain.Builders;
 using Catering.Domain.Exceptions;
-using System;
 using Xunit;
 
 namespace Catering.Domain.Test.OrderAggregate;

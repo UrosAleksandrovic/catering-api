@@ -1,9 +1,9 @@
-﻿using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ExpenseAggregate;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.MenuAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Expense;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Aggregates.Menu;
+using Catering.Domain.Aggregates.Order;
 using Catering.Infrastructure.Data.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,13 +30,13 @@ internal class CateringDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
-        new ItemEntityConfiguration().Configure(modelBuilder.Entity<Item>());
-        new MenuEntityConfiguration().Configure(modelBuilder.Entity<Menu>());
-        new CartEntityConfiguration().Configure(modelBuilder.Entity<Cart>());
-        new OrderEntityConfiguration().Configure(modelBuilder.Entity<Order>());
-        new IdentityEntityConfiguration().Configure(modelBuilder.Entity<Identity>());
-        new CateringIdentitiesConfiguration().Configure(modelBuilder.Entity<CateringIdentity>());
-        new CustomerEntityConfiguration().Configure(modelBuilder.Entity<Customer>());
-        new IdentityInvitationEntityConfiguration().Configure(modelBuilder.Entity<IdentityInvitation>());
+        modelBuilder.ApplyConfiguration(new ItemEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new MenuEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new CartEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new IdentityEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new CateringIdentitiesConfiguration());
+        modelBuilder.ApplyConfiguration(new CustomerEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new IdentityInvitationEntityConfiguration());
     }
 }

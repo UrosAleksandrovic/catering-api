@@ -1,6 +1,6 @@
 ﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain.Aggregates.Order;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;

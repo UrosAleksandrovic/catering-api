@@ -3,9 +3,9 @@ using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Aggregates.Orders.Notifications;
 using Catering.Application.Aggregates.Orders.Requests;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Order;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.OrderAggregate;
 using Catering.Domain.Services.Abstractions;
 using MediatR;
 

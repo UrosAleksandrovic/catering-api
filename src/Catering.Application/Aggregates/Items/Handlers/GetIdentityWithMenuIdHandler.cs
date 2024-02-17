@@ -1,7 +1,7 @@
 ﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Items.Requests;
 using Catering.Application.Aggregates.Menus.Abstractions;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Items.Handlers;

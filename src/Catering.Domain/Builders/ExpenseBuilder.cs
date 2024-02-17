@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.ExpenseAggregate;
+﻿using Catering.Domain.Aggregates.Expense;
 
 namespace Catering.Domain.Builders;
 

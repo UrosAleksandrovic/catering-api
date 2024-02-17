@@ -4,8 +4,8 @@ using Catering.Application.Aggregates.Menus.Dtos;
 using Catering.Application.Aggregates.Menus.Notifications;
 using Catering.Application.Aggregates.Menus.Requests;
 using Catering.Application.Dtos.Menu;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Menus;

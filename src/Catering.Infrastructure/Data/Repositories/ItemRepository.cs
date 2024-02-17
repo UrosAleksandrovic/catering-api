@@ -1,8 +1,8 @@
 ﻿using Catering.Application.Aggregates.Items;
 using Catering.Application.Aggregates.Items.Abstractions;
-using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Aggregates.Order;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;

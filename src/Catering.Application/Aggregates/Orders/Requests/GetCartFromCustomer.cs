@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.CartAggregate;
+﻿using Catering.Domain.Aggregates.Cart;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Orders.Requests;

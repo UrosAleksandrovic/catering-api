@@ -3,8 +3,8 @@ using Catering.Application.Aggregates.Expenses.Abstractions;
 using Catering.Application.Aggregates.Expenses.Dtos;
 using Catering.Application.Aggregates.Expenses.Notifications;
 using Catering.Application.Aggregates.Menus.Requests;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Expenses;

@@ -1,6 +1,6 @@
-﻿using Catering.Domain.Entities.ExpenseAggregate;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.MenuAggregate;
+﻿using Catering.Domain.Aggregates.Expense;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Menu;
 using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

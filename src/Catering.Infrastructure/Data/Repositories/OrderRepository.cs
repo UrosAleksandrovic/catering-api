@@ -1,10 +1,8 @@
-﻿using Catering.Application.Aggregates.Items;
-using Catering.Application.Aggregates.Orders;
+﻿using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.MenuAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Menu;
+using Catering.Domain.Aggregates.Order;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
@@ -108,7 +106,7 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
         if (filters.BottomPrice != null)
             query = query.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) >= filters.BottomPrice);
 
-        if (filters.Statuses != null && filters.Statuses.Any())
+        if (filters.Statuses != null && filters.Statuses.Count != 0)
             query = query.Where(o => filters.Statuses.Contains(o.Status));
 
         if (filters.DeliveredOn.HasValue)

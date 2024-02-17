@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.ItemAggregate;
+﻿using Catering.Domain.Aggregates.Item;
 using System;
 using System.Linq;
 using Xunit;
@@ -120,7 +120,7 @@ public class ItemTest
         Assert.Equal(item.Categories.Count, categoriesToBeAdded.Length + 1);
 
         foreach (var category in categoriesToBeAdded)
-            Assert.Contains(item.Categories, c => c.Id == category.ToLowerInvariant());
+            Assert.Contains(item.Categories, c => c.Id.Equals(category, StringComparison.InvariantCultureIgnoreCase));
         Assert.Contains(item.Categories, c => c.Id == "desert");
     }
 
@@ -149,7 +149,7 @@ public class ItemTest
         item.RemoveCategories(Enumerable.Empty<string>());
 
         //Assert
-        Assert.Equal(1, item.Categories.Count);
+        Assert.Single(item.Categories);
         Assert.Equal(initialCategories[0], item.Categories.Single().Id);
     }
 
@@ -202,10 +202,10 @@ public class ItemTest
         //Arrange
         var ingredientsToBeAdded = new[]
         {
-                "onion",
-                "cheese",
-                "garlic"
-            };
+            "onion",
+            "cheese",
+            "garlic"
+        };
         var item = new Item("Name", "", 10, Guid.NewGuid());
 
         //Act
@@ -216,7 +216,7 @@ public class ItemTest
         Assert.Equal(item.Ingredients.Count, ingredientsToBeAdded.Length + 1);
 
         foreach (var ingredient in ingredientsToBeAdded)
-            Assert.Contains(item.Ingredients, c => c.Id == ingredient.ToLowerInvariant());
+            Assert.Contains(item.Ingredients, c => c.Id.Equals(ingredient, StringComparison.InvariantCultureIgnoreCase));
         Assert.Contains(item.Ingredients, c => c.Id == "carrot");
     }
 
@@ -245,7 +245,7 @@ public class ItemTest
         item.RemoveIngredients(Enumerable.Empty<string>());
 
         //Assert
-        Assert.Equal(1, item.Ingredients.Count);
+        Assert.Single(item.Ingredients);
         Assert.Equal(initialIngredients[0], item.Ingredients.Single().Id);
     }
 
@@ -306,7 +306,7 @@ public class ItemTest
         item.AddOrChangeRating(customerId, customerRating);
 
         //Assert
-        Assert.Equal(1, item.Ratings.Count);
+        Assert.Single(item.Ratings);
         Assert.NotNull(item.Ratings.SingleOrDefault(s => s.CustomerId == customerId && s.Rating == customerRating));
     }
 
@@ -323,7 +323,7 @@ public class ItemTest
         item.AddOrChangeRating(customerId, newCustomerRating);
 
         //Assert
-        Assert.Equal(1, item.Ratings.Count);
+        Assert.Single(item.Ratings);
         Assert.NotNull(item.Ratings.SingleOrDefault(s => s.CustomerId == customerId && s.Rating == newCustomerRating));
     }
 
@@ -338,7 +338,7 @@ public class ItemTest
         item.RemoveRating(null);
 
         //Assert
-        Assert.Equal(1, item.Ratings.Count);
+        Assert.Single(item.Ratings);
     }
 
     [Fact]
@@ -352,7 +352,7 @@ public class ItemTest
         item.RemoveRating("someId");
 
         //Assert
-        Assert.Equal(1, item.Ratings.Count);
+        Assert.Single(item.Ratings);
     }
 
     [Fact]

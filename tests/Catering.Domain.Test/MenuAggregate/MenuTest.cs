@@ -1,5 +1,5 @@
-﻿using Catering.Domain.Entities.MenuAggregate;
-using System;
+﻿using System;
+using Catering.Domain.Aggregates.Menu;
 using Xunit;
 
 namespace Catering.Domain.Test.MenuAggregate;

@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Order;
 using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

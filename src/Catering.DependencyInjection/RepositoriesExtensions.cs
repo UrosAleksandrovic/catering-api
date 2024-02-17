@@ -5,7 +5,7 @@ using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Mailing.Emails;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Infrastructure.Data.Repositories;
 using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,5 +1,5 @@
-﻿using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

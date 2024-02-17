@@ -1,8 +1,7 @@
-﻿using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Exceptions;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Linq;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Exceptions;
 using Xunit;
 
 namespace Catering.Domain.Test.CartAggregate;

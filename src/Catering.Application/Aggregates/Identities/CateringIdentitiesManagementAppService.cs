@@ -3,8 +3,9 @@ using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
 using Catering.Application.Aggregates.Identities.Notifications;
 using Catering.Application.Security;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.ErrorCodes;
 using Catering.Domain.Exceptions;
 using MediatR;
 
@@ -43,7 +44,7 @@ internal class CateringIdentitiesManagementAppService : ICateringIdentitiesManag
 
         var identityExists = await _cateringIdentitiesRepository.GetByEmailAsync(createRequest.Email);
         if (identityExists != null)
-            throw new ArgumentException("Identity with provided email already exists.");
+            throw new IdentityAlreadyExists();
 
         var invtitation = new IdentityInvitationBuilder()
             .HasEmail(createRequest.Email)
@@ -60,7 +61,7 @@ internal class CateringIdentitiesManagementAppService : ICateringIdentitiesManag
     {
         var invitation = await _cateringIdentitiesRepository.GetInvitationByIdAsync(invitationId);
         if (invitation == null)
-            throw new CateringException("Invitation does not exist!");
+            throw new CateringException(IdentityErrorCodes.INVITATION_NOT_FOUND);
 
 
         var (identity, customer) = invitation.AcceptInvitation(_dataProtector.Hash(newPassword));

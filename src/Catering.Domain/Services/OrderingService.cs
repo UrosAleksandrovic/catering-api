@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Order;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.OrderAggregate;
 using Catering.Domain.Services.Abstractions;
 
 namespace Catering.Domain.Services;

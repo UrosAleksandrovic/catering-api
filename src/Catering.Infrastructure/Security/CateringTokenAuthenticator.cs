@@ -1,8 +1,8 @@
 ﻿using Ardalis.GuardClauses;
 using Catering.Application.Security;
-using Catering.Domain.Entities.IdentityAggregate;
 using System.Security.Authentication;
 using Catering.Application.Aggregates.Identities.Abstractions;
+using Catering.Domain.Aggregates.Identity;
 
 namespace Catering.Infrastructure.Security;
 

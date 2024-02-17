@@ -18,7 +18,7 @@ internal class MailingDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
-        new FailedEmailEntityConfiguration().Configure(modelBuilder.Entity<FailedCateringEmail>());
-        new EmailTemplateEntityConfiguration().Configure(modelBuilder.Entity<EmailTemplate>());
+        modelBuilder.ApplyConfiguration(new FailedEmailEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new EmailTemplateEntityConfiguration());
     }
 }

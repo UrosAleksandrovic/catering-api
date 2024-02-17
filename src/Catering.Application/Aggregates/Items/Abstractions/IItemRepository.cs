@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.ItemAggregate;
+﻿using Catering.Domain.Aggregates.Item;
 
 namespace Catering.Application.Aggregates.Items.Abstractions;
 

@@ -1,7 +1,7 @@
 ﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Notifications;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Catering.Application.Mailing.Emails.TemplateNamesConstants;

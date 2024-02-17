@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
 
 namespace Catering.Application.Aggregates.Identities.Abstractions;
 

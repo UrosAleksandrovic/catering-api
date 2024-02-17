@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
-using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Aggregates.Order;
 using Catering.Domain.Exceptions;
 
 namespace Catering.Domain.Builders;
@@ -74,7 +74,7 @@ public class OrderBuilder : IBuilder<Order>
 
     private List<OrderItem> GenerateOrderItems()
     {
-        List<OrderItem> orderItems = new();
+        List<OrderItem> orderItems = [];
 
         foreach (var item in _items)
         {

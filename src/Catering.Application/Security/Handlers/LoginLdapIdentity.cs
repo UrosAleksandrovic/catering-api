@@ -1,5 +1,5 @@
 ﻿using Catering.Application.Security.Requests;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using MediatR;
 
 namespace Catering.Application.Security.Handlers;

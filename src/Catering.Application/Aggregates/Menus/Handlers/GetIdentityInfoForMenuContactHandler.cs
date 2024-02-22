@@ -5,7 +5,8 @@ using MediatR;
 
 namespace Catering.Application.Aggregates.Menus.Handlers;
 
-internal class GetIdentityInfoForMenuContactHandler : IRequestHandler<GetIdentityInfoForMenuContactRequest, MenuContactDetailedInfoDto>
+internal class GetIdentityInfoForMenuContactHandler 
+    : IRequestHandler<GetIdentityInfoForMenuContactRequest, MenuContactDetailedInfoDto>
 {
     private readonly ICateringIdentitiesRepository _identitiesRepository;
 

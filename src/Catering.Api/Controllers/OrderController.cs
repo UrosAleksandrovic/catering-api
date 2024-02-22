@@ -2,17 +2,20 @@
 using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
+using Catering.Application.Aggregates.Orders.Queries;
 using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Aggregates.Order;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/orders")]
-public class OrdersController(IOrderManagementAppService ordersService) : ControllerBase
+public class OrdersController(IOrderManagementAppService ordersService, IMediator publisher) : ControllerBase
 {
     private readonly IOrderManagementAppService _ordersService = ordersService;
+    private readonly IMediator _publisher = publisher;
 
     [HttpPost]
     [AuthorizeClientsEmployee]
@@ -49,7 +52,7 @@ public class OrdersController(IOrderManagementAppService ordersService) : Contro
     [Authorize]
     public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long id)
     {
-        var order = await _ordersService.GetByIdAsync(id, this.GetUserId());
+        var order = await _publisher.Send(new GetOrderByIdQuery(id, this.GetUserId()));
 
         if (order == default)
             return NotFound();
@@ -61,7 +64,7 @@ public class OrdersController(IOrderManagementAppService ordersService) : Contro
     [Authorize]
     public async Task<IActionResult> GetFilteredOrdersAsync([FromQuery] OrdersFilter filter)
     {
-        var orders = await _ordersService.GetFilteredAsync(filter, this.GetUserId());
+        var orders = await _publisher.Send(new GetFilteredOrdersQuery(filter, this.GetUserId()));
 
         return Ok(orders);
     }

@@ -7,24 +7,12 @@ namespace Catering.Infrastructure.Data.Repositories;
 internal class IdentityRepository<T> : BaseCrudRepository<T, CateringDbContext>, IIdentityRepository<T> 
     where T : Identity
 {
-    public IdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
+    public IdentityRepository(CateringDbContext dbContextFactory) 
         : base(dbContextFactory) { }
 
-    public async Task<T> GetByEmailAsync(string email)
-    {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var result = await dbContext.Set<T>().FirstOrDefaultAsync(e => e.Email == email);
-
-        return result;
-    }
+    public Task<T> GetByEmailAsync(string email)
+        => _dbContext.Set<T>().FirstOrDefaultAsync(e => e.Email == email);
 
     public async Task<T> GetByIdAsync(string id)
-    {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var result = await dbContext.Set<T>().FindAsync(id);
-
-        return result;
-    }
+        => await _dbContext.Set<T>().FindAsync(id);
 }

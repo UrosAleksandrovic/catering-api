@@ -1,91 +1,65 @@
-﻿using Catering.Application.Aggregates.Orders;
+﻿using AutoMapper;
+using Catering.Application;
+using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
-using Catering.Domain.Aggregates.Identity;
-using Catering.Domain.Aggregates.Menu;
+using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Domain.Aggregates.Order;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
-internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, IOrderRepository
+internal class OrdersQueryRepository : IOrdersQueryRepository
 {
-    public OrderRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
-        : base(dbContextFactory)
-    { }
+    private readonly IDbContextFactory<CateringDbContext> _dbContextFactory;
+    private readonly IMapper _mapper;
 
-    public async Task CreateOrderForCustomerAsync(Customer customer, Order order)
+    public OrdersQueryRepository(
+        IDbContextFactory<CateringDbContext> dbContextFactory,
+        IMapper mapper)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        dbContext.Update(customer);
-        dbContext.Add(order);
-
-        await dbContext.SaveChangesAsync();
+        _dbContextFactory = dbContextFactory;
+        _mapper = mapper;
     }
 
-    public async Task<List<Order>> GetActiveOrdersByItemAsync(Guid itemId)
+    public async Task<OrderInfoDto> GetByIdAsync(long id)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var result = await dbContext.Set<Order>()
-            .AsNoTracking()
-            .Where(o => o.Items.Any(i => i.ItemId == itemId))
-            .ToListAsync();
+        var query = dbContext.Set<Order>().AsQueryable().Where(o => o.Id == id);
 
-        return result;
+        return await _mapper.ProjectTo<OrderInfoDto>(query).SingleOrDefaultAsync();
     }
 
-    public async Task<(List<Order>, int)> GetFilteredAsync(OrdersFilter filters)
+    public async Task<PageBase<OrderInfoDto>> GetFilteredAsync(OrdersFilter filters)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
+        using var dbContext = _dbContextFactory.CreateDbContext();
         var filterableOrders = ApplyFilters(filters, dbContext.Set<Order>());
         if (!filters.OrderBy.HasValue)
-            return (await filterableOrders.ToListAsync(), await filterableOrders.CountAsync());
+        {
+            var unorderedProjectedQuery = _mapper.ProjectTo<OrderInfoDto>(filterableOrders);
+            return new(await unorderedProjectedQuery.ToListAsync(), await filterableOrders.CountAsync());
+        }
 
         filterableOrders = ApplyOrdering(filters, filterableOrders);
 
-        return (await filterableOrders.ToListAsync(), await filterableOrders.CountAsync());
+        var projectedQuery = _mapper.ProjectTo<OrderInfoDto>(filterableOrders);
+        return new(await projectedQuery.ToListAsync(), await filterableOrders.CountAsync());
     }
 
-    public async Task<Menu> GetOrderMenuAsync(long orderId)
-    {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var menu = await dbContext.Set<Order>().AsNoTracking().Join(
-                dbContext.Set<Menu>(),
-                order => order.MenuId,
-                menu => menu.Id,
-                (order, menu) => menu)
-            .FirstOrDefaultAsync();
-
-        return menu;
-    }
-
-    public async Task<(List<Order>, int)> GetOrdersForCustomerAsync(OrdersFilter filters)
+    public async Task<PageBase<OrderInfoDto>> GetOrdersForCustomerAsync(OrdersFilter filters)
     {
         if (filters.CustomerId == default)
-            return (new List<Order>(), 0);
+            return PageBase<OrderInfoDto>.Empty();
 
         return await GetFilteredAsync(filters);
     }
 
-    public async Task<(List<Order>, int)> GetOrdersForMenuAsync(OrdersFilter filters)
+    public async Task<PageBase<OrderInfoDto>> GetOrdersForMenuAsync(OrdersFilter filters)
     {
         if (filters.MenuId == default)
-            return (new List<Order>(), 0);
+            return PageBase<OrderInfoDto>.Empty();
 
         return await GetFilteredAsync(filters);
-    }
-
-    public async Task UpdateOrderWithCustomerAsync(Customer customer, Order order)
-    {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        dbContext.Update(customer);
-        dbContext.Update(order);
-
-        await dbContext.SaveChangesAsync();
     }
 
     private IQueryable<Order> ApplyFilters(OrdersFilter filters, IQueryable<Order> query)
@@ -101,7 +75,7 @@ internal class OrderRepository : BaseCrudRepository<Order, CateringDbContext>, I
             query = query.Where(o => o.MenuId == filters.MenuId);
 
         if (filters.TopPrice != null)
-            query = query.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) <=  filters.TopPrice);
+            query = query.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) <= filters.TopPrice);
 
         if (filters.BottomPrice != null)
             query = query.Where(o => o.Items.Sum(i => i.PriceSnapshot * i.Quantity) >= filters.BottomPrice);

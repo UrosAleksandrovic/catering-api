@@ -7,15 +7,13 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class ExpensesRepository : BaseCrudRepository<Expense, CateringDbContext>, IExpensesRepository
 {
-    public ExpensesRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
-        : base(dbContextFactory)
+    public ExpensesRepository(CateringDbContext dbContext)
+        : base(dbContext)
     { }
 
     public async Task<(List<Expense> Expenses, int TotalCount)> GetFilteredAsync(ExpensesFilter filters)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var filterableOrders = ApplyFilters(filters, dbContext.Set<Expense>());
+        var filterableOrders = ApplyFilters(filters, _dbContext.Set<Expense>());
         if (!filters.OrderBy.HasValue)
             return (await filterableOrders.ToListAsync(), await filterableOrders.CountAsync());
 

@@ -2,6 +2,8 @@
 using Catering.Application.Aggregates.Items;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
+using Catering.Application.Aggregates.Items.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,13 +11,14 @@ using System.Security.Claims;
 namespace Catering.Api.Controllers;
 
 [Route("/api/menus")]
-public class MenuItemsController(IItemManagementAppService itemsAppService) : ControllerBase
+public class MenuItemsController(IItemManagementAppService itemsAppService, IMediator publisher) : ControllerBase
 {
     private readonly IItemManagementAppService _itemsAppService = itemsAppService;
+    private readonly IMediator _publisher = publisher;
 
     [HttpPost("{menuId:Guid}/items")]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> CreateAsync([FromRoute] Guid menuId,[FromBody] CreateItemDto createRequest)
+    public async Task<IActionResult> CreateAsync([FromRoute] Guid menuId, [FromBody] CreateItemDto createRequest)
     {
         var createdId = await _itemsAppService.CreateItemAsync(menuId, createRequest);
 
@@ -84,17 +87,13 @@ public class MenuItemsController(IItemManagementAppService itemsAppService) : Co
     [Authorize]
     public async Task<IActionResult> GetPageAsync([FromQuery] ItemsFilter filter)
     {
-        var result = await _itemsAppService.GetFilteredAsync(filter, this.GetUserId());
-
-        return Ok(result);
+        return Ok(await _publisher.Send(new GetFilteredItemsQuery(filter, this.GetUserId())));
     }
 
     [HttpGet("{menuId:Guid}/top-orders")]
     [Authorize]
     public async Task<IActionResult> GetTopOrdered([FromRoute] Guid menuId, [FromQuery] int top = 10)
     {
-        var result = await _itemsAppService.GetMostOrderedFromTheMenuAsync(top, menuId);
-
-        return Ok(new { Items = result });
+        return Ok(new { Result = await _publisher.Send(new GetMostOrderedFromTheMenuQuery(menuId, top)) });
     }
 }

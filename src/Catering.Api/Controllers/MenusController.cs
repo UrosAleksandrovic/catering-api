@@ -2,15 +2,20 @@
 using Catering.Application.Aggregates.Menus;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
+using Catering.Application.Aggregates.Menus.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/menus")]
-public class MenusController(IMenuManagementAppService menuAppService) : ControllerBase
+public class MenusController(
+    IMenusManagementAppService menuAppService,
+    IMediator publisher) : ControllerBase
 {
-    private readonly IMenuManagementAppService _menuAppService = menuAppService;
+    private readonly IMenusManagementAppService _menuAppService = menuAppService;
+    private readonly IMediator _publisher = publisher;
 
     [HttpPost]
     [AuthorizeClientsAdmins]
@@ -38,10 +43,8 @@ public class MenusController(IMenuManagementAppService menuAppService) : Control
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
     {
-        var result = await _menuAppService.GetFilteredAsync(filter);
-
-        return Ok(result);
-    } 
+        return Ok(await _publisher.Send(new GetFilteredMenusQuery(filter)));
+    }
 
     [HttpPut("{id:Guid}")]
     [AuthorizeClientsAdmins]
@@ -64,6 +67,6 @@ public class MenusController(IMenuManagementAppService menuAppService) : Control
     [HttpGet("contacts")]
     public async Task<IActionResult> GetRestaurantContacts([FromQuery] MenusFilter filter)
     {
-        return Ok(await _menuAppService.GetRestaurantContactsAsync(filter));
+        return Ok(await _publisher.Send(new GetFilteredMenuContactsQuery(filter)));
     }
 }

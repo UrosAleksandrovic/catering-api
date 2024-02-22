@@ -15,7 +15,7 @@ internal class OrderCanceledEmailHandler : INotificationHandler<OrderCanceled>
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
     private readonly ICustomerRepository _customerRepository;
-    private readonly IMenuRepository _menuRepository;
+    private readonly IMenusRepository _menuRepository;
     private readonly ILogger<OrderCanceledEmailHandler> _logger;
 
     public OrderCanceledEmailHandler(
@@ -24,7 +24,7 @@ internal class OrderCanceledEmailHandler : INotificationHandler<OrderCanceled>
         IOrderRepository orderRepository,
         IEmailBuilder emailBuilder,
         ICustomerRepository customerRepository,
-        IMenuRepository menuRepository,
+        IMenusRepository menuRepository,
         ILogger<OrderCanceledEmailHandler> logger)
     {
         _emailRepository = emailRepository;

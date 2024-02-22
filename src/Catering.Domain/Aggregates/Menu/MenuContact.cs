@@ -4,9 +4,9 @@ namespace Catering.Domain.Aggregates.Menu;
 
 public class MenuContact : IContact
 {
-    public string PhoneNumber { get; private set; }
-
     public string Email { get; private set; }
+
+    public string PhoneNumber { get; private set; }
 
     public string Address { get; private set; }
 

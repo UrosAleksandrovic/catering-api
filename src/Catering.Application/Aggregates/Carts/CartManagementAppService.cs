@@ -12,8 +12,8 @@ namespace Catering.Application.Aggregates.Carts;
 internal class CartManagementAppService : ICartManagementAppService
 {
     private readonly ICartRepository _cartRepository;
-    private readonly IMediator _publisher;
     private readonly IMapper _mapper;
+    private readonly IMediator _publisher;
 
     public CartManagementAppService(
         ICartRepository cartRepository,
@@ -43,17 +43,6 @@ internal class CartManagementAppService : ICartManagementAppService
         await _cartRepository.UpdateAsync(cart);
     }
 
-    public async Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId)
-    {
-        var cart = await GetOrCreteCartForCustomerAsync(customerId);
-        var cartItems = await _publisher.Send(new GetItemsFromTheCart { CustomerId = customerId });
-
-        var resultCart = _mapper.Map<CartInfoDto>(cart);
-        resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.SingleOrDefault(ci => ci.Id == i.ItemId)));
-
-        return resultCart;
-    }
-
     public async Task IncrementItemAsync(string customerId, Guid itemId, int quantity = 1)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
@@ -77,7 +66,25 @@ internal class CartManagementAppService : ICartManagementAppService
             cart.DecrementOrDeleteItem(itemId, currentQuantity - quantity);
 
         await _cartRepository.UpdateAsync(cart);
-        await _cartRepository.CleanUpDeletedItemsAsync(cart);
+    }
+
+    public async Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId)
+    {
+        var cart = await GetOrCreteCartForCustomerAsync(customerId);
+        var cartItems = await _publisher.Send(new GetItemsFromTheCart(customerId));
+
+        var resultCart = _mapper.Map<CartInfoDto>(cart);
+        resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.SingleOrDefault(ci => ci.Id == i.ItemId)));
+
+        return resultCart;
+    }
+
+    private async Task<Cart> CreateForCustomerAsync(string customerId)
+    {
+        var cart = new Cart(customerId);
+        await _cartRepository.CreateAsync(cart);
+
+        return cart;
     }
 
     private async Task<Cart> GetOrCreteCartForCustomerAsync(string customerId)
@@ -86,8 +93,7 @@ internal class CartManagementAppService : ICartManagementAppService
         if (cart != default)
             return cart;
 
-        cart = new Cart(customerId);
-        await _cartRepository.CreateAsync(cart);
+        cart = await CreateForCustomerAsync(customerId);
 
         return cart;
     }

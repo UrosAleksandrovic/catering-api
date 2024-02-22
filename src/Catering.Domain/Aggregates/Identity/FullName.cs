@@ -15,6 +15,12 @@ public class FullName
         LastName = lastName?.Trim();
     }
 
+    public FullName(FullName fullName)
+    {
+        FirstName = fullName.FirstName;
+        LastName = fullName.LastName;
+    }
+
     public void Edit(string firstName, string lastName = null)
     {
         Guard.Against.NullOrWhiteSpace(firstName);

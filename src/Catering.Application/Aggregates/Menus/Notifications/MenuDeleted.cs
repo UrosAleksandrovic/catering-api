@@ -2,7 +2,4 @@
 
 namespace Catering.Application.Aggregates.Menus.Notifications;
 
-public class MenuDeleted : INotification
-{
-    public Guid MenuId { get; init; }
-}
+public record MenuDeleted(Guid MenuId) : INotification;

@@ -29,7 +29,7 @@ public static class AppServicesExtensions
         services.AddScoped<ICartManagementAppService, CartManagementAppService>();
         services.AddScoped<ICustomerManagementAppService, CustomerManagementAppService>();
         services.AddScoped<ICateringIdentitiesManagementAppService, CateringIdentitiesManagementAppService>();
-        services.AddScoped<IMenuManagementAppService, MenuManagementAppService>();
+        services.AddScoped<IMenusManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
         services.AddScoped<IExpensesManagementAppService, ExpensesManagementAppService>();
         services.AddScoped<ICustomerReportsAppService, CustomerReportsAppService>();

@@ -8,11 +8,11 @@ namespace Catering.Application.Aggregates.Items.Handlers;
 
 internal class GetIdentityWithMenuIdHandler : IRequestHandler<GetIdentityForMenuId, Identity>
 {
-    private readonly IMenuRepository _menuRepository;
+    private readonly IMenusRepository _menuRepository;
     private readonly IIdentityRepository<Identity> _identity;
 
     public GetIdentityWithMenuIdHandler(
-        IMenuRepository menuRepository,
+        IMenusRepository menuRepository,
         IIdentityRepository<Identity> identity)
     {
         _menuRepository = menuRepository;

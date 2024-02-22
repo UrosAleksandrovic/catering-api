@@ -10,14 +10,14 @@ using MediatR;
 
 namespace Catering.Application.Aggregates.Menus;
 
-internal class MenuManagementAppService : IMenuManagementAppService
+internal class MenuManagementAppService : IMenusManagementAppService
 {
-    private readonly IMenuRepository _menuRepository;
+    private readonly IMenusRepository _menuRepository;
     private readonly IMapper _mapper;
     private readonly IMediator _publisher;
 
     public MenuManagementAppService(
-        IMenuRepository menuRepository,
+        IMenusRepository menuRepository,
         IMapper mapper,
         IMediator publisher)
     {
@@ -48,7 +48,7 @@ internal class MenuManagementAppService : IMenuManagementAppService
         menu.MarkAsDeleted();
         await _menuRepository.UpdateAsync(menu);
 
-        await _publisher.Publish(new MenuDeleted { MenuId = menu.Id });
+        await _publisher.Publish(new MenuDeleted(menu.Id));
     }
 
     public async Task<MenuInfoDto> GetByIdAsync(Guid id, string requestorId)
@@ -61,45 +61,6 @@ internal class MenuManagementAppService : IMenuManagementAppService
             return _mapper.Map<MenuInfoDto>(menu);
 
         return menu.HasContact(requestorId) ? _mapper.Map<MenuInfoDto>(menu) : null;
-    }
-
-    public async Task<FilterResult<MenuInfoDto>> GetFilteredAsync(MenusFilter menusFilter)
-    {
-        var result = FilterResult<MenuInfoDto>.GetEmpty<MenuInfoDto>(menusFilter.PageIndex, menusFilter.PageSize);
-
-        var (menus, totalCount) = await _menuRepository.GetFilteredAsync(menusFilter);
-        result.TotalNumberOfElements = totalCount;
-        result.Result = _mapper.Map<IEnumerable<MenuInfoDto>>(menus);
-
-        return result;
-    }
-
-    public async Task<FilterResult<MenuContactDetailedInfoDto>> GetRestaurantContactsAsync(MenusFilter menusFilter)
-    {
-        var result = FilterResult<MenuContactDetailedInfoDto>.GetEmpty<MenuContactDetailedInfoDto>(
-            menusFilter.PageIndex,
-            menusFilter.PageSize);
-
-        var (menus, totalCount) = await _menuRepository.GetFilteredAsync(menusFilter);
-        var identities = new List<MenuContactDetailedInfoDto>();
-
-        foreach (var menu in menus)
-        {
-            var menuIdentity = await _publisher.Send(new GetIdentityInfoForMenuContactRequest
-            {
-                IdentityId = menu.Contact.IdentityId,
-                MenuId = menu.Id,
-                MenuName = menu.Name
-            });
-
-            if (menuIdentity != null)
-                identities.Add(menuIdentity);
-        }
-
-        result.TotalNumberOfElements = totalCount;
-        result.Result = identities;
-
-        return result;
     }
 
     public async Task UpdateAsync(Guid id, UpdateMenuDto updateMenu)

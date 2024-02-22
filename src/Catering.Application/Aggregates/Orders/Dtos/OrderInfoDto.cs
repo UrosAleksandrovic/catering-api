@@ -12,4 +12,5 @@ public class OrderInfoDto
     public OrderStatus Status { get; set; }
     public decimal TotalSumToPay { get; set; }
     public Guid MenuId { get; set; }
+    public string CustomerId { get; set; }
 }

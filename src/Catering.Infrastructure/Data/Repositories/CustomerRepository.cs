@@ -7,30 +7,24 @@ namespace Catering.Infrastructure.Data.Repositories;
 
 internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbContext>, ICustomerRepository
 {
-    public CustomerRepository(IDbContextFactory<CateringDbContext> dbContextFactory) 
-        : base(dbContextFactory) { }
+    public CustomerRepository(CateringDbContext dbContext) 
+        : base(dbContext) { }
 
     public async Task<Customer> GetByIdentityEmailAsync(string email)
-    {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        return await dbContext.Set<Customer>()
+        => await _dbContext.Set<Customer>()
             .AsNoTracking()
             .Include(c => c.Identity)
             .Where(c => c.Identity.Email == email)
             .FirstOrDefaultAsync();
-    }
 
     public async Task<(IEnumerable<Customer>, int)> GetFilteredInternalCustomersAsync(CustomersFilter filter)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var queryable = dbContext
+        var queryable = _dbContext
             .Customers
             .AsNoTracking()
             .Include(c => c.Identity)
             .GroupJoin(
-                dbContext.CateringIdentities,
+                _dbContext.CateringIdentities,
                 customer => customer.IdentityId,
                 cateringIdentity => cateringIdentity.Id,
                 (customer, cateringIdentity) => new { Customer = customer, CateringIdentity = cateringIdentity })
@@ -48,12 +42,10 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
 
     public async Task<(IEnumerable<Customer>, int)> GetFilteredExternalCustomersAsync(CustomersFilter filter)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var queryable = dbContext
+        var queryable = _dbContext
             .Customers
             .AsNoTracking()
-            .Join(dbContext.CateringIdentities,
+            .Join(_dbContext.CateringIdentities,
                 customer => customer.IdentityId,
                 cateringIdentity => cateringIdentity.Id,
                 (customer, cateringIdentity) => customer)
@@ -67,9 +59,7 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
 
     public async Task<Customer> GetFullByIdAsync(string id)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        return await dbContext
+        return await _dbContext
             .Set<Customer>()
             .AsNoTracking()
             .Include(c => c.Identity)
@@ -79,13 +69,11 @@ internal class CustomerRepository : BaseCrudRepository<Customer, CateringDbConte
 
     public async Task ResetBudgetAsync(decimal newBudget)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        await dbContext.Customers.ExecuteUpdateAsync(setter => setter
+        await _dbContext.Customers.ExecuteUpdateAsync(setter => setter
             .SetProperty(c => c.Budget.Balance, newBudget)
             .SetProperty(c => c.Budget.ReservedAssets, 0));
 
-        await dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
 
     private IQueryable<Customer> ApplyFilters(IQueryable<Customer> customers, CustomersFilter filter)

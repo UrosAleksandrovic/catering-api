@@ -13,7 +13,7 @@ internal class OrderPlacedRestaurantEmailHandler : INotificationHandler<OrderPla
     private readonly IOrderRepository _orderRepository;
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
-    private readonly IMenuRepository _menuRepository;
+    private readonly IMenusRepository _menuRepository;
     private readonly ILogger<OrderPlacedRestaurantEmailHandler> _logger;
 
     public OrderPlacedRestaurantEmailHandler(
@@ -21,7 +21,7 @@ internal class OrderPlacedRestaurantEmailHandler : INotificationHandler<OrderPla
         IEmailSender emailSender,
         IOrderRepository orderRepository,
         IEmailBuilder emailBuilder,
-        IMenuRepository menuRepository,
+        IMenusRepository menuRepository,
         ILogger<OrderPlacedRestaurantEmailHandler> logger)
     {
         _emailRepository = emailRepository;

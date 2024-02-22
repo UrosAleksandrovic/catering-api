@@ -16,13 +16,22 @@ public static class RepositoriesExtensions
 {
     public static IServiceCollection AddCateringRepositories(this IServiceCollection services)
     {
-        services.AddTransient<IItemRepository, ItemRepository>();
-        services.AddTransient<ICartRepository, CartRepository>();
-        services.AddTransient<ICustomerRepository, CustomerRepository>();
-        services.AddTransient<IMenuRepository, MenuRepository>();
-        services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddScoped<IItemRepository, ItemRepository>();
+        services.AddTransient<IItemsQueryRepository, ItemsQueryRepository>();
+
+        services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<ICartQueryRepository, CartQueryRepository>();
+
+        services.AddScoped<IMenusRepository, MenusRepository>();
+        services.AddTransient<IMenusQueryRepository, MenusQueryRepository>();
+
+        services.AddScoped<IOrderRepository, OrdersRepository>();
+        services.AddTransient<IOrdersQueryRepository, OrdersQueryRepository>();
+
         services.AddTransient<IExpensesRepository, ExpensesRepository>();
         services.AddTransient<ICustomerReportsRepository, CustomerReportsRepository>();
+
+        services.AddTransient<ICustomerRepository, CustomerRepository>();
         services.AddTransient<ICateringIdentitiesRepository, CateringIdentityRepository>();
         services.AddTransient<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
 

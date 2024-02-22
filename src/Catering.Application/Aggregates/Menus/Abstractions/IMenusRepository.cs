@@ -2,9 +2,7 @@
 
 namespace Catering.Application.Aggregates.Menus.Abstractions;
 
-public interface IMenuRepository : IBaseCrudRepository<Menu>
+public interface IMenusRepository : IBaseCrudRepository<Menu>
 {
     Task<Menu> GetByContactIdAsync(string contactId);
-
-    Task<(List<Menu> Menus, int TotalCount)> GetFilteredAsync(MenusFilter menusFilter);
 }

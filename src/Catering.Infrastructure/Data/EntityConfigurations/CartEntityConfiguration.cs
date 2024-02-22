@@ -18,6 +18,8 @@ internal class CartEntityConfiguration : IEntityTypeConfiguration<Cart>
 
         builder.Property(e => e.CustomerId).IsRequired();
 
+        builder.HasIndex(e => e.CustomerId).IsUnique();
+
         builder.OwnsMany(e => e.Items, cfg =>
         {
             cfg.HasKey(i => new { i.CartId, i.ItemId });

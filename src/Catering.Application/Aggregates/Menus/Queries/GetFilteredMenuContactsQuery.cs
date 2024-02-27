@@ -1,5 +1,6 @@
 ﻿using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
+using Catering.Application.Filtering;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Menus.Queries;
@@ -15,13 +16,13 @@ internal class GetMenuContactsQueryHandler(IMenusQueryRepository queryRepository
         GetFilteredMenuContactsQuery request,
         CancellationToken cancellationToken)
     {
-        var result = FilterResult<MenuContactDetailedInfoDto>.GetEmpty<MenuContactDetailedInfoDto>(
+        var result = FilterResult<MenuContactDetailedInfoDto>.Empty<MenuContactDetailedInfoDto>(
             request.Filters.PageIndex,
             request.Filters.PageSize);
 
         var page = await _queryRepository.GetContactsAsync(request.Filters);
         result.TotalNumberOfElements = page.TotalCount;
-        result.Result = page.Data;
+        result.Value = page.Data;
 
         return result;
     }

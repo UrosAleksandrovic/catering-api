@@ -1,9 +1,9 @@
 ﻿using Catering.Api.Configuration.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Identities;
 using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 

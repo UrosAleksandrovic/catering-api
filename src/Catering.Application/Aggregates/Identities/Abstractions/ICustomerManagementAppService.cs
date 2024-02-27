@@ -1,4 +1,5 @@
 ﻿using Catering.Application.Aggregates.Identities.Dtos;
+using Catering.Application.Filtering;
 
 namespace Catering.Application.Aggregates.Identities.Abstractions;
 

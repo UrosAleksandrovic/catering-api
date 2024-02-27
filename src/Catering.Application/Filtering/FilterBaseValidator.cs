@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Catering.Application;
+namespace Catering.Application.Filtering;
 
 internal class FilterBaseValidator : AbstractValidator<FilterBase>
 {

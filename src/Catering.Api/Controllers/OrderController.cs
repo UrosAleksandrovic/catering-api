@@ -1,8 +1,10 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Aggregates.Orders.Queries;
+using Catering.Application.Results;
 using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Aggregates.Order;
 using MediatR;
@@ -21,51 +23,37 @@ public class OrdersController(IOrderManagementAppService ordersService, IMediato
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> MakeOrderAsync([FromBody] CreateOrderDto createOrder)
     {
-        var orderId = await _ordersService.PlaceOrderAsync(this.GetUserId(), createOrder);
+        var createdResult = await _ordersService.PlaceOrderAsync(this.GetUserId(), createOrder);
 
-        return CreatedAtRoute(GetNameRoute, new { id = orderId }, new { id = orderId });
+        return this.CreatedAtRouteFromResult(createdResult, GetNameRoute);
     }
 
     [HttpPut("{id:long}/status")]
     [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
         IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
         IdentityRole.Restaurant | IdentityRole.Employee)]
-    public async Task<IActionResult> ChangeStatusAsync([FromRoute] long id, [FromBody] ChangeOrderStatusDto newStatus)
+    public async Task<IActionResult> ChangeStatusAsync(
+        [FromRoute] long id,
+        [FromBody] ChangeOrderStatusDto newStatus)
     {
-        switch (newStatus.NewStatus)
+        var result = newStatus.NewStatus switch
         {
-            case OrderStatus.Canceled:
-                await _ordersService.CancelAsync(id);
-                break;
-            case OrderStatus.Confirmed:
-                await _ordersService.ConfirmAsync(id);
-                break;
-            default:
-                return BadRequest();
-        }
+            OrderStatus.Canceled => await _ordersService.CancelAsync(id),
+            OrderStatus.Confirmed => await _ordersService.ConfirmAsync(id),
+            _ => Result.Error(ErrorType.Unknown)
+        };
 
-        return NoContent();
+        return this.FromResult(result);
     }
 
     private const string GetNameRoute = "GetOrderById";
     [HttpGet("{id:long}", Name = GetNameRoute)]
     [Authorize]
     public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long id)
-    {
-        var order = await _publisher.Send(new GetOrderByIdQuery(id, this.GetUserId()));
-
-        if (order == default)
-            return NotFound();
-
-        return Ok(order);
-    }
+        => this.FromResult(await _publisher.Send(new GetOrderByIdQuery(id, this.GetUserId())));
 
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetFilteredOrdersAsync([FromQuery] OrdersFilter filter)
-    {
-        var orders = await _publisher.Send(new GetFilteredOrdersQuery(filter, this.GetUserId()));
-
-        return Ok(orders);
-    }
+        => this.FromResult(await _publisher.Send(new GetFilteredOrdersQuery(filter, this.GetUserId())));
 }

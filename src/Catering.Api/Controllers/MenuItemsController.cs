@@ -1,4 +1,5 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Items;
 using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
@@ -6,7 +7,6 @@ using Catering.Application.Aggregates.Items.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 

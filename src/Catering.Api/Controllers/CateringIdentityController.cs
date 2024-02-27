@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
 using Microsoft.AspNetCore.Authorization;

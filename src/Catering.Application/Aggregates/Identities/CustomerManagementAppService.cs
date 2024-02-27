@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
+using Catering.Application.Filtering;
 using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Exceptions;
 
@@ -73,22 +74,22 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
 
     public async Task<FilterResult<CustomerInfoDto>> GetFilteredInternalAsync(CustomersFilter filter)
     {
-        var result = FilterResult<CustomerInfoDto>.GetEmpty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
+        var result = FilterResult<CustomerInfoDto>.Empty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
 
         var (items, totalCount) = await _customerRepository.GetFilteredInternalCustomersAsync(filter);
         result.TotalNumberOfElements = totalCount;
-        result.Result = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
+        result.Value = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
 
         return result;
     }
 
     public async Task<FilterResult<CustomerInfoDto>> GetFilteredExternalAsync(CustomersFilter filter)
     {
-        var result = FilterResult<CustomerInfoDto>.GetEmpty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
+        var result = FilterResult<CustomerInfoDto>.Empty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
 
         var (items, totalCount) = await _customerRepository.GetFilteredExternalCustomersAsync(filter);
         result.TotalNumberOfElements = totalCount;
-        result.Result = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
+        result.Value = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
 
         return result;
     }

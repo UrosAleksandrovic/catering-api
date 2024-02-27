@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Catering.Application.Filtering;
+using FluentValidation;
 
 namespace Catering.Application.Aggregates.Menus.Dtos.Validators;
 

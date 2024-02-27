@@ -15,7 +15,9 @@ internal class GetIdentityInfoForMenuContactHandler
         _identitiesRepository = identitiesRepository;
     }
 
-    public async Task<MenuContactDetailedInfoDto> Handle(GetIdentityInfoForMenuContactRequest request, CancellationToken cancellationToken)
+    public async Task<MenuContactDetailedInfoDto> Handle(
+        GetIdentityInfoForMenuContactRequest request,
+        CancellationToken cancellationToken)
     {
         var identity = await _identitiesRepository.GetByIdAsync(request.IdentityId);
 

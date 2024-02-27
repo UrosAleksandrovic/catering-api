@@ -1,4 +1,5 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Carts.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -13,35 +14,21 @@ public class CartsController(ICartManagementAppService cartsAppService) : Contro
 
     [HttpGet]
     public async Task<IActionResult> GetByCustomerIdAsync()
-    {
-        return Ok(await _cartsAppService.GetCartByCustomerIdAsync(this.GetUserId()));
-    }
+        => this.FromResult(await _cartsAppService.GetCartByCustomerIdAsync(this.GetUserId()));
 
     [HttpPost("items")]
     public async Task<IActionResult> PutItemInCartAsync([FromBody] AddItemToCartDto addItemDto)
-    {
-        await _cartsAppService.AddItemAsync(this.GetUserId(), addItemDto);
-
-        return NoContent();
-    }
+        => this.FromResult(await _cartsAppService.AddItemAsync(this.GetUserId(), addItemDto));
 
     [HttpPut("items/{itemId:Guid}/quantity")]
     public async Task<IActionResult> ChangeQuantity(
         [FromRoute] Guid itemId,
         [FromBody] CartItemQuantityDto newQuantity)
-    {
-        await _cartsAppService.ChangeQuantity(this.GetUserId(), itemId, newQuantity.Quantity);
-
-        return NoContent();
-    }
+        => this.FromResult(await _cartsAppService.ChangeQuantity(this.GetUserId(), itemId, newQuantity.Quantity));
 
     [HttpPut("items/{itemId:Guid}/note")]
     public async Task<IActionResult> ChangeNoteAsync(
         [FromRoute] Guid itemId,
         [FromBody] CartItemNoteDto newNote)
-    {
-        await _cartsAppService.AddOrEditItemNoteAsync(this.GetUserId(), itemId, newNote.Note);
-
-        return NoContent();
-    }
+        => this.FromResult(await _cartsAppService.AddOrEditItemNoteAsync(this.GetUserId(), itemId, newNote.Note));
 }

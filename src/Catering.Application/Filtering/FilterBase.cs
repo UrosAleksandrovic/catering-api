@@ -1,4 +1,4 @@
-﻿namespace Catering.Application;
+﻿namespace Catering.Application.Filtering;
 
 public class FilterBase
 {

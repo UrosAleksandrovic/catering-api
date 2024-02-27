@@ -1,6 +1,8 @@
-﻿using Catering.Application.Aggregates.Orders.Abstractions;
+﻿using Catering.Application.Aggregates.Menus.Dtos;
+using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Aggregates.Orders.Requests;
+using Catering.Application.Filtering;
 using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Aggregates.Order;
 using MediatR;
@@ -19,15 +21,16 @@ internal class GetFilteredOrdersQueryHandler(IOrdersQueryRepository queryReposit
         GetFilteredOrdersQuery request,
         CancellationToken cancellationToken)
     {
-        var orders = await GetFilteredOrdersBasedOnRequestorAsync(request.Filters, request.RequestorId);
+        var result = FilterResult<OrderInfoDto>.Empty<OrderInfoDto>(
+            request.Filters.PageIndex,
+            request.Filters.PageSize);
 
-        return new FilterResult<OrderInfoDto>
-        {
-            PageIndex = request.Filters.PageIndex,
-            PageSize = request.Filters.PageSize,
-            Result = orders.Data,
-            TotalNumberOfElements = orders.TotalCount,
-        };
+
+        var page = await GetFilteredOrdersBasedOnRequestorAsync(request.Filters, request.RequestorId);
+        result.TotalNumberOfElements = page.TotalCount;
+        result.Value = page.Data;
+
+        return result;
     }
 
     private async Task<PageBase<OrderInfoDto>> GetFilteredOrdersBasedOnRequestorAsync(

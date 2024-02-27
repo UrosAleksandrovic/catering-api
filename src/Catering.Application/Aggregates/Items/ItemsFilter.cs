@@ -1,4 +1,6 @@
-﻿namespace Catering.Application.Aggregates.Items;
+﻿using Catering.Application.Filtering;
+
+namespace Catering.Application.Aggregates.Items;
 
 public class ItemsFilter : FilterBase
 {

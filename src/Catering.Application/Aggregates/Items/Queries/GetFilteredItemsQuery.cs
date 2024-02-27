@@ -1,6 +1,7 @@
 ﻿using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
 using Catering.Application.Aggregates.Items.Requests;
+using Catering.Application.Filtering;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Items.Queries;
@@ -17,22 +18,18 @@ internal class GetFilteredItemsQueryHandler(IItemsQueryRepository itemsQueryRepo
         GetFilteredItemsQuery request,
         CancellationToken cancellationToken)
     {
-        var result = FilterResult<ItemInfoDto>.GetEmpty<ItemInfoDto>(
+        var result = FilterResult<ItemInfoDto>.Empty<ItemInfoDto>(
             request.Filters.PageSize,
             request.Filters.PageIndex);
 
-        var identityRequest = new GetIdentityForMenuId
-        {
-            IdentityId = request.RequesterId,
-            MenuId = request.Filters.MenuId
-        };
+        var identityRequest = new GetIdentityForMenuId(request.Filters.MenuId, request.RequesterId);
         var requester = await _publisher.Send(identityRequest, cancellationToken);
         if (requester == default)
             return result;
 
         var pageBase = await _itemsQueryRepository.GetPageAsync(request.Filters);
         result.TotalNumberOfElements = pageBase.TotalCount;
-        result.Result = pageBase.Data;
+        result.Value = pageBase.Data;
 
         return result;
     }

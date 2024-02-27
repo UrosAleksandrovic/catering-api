@@ -1,23 +1,19 @@
 ﻿using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
+using Catering.Application.Results;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Items.Queries;
 
-public record GetMostOrderedFromTheMenuQuery(Guid MenuId, int Top) : IRequest<List<ItemsLeaderboardDto>>;
+public record GetMostOrderedFromTheMenuQuery(Guid MenuId, int Top) : IRequest<Result<List<ItemsLeaderboardDto>>>;
 
-internal class GetMostOrderedFromTheMenuQueryHandler
-    : IRequestHandler<GetMostOrderedFromTheMenuQuery, List<ItemsLeaderboardDto>>
+internal class GetMostOrderedFromTheMenuQueryHandler(IItemsQueryRepository queryRepository)
+    : IRequestHandler<GetMostOrderedFromTheMenuQuery, Result<List<ItemsLeaderboardDto>>>
 {
-    private readonly IItemsQueryRepository _itemRepository;
+    private readonly IItemsQueryRepository _queryRepository = queryRepository;
 
-    public GetMostOrderedFromTheMenuQueryHandler(IItemsQueryRepository itemRepository)
-    {
-        _itemRepository = itemRepository;
-    }
-
-    public Task<List<ItemsLeaderboardDto>> Handle(
+    public async Task<Result<List<ItemsLeaderboardDto>>> Handle(
         GetMostOrderedFromTheMenuQuery request,
         CancellationToken cancellationToken)
-        => _itemRepository.GetMostOrderedFromTheMenuAsync(request.MenuId, request.Top);
+        => Result.Success(await _queryRepository.GetMostOrderedFromTheMenuAsync(request.MenuId, request.Top));
 }

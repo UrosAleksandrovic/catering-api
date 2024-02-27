@@ -1,4 +1,5 @@
-﻿using Catering.Domain.Aggregates.Order;
+﻿using Catering.Application.Filtering;
+using Catering.Domain.Aggregates.Order;
 
 namespace Catering.Application.Aggregates.Orders;
 

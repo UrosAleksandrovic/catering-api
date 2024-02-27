@@ -7,4 +7,5 @@ public static class IdentityErrorCodes
     public const string INVITATION_NOT_FOUND = nameof(INVITATION_NOT_FOUND);
     public const string INVITATION_EXPIRED = nameof(INVITATION_EXPIRED);
     public const string IDENTITY_ALREADY_EXISTS = nameof(IDENTITY_ALREADY_EXISTS);
+    public const string INVALID_CUSTOMER_ID = nameof(INVALID_CUSTOMER_ID);
 }

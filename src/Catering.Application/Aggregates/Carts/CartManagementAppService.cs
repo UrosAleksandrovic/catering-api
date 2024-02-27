@@ -2,6 +2,8 @@
 using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Carts.Dtos;
 using Catering.Application.Aggregates.Carts.Requests;
+using Catering.Application.Results;
+using Catering.Application.Validation;
 using Catering.Domain.Aggregates.Cart;
 using Catering.Domain.Aggregates.Item;
 using Catering.Domain.Exceptions;
@@ -12,47 +14,46 @@ namespace Catering.Application.Aggregates.Carts;
 internal class CartManagementAppService : ICartManagementAppService
 {
     private readonly ICartRepository _cartRepository;
+    private readonly IValidationProvider _validationProvider;
     private readonly IMapper _mapper;
     private readonly IMediator _publisher;
 
     public CartManagementAppService(
         ICartRepository cartRepository,
+        IValidationProvider validationProvider,
         IMapper mapper,
         IMediator publisher)
     {
         _cartRepository = cartRepository;
         _mapper = mapper;
         _publisher = publisher;
+        _validationProvider = validationProvider;
     }
 
-    public async Task AddItemAsync(string customerId, AddItemToCartDto addItemDto)
+    public async Task<Result> AddItemAsync(string customerId, AddItemToCartDto addItemDto)
     {
+        if (await _validationProvider.ValidateModelAsync(addItemDto) is var valResult && !valResult.IsSuccess)
+            return valResult;
+
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
         cart.AddItem(addItemDto.MenuId, addItemDto.ItemId, addItemDto.Quantity, addItemDto.Note);
 
         await _cartRepository.UpdateAsync(cart);
+        return Result.Success();
     }
 
-    public async Task AddOrEditItemNoteAsync(string customerId, Guid itemId, string note)
+    public async Task<Result> AddOrEditItemNoteAsync(string customerId, Guid itemId, string note)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
         cart.AddOrEditNoteToItem(itemId, note);
 
         await _cartRepository.UpdateAsync(cart);
+        return Result.Success();
     }
 
-    public async Task IncrementItemAsync(string customerId, Guid itemId, int quantity = 1)
-    {
-        var cart = await GetOrCreteCartForCustomerAsync(customerId);
-
-        cart.IncrementItem(itemId, quantity);
-
-        await _cartRepository.UpdateAsync(cart);
-    }
-
-    public async Task ChangeQuantity(string customerId, Guid itemId, int quantity)
+    public async Task<Result> ChangeQuantity(string customerId, Guid itemId, int quantity)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
@@ -66,9 +67,10 @@ internal class CartManagementAppService : ICartManagementAppService
             cart.DecrementOrDeleteItem(itemId, currentQuantity - quantity);
 
         await _cartRepository.UpdateAsync(cart);
+        return Result.Success();
     }
 
-    public async Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId)
+    public async Task<Result<CartInfoDto>> GetCartByCustomerIdAsync(string customerId)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
         var cartItems = await _publisher.Send(new GetItemsFromTheCart(customerId));
@@ -76,7 +78,7 @@ internal class CartManagementAppService : ICartManagementAppService
         var resultCart = _mapper.Map<CartInfoDto>(cart);
         resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.SingleOrDefault(ci => ci.Id == i.ItemId)));
 
-        return resultCart;
+        return Result.Success();
     }
 
     private async Task<Cart> CreateForCustomerAsync(string customerId)

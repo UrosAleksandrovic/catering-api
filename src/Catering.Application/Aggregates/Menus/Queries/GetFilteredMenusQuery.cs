@@ -1,5 +1,6 @@
 ﻿using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Dtos.Menu;
+using Catering.Application.Filtering;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Menus.Queries;
@@ -15,13 +16,13 @@ internal class GetFilteredMenusQueryHandler(IMenusQueryRepository queryRepositor
         GetFilteredMenusQuery request,
         CancellationToken cancellationToken)
     {
-        var result = FilterResult<MenuInfoDto>.GetEmpty<MenuInfoDto>(
+        var result = FilterResult<MenuInfoDto>.Empty<MenuInfoDto>(
             request.Filters.PageSize,
             request.Filters.PageIndex);
 
         var page = await _queryRepository.GetPageAsync(request.Filters);
         result.TotalNumberOfElements = page.TotalCount;
-        result.Result = page.Data;
+        result.Value = page.Data;
 
         return result;
     }

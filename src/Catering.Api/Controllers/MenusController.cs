@@ -1,4 +1,5 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Menus;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;

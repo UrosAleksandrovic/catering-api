@@ -4,10 +4,6 @@ namespace Catering.Api.Configuration.Authorization;
 
 internal class AuthorizeClientsEmployeeAttribute : CateringAuthorizationAttribute
 {
-    public AuthorizeClientsEmployeeAttribute()
-        : base(new[] { 
-            IdentityRole.Super | IdentityRole.Administrator,
-            IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-            IdentityRole.Client | IdentityRole.Employee })
+    public AuthorizeClientsEmployeeAttribute() : base(IdentityRole.ClientAdmin, IdentityRole.ClientEmployee)
     { }
 }

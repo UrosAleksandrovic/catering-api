@@ -1,5 +1,4 @@
-﻿using Catering.Application.Aggregates.Expenses.Queries;
-using Catering.Application.Results;
+﻿using Catering.Application.Results;
 
 namespace Catering.Application.Filtering;
 
@@ -20,4 +19,7 @@ public class FilterResult<T> : Result<IEnumerable<T>>
             ErrorCodes = Array.Empty<string>(),
             Type = null
         };
+
+    public static FilterResult<TElement> Empty<TElement>(FilterBase filter)
+        => Empty<TElement>(filter.PageSize, filter.PageIndex);
 }

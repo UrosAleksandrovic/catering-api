@@ -29,11 +29,16 @@ public static class RepositoriesExtensions
         services.AddTransient<IOrdersQueryRepository, OrdersQueryRepository>();
 
         services.AddTransient<IExpensesRepository, ExpensesRepository>();
+
         services.AddTransient<ICustomerReportsRepository, CustomerReportsRepository>();
 
-        services.AddTransient<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddTransient<ICustomerQueryRepository, CustomerQueryRepository>();
+
         services.AddTransient<ICateringIdentitiesRepository, CateringIdentityRepository>();
-        services.AddTransient<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
+
+        services.AddScoped<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
+        services.AddTransient<IIdentityQueryRepository<Identity>, IdentityQueryRepository<Identity>>();
 
         return services;
     }

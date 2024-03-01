@@ -45,7 +45,7 @@ internal class JwtTokenGenerator : IJwtTokenGenerator
             new(JwtRegisteredClaimNames.Iat, expirationTime),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Aud, _options.Audience),
-            new(ClaimTypes.Role, identity.Role.ToIdentityString())
+            new(ClaimTypes.Role, identity.Role.ToString())
         };
 
         return claims;

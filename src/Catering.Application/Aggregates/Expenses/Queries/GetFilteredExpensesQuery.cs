@@ -17,9 +17,7 @@ public class GetFilteredExpensesQueryHandler(IExpensesQueryRepository queryRepos
         GetFilteredExpensesQuery request,
         CancellationToken cancellationToken)
     {
-        var result = FilterResult<ItemInfoDto>.Empty<ExpenseInfoDto>(
-            request.Filters.PageSize,
-            request.Filters.PageIndex);
+        var result = FilterResult<ItemInfoDto>.Empty<ExpenseInfoDto>(request.Filters);
 
         var pageBase = await _queryRepository.GetPageAsync(request.Filters);
         result.TotalNumberOfElements = pageBase.TotalCount;

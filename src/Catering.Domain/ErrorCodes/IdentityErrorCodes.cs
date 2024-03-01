@@ -8,4 +8,6 @@ public static class IdentityErrorCodes
     public const string INVITATION_EXPIRED = nameof(INVITATION_EXPIRED);
     public const string IDENTITY_ALREADY_EXISTS = nameof(IDENTITY_ALREADY_EXISTS);
     public const string INVALID_CUSTOMER_ID = nameof(INVALID_CUSTOMER_ID);
+    public const string INVALID_CREATOR_ROLE = nameof(INVALID_CREATOR_ROLE);
+    public const string INITIATOR_IDENTITY_NOT_FOUND = nameof(INITIATOR_IDENTITY_NOT_FOUND);
 }

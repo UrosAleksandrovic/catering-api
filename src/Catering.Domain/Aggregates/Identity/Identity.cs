@@ -9,21 +9,24 @@ public class Identity
     public string Email { get; private set; }
     public FullName FullName { get; private set; }
     public IdentityRole Role { get; private set; }
+    public bool IsExternal { get; private set; }
 
     protected Identity() { }
 
     public Identity(
-        FullName fullName,
         string email,
-        IdentityRole startingRole)
-        : this(email, startingRole)
+        FullName fullName,
+        IdentityRole startingRole,
+        bool isExternal)
+        : this(email, startingRole, isExternal)
     {
         FullName = fullName;
     }
 
     public Identity(
         string email,
-        IdentityRole startingRole)
+        IdentityRole startingRole,
+        bool isExternal)
     {
         Guard.Against.NullOrWhiteSpace(email);
         Guard.Against.Zero((int)startingRole);
@@ -31,6 +34,7 @@ public class Identity
         Id = Guid.NewGuid().ToString();
         Email = email;
         Role = startingRole;
+        IsExternal = isExternal;
     }
 
     public void Edit(string email, FullName fullName)
@@ -69,8 +73,5 @@ public class Identity
     }
 
     public bool HasRole(IdentityRole role)
-        => Role.HasFlag(role);
-
-    public bool HasIdenticalRole(IdentityRole role)
-        => (Role & role) != 0;
+        => Role == role;
 }

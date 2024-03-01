@@ -2,60 +2,62 @@
 
 namespace Catering.Application.Aggregates.Identities;
 
-[Flags]
-public enum IdentityPermissions
+public static class Permissions
 {
-    ListMenus = 1,
-    EditMenus = 2,
-    DeleteMenus = 4,
-    AddMenuItems = 8,
-    DeleteMenuItems = 16,
-    ListOrders = 32,
-    ChangeOrderStatus = 64,
-    ChangeGlobalSettings = 128,
-    ListUsers = 256,
-    InviteUsers = 512,
-    AddUsers = 1024,
-    DeleteUsers = 2048,
-    ListReports = 4096,
-    GenerateReports = 8192,
-    NoPermissions = 16384,
-}
+    public const string MENUS_READ = nameof(MENUS_READ);
+    public const string MENUS_WRITE = nameof(MENUS_WRITE);
+    public const string MENU_ITEMS_READ = nameof(MENU_ITEMS_READ);
+    public const string MENU_ITEMS_WRITE = nameof(MENU_ITEMS_WRITE);
+    public const string ORDERS_READ = nameof(ORDERS_READ);
+    public const string ORDERS_WRITE = nameof(ORDERS_WRITE);
+    public const string ORDERS_STATUS_WRITE = nameof(ORDERS_STATUS_WRITE);
+    public const string CART_WRITE = nameof(CART_WRITE);
+    public const string EXPENSES_READ = nameof(EXPENSES_READ);
+    public const string EXPENSES_WRITE = nameof(EXPENSES_WRITE);
+    public const string IDENTITIES_WRITE = nameof(IDENTITIES_WRITE);
+    public const string REPORTS_READ = nameof(REPORTS_READ);
+    public const string REPORTS_WRITE = nameof(REPORTS_WRITE);
+    public const string SETTINGS_WRITE = nameof(SETTINGS_WRITE);
 
-public static class IdentityPermissionsExtensions
-{
-    public static IdentityPermissions GetFromRole(this IdentityRole role)
-    {
-        if (role.IsSuperAdmin())
-            return GetSuperAdminPermissions();
+    public static string[] GetIdentityPermissions(IdentityRole role)
+        => role switch 
+        { 
+            IdentityRole.RestaurantEmployee => RestaurantEmployeePermissions, 
+            IdentityRole.RestaurantAdmin => RestaurantAdminPermissions,
+            IdentityRole.ClientEmployee => ClientEmployeePermissions,
+            IdentityRole.ClientAdmin => ClientAdministratorPermissions,
+            IdentityRole.SuperAdmin => ClientAdministratorPermissions,
+            _ => []
+        };
 
-        if (role.IsClientEmployee() && role.IsAdministrator())
-            return GetClientAdminPermissions();
+    private static string[] RestaurantEmployeePermissions => 
+        [
+            MENUS_READ,
+            MENU_ITEMS_READ,
+            ORDERS_READ,
+            ORDERS_STATUS_WRITE
+        ];
 
-        if (role.IsClientEmployee())
-            return GetClientEmployeesPermissions();
+    private static string[] RestaurantAdminPermissions => RestaurantEmployeePermissions;
 
-        if (role.IsRestaurantEmployee())
-            return GetRestaurantEmployeePermissions();
+    private static string[] ClientEmployeePermissions =>
+        [
+            MENUS_READ,
+            MENU_ITEMS_READ,
+            ORDERS_WRITE,
+            CART_WRITE,
+            EXPENSES_READ,
+        ];
 
-        return IdentityPermissions.NoPermissions;
-    } 
-
-    public static IdentityPermissions GetSuperAdminPermissions()
-    {
-        var permissions = IdentityPermissions.ListMenus;
-        foreach (var identityPermission in Enum.GetValues<IdentityPermissions>())
-            permissions |= identityPermission;
-
-        return permissions;
-    }
-
-    public static IdentityPermissions GetClientEmployeesPermissions()
-        => IdentityPermissions.ListMenus;
-
-    public static IdentityPermissions GetRestaurantEmployeePermissions()
-        => IdentityPermissions.ChangeOrderStatus;
-
-    public static IdentityPermissions GetClientAdminPermissions()
-        => GetSuperAdminPermissions();
+    private static string[] ClientAdministratorPermissions =>
+        [
+            MENUS_WRITE,
+            MENU_ITEMS_WRITE,
+            ORDERS_WRITE,
+            ORDERS_STATUS_WRITE,
+            EXPENSES_WRITE,
+            IDENTITIES_WRITE,
+            REPORTS_WRITE,
+            SETTINGS_WRITE
+        ];
 }

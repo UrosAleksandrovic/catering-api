@@ -30,7 +30,7 @@ internal class CateringAggregatesMapperConfiguration : Profile
         CreateMap<Identity, IdentityInfoDto>()
             .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FullName.FirstName))
             .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.FullName.LastName))
-            .ForMember(d => d.Roles, opt => opt.MapFrom(s => s.Role.GetRoles().Select(r => r.ToString())));
+            .ForMember(d => d.Role, opt => opt.MapFrom(s => s.Role.ToString()));
 
         CreateMap<CustomerBudget, CustomerBudgetInfoDto>()
             .ForMember(c => c.ReservedBalance, opt => opt.MapFrom(s => s.ReservedAssets))

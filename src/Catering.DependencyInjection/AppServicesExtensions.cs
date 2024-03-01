@@ -32,7 +32,6 @@ public static class AppServicesExtensions
         services.AddScoped<IMenusManagementAppService, MenuManagementAppService>();
         services.AddScoped<IOrderManagementAppService, OrderManagementAppService>();
         services.AddScoped<IExpensesManagementAppService, ExpensesManagementAppService>();
-        services.AddScoped<ICustomerReportsAppService, CustomerReportsAppService>();
 
         return services;
     }

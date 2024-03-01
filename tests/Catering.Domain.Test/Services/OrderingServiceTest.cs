@@ -28,7 +28,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
 
         //Act
@@ -43,7 +43,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
@@ -81,7 +81,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
 
         //Act
@@ -97,7 +97,7 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
@@ -138,7 +138,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
 
         //Act
@@ -155,7 +155,7 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();

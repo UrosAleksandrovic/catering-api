@@ -1,20 +1,19 @@
 ﻿using Catering.Api.Configuration.Authorization;
-using Catering.Application.Aggregates.Identities.Abstractions;
+using Catering.Api.Extensions;
+using Catering.Application.Aggregates.Identities.Queries;
+using Catering.Domain;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/admin/reports")]
 [AuthorizeClientsAdmins]
-public class AdminReportsController(ICustomerReportsAppService customerReportsAppService) : ControllerBase
+public class AdminReportsController(IMediator mediator) : ControllerBase
 {
-    private readonly ICustomerReportsAppService _customerReportsAppService = customerReportsAppService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("monthly-spendings")]
-    public async Task<IActionResult> GetMonthlySendings([FromQuery] int? month = null, [FromQuery] int? year = null)
-    {
-        var monthlySpending = await _customerReportsAppService.GetMonthlySendingAsync(month, year);
-
-        return Ok(new { data = monthlySpending });
-    }
+    public async Task<IActionResult> GetMonthlySendings([FromQuery] YearAndMonth yearAndMonth)
+        => this.FromResult(await _mediator.Send(new GetCustomerMonthlySendingsQuery(yearAndMonth)));
 }

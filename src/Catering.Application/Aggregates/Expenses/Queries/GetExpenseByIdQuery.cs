@@ -19,10 +19,10 @@ internal class GetExpenseByIdQueryHandler(IExpensesQueryRepository queryReposito
     {
         var requestor = await _publisher.Send(new GetIdentityById(request.RequestorId));
         if (requestor.Role.IsAdministrator())
-            return Result.NotFound();
+            return Results.Result.NotFound();
 
         var expense = await _queryRepository.GetByIdAsync(request.Id);
 
-        return expense.CustomerId == request.RequestorId ? Result.Success(expense) : Result.NotFound();
+        return expense.CustomerId == request.RequestorId ? Results.Result.Success(expense) : Results.Result.NotFound();
     }
 }

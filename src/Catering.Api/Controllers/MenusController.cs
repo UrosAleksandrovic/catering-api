@@ -21,53 +21,30 @@ public class MenusController(
     [HttpPost]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateMenuAsync([FromBody] CreateMenuDto createRequest)
-    {
-        var createdId = await _menuAppService.CreateAsync(createRequest);
-
-        return CreatedAtRoute(GetNameRoute, new { id = createdId }, new { id = createdId });
-    }
+        => this.FromResult(await _menuAppService.CreateAsync(createRequest));
 
     const string GetNameRoute = "GetMenuById";
     [HttpGet("{id:Guid}", Name = GetNameRoute)]
     [Authorize]
     public async Task<IActionResult> GetMenuByIdAsync(Guid id)
-    {
-        var menu = await _menuAppService.GetByIdAsync(id, this.GetUserId());
-
-        if (menu == null)
-            return NotFound();
-
-        return Ok(menu);
-    }
+        => this.FromResult(await _menuAppService.GetByIdAsync(id, this.GetUserId()));
 
     [HttpGet]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
-    {
-        return Ok(await _publisher.Send(new GetFilteredMenusQuery(filter)));
-    }
+        => this.FromResult(await _publisher.Send(new GetFilteredMenusQuery(filter)));
 
     [HttpPut("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateMenu([FromRoute] Guid id, [FromBody] UpdateMenuDto updateRequest)
-    {
-        await _menuAppService.UpdateAsync(id, updateRequest);
-
-        return NoContent();
-    }
+        => this.FromResult(await _menuAppService.UpdateAsync(id, updateRequest));
 
     [HttpDelete("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> DeleteMenu([FromRoute] Guid id)
-    {
-        await _menuAppService.DeleteAsync(id);
-
-        return NoContent();
-    }
+        => this.FromResult(await _menuAppService.DeleteAsync(id));
 
     [HttpGet("contacts")]
     public async Task<IActionResult> GetRestaurantContacts([FromQuery] MenusFilter filter)
-    {
-        return Ok(await _publisher.Send(new GetFilteredMenuContactsQuery(filter)));
-    }
+        => this.FromResult(await _publisher.Send(new GetFilteredMenuContactsQuery(filter)));
 }

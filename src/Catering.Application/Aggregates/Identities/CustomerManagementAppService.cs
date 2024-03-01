@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Catering.Application.Aggregates.Identities.Abstractions;
+﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
-using Catering.Application.Filtering;
+using Catering.Application.Results;
+using Catering.Application.Validation;
 using Catering.Domain.Aggregates.Identity;
-using Catering.Domain.Exceptions;
+using Catering.Domain.ErrorCodes;
 
 namespace Catering.Application.Aggregates.Identities;
 
@@ -11,86 +11,55 @@ internal class CustomerManagementAppService : ICustomerManagementAppService
 {
     private readonly IIdentityRepository<Identity> _identityRepository;
     private readonly ICustomerRepository _customerRepository;
-    private readonly IMapper _mapper;
+    private readonly IValidationProvider _validationProvider;
 
     public CustomerManagementAppService(
         ICustomerRepository customerRepository,
-        IMapper mapper,
-        IIdentityRepository<Identity> identityRepository)
+        IIdentityRepository<Identity> identityRepository,
+        IValidationProvider validationProvider)
     {
         _customerRepository = customerRepository;
-        _mapper = mapper;
         _identityRepository = identityRepository;
+        _validationProvider = validationProvider;
     }
 
-    public async Task<string> CreateClientsCustomerAsync(CreateCustomerDto createCustomer, string creatorId)
+    public async Task<Result<string>> CreateClientsCustomerAsync(CreateCustomerDto createCustomer, string creatorId)
     {
-        await CheckIfInitiatorIsAdminAsync(creatorId, nameof(CreateClientsCustomerAsync));
+        if (await ValidateCustomerCreationAsync(createCustomer, creatorId) is var valResult && !valResult.IsSuccess)
+            return Result.From<string>(valResult);
 
-        var customerExists = await _customerRepository.GetByIdentityEmailAsync(createCustomer.Email);
-        if (customerExists != null)
-            throw new IdentityAlreadyExists();
-
-        var customerIdentity = new Identity(createCustomer.Email, IdentityRole.Employee | IdentityRole.Client);
+        var customerIdentity = new Identity(createCustomer.Email, IdentityRole.ClientEmployee, false);
         var customerToCreate = new Customer(customerIdentity);
+        await _customerRepository.CreateAsync(customerToCreate, customerIdentity);
 
-        await _identityRepository.CreateAsync(customerIdentity);
-        await _customerRepository.CreateAsync(customerToCreate);
-
-        return customerIdentity.Id;
+        return Result.Success(customerIdentity.Id);
     }
 
-    public async Task<CustomerBudgetInfoDto> GetCustomerBudgetInfoAsync(string customerId)
+    private async Task<Result> ValidateCustomerCreationAsync(CreateCustomerDto createRequest, string creatorId)
     {
-        var customer = await _customerRepository.GetByIdAsync(customerId);
+        if (_validationProvider.ValidateModel(createRequest) is var valResult && !valResult.IsSuccess)
+            return Result.From<string>(valResult);
 
-        return _mapper.Map<CustomerBudgetInfoDto>(customer.Budget);
+        if (await CheckIfInitiatorIsAdminAsync(creatorId) is var adminCheck && !adminCheck.IsSuccess)
+            return Result.From<string>(adminCheck);
+
+        var customerExists = await _customerRepository.GetByIdentityEmailAsync(createRequest.Email);
+        if (customerExists != null)
+            return Result.ValidationError(IdentityErrorCodes.IDENTITY_ALREADY_EXISTS);
+
+        return Result.Success();
     }
 
-    public async Task<CustomerInfoDto> GetCustomerInfoAsync(string customerId)
+    private async Task<Result> CheckIfInitiatorIsAdminAsync(string initiatorId)
     {
-        var customer = await _customerRepository.GetFullByIdAsync(customerId);
+        var initiator = await _identityRepository.GetByIdAsync(initiatorId);
 
-        return _mapper.Map<CustomerInfoDto>(customer);
-    }
-
-    private async Task<Identity> GetInitiatorAsync(string initiatorId)
-    {
-        var result = await _identityRepository.GetByIdAsync(initiatorId);
-
-        if (result == default)
-            throw new ArgumentException("Initiator does not exist.");
-
-        return result;
-    }
-
-    private async Task CheckIfInitiatorIsAdminAsync(string initiatorId, string actionName)
-    {
-        var initiator = await GetInitiatorAsync(initiatorId);
+        if (initiator == default)
+            return Result.ValidationError(IdentityErrorCodes.INITIATOR_IDENTITY_NOT_FOUND);
 
         if (!initiator.Role.IsAdministrator())
-            throw new IdentityRestrictionException(initiatorId, actionName);
-    }
+            return Result.ValidationError(IdentityErrorCodes.FORBIDDEN_ACTION);
 
-    public async Task<FilterResult<CustomerInfoDto>> GetFilteredInternalAsync(CustomersFilter filter)
-    {
-        var result = FilterResult<CustomerInfoDto>.Empty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
-
-        var (items, totalCount) = await _customerRepository.GetFilteredInternalCustomersAsync(filter);
-        result.TotalNumberOfElements = totalCount;
-        result.Value = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
-
-        return result;
-    }
-
-    public async Task<FilterResult<CustomerInfoDto>> GetFilteredExternalAsync(CustomersFilter filter)
-    {
-        var result = FilterResult<CustomerInfoDto>.Empty<CustomerInfoDto>(filter.PageIndex, filter.PageSize);
-
-        var (items, totalCount) = await _customerRepository.GetFilteredExternalCustomersAsync(filter);
-        result.TotalNumberOfElements = totalCount;
-        result.Value = _mapper.Map<IEnumerable<CustomerInfoDto>>(items);
-
-        return result;
+        return Result.Success();
     }
 }

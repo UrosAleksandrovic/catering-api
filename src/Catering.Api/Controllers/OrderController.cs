@@ -5,7 +5,6 @@ using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Aggregates.Orders.Queries;
 using Catering.Application.Results;
-using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Aggregates.Order;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,9 +28,7 @@ public class OrdersController(IOrderManagementAppService ordersService, IMediato
     }
 
     [HttpPut("{id:long}/status")]
-    [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
-        IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-        IdentityRole.Restaurant | IdentityRole.Employee)]
+    [AuthorizeRestaurantEmployee]
     public async Task<IActionResult> ChangeStatusAsync(
         [FromRoute] long id,
         [FromBody] ChangeOrderStatusDto newStatus)

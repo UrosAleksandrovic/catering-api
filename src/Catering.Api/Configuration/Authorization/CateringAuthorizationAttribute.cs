@@ -7,6 +7,7 @@ internal class CateringAuthorizationAttribute : AuthorizeAttribute
 {
     public CateringAuthorizationAttribute(params IdentityRole[] identityRoles)
     {
-        Roles = string.Join(',', identityRoles.Select(r => r.ToIdentityString()));
+        var finalListOfRoles = identityRoles.Concat([IdentityRole.SuperAdmin]);
+        Roles = string.Join(',', finalListOfRoles.Select(r => r.ToString()));
     }
 }

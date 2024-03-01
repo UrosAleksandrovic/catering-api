@@ -11,8 +11,7 @@ public class CustomerTest
     {
         //Arrange
         var newBudget = 100;
-        var identity = new Identity(new FullName("Test", "Test"),
-            "test@test.com", IdentityRoleExtensions.GetClientAdministrator());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientAdmin, false);
         var customer = new Customer(identity);
 
         //Act
@@ -27,8 +26,7 @@ public class CustomerTest
     {
         //Arrange
         var reservedBalance = 100;
-        var identity = new Identity(new FullName("Test", "Test"),
-            "test@test.com", IdentityRoleExtensions.GetClientAdministrator());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientAdmin, false);
         var customer = new Customer(identity);
         customer.ResetBudget(reservedBalance + 1);
 
@@ -45,8 +43,7 @@ public class CustomerTest
     {
         //Arrange
         var reservedBalance = 100;
-        var identity = new Identity(new FullName("Test", "Test"), 
-            "test@test.com", IdentityRoleExtensions.GetClientAdministrator());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientAdmin, false);
         var customer = new Customer(identity);
         customer.ResetBudget(reservedBalance + 1);
         customer.ReserveAssets(reservedBalance);
@@ -64,8 +61,7 @@ public class CustomerTest
     {
         //Arrange
         var reservedBalance = 100;
-        var identity = new Identity(new FullName("Test", "Test"),
-            "test@test.com", IdentityRoleExtensions.GetClientAdministrator());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientAdmin, false);
         var customer = new Customer(identity);
         customer.ResetBudget(2 * reservedBalance + 1);
         customer.ReserveAssets(reservedBalance);

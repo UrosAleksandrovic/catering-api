@@ -6,5 +6,5 @@ namespace Catering.Application.Aggregates.Expenses.Abstractions;
 public interface IExpensesManagementAppService
 {
     Task<Result<Guid>> CreateAsync(CreateExpenseDto createExpense);
-    Task<Result> UpdateAsync(Guid id, UpdateExpenseDto updateExpense);
+    Task<Results.Result> UpdateAsync(Guid id, UpdateExpenseDto updateExpense);
 }

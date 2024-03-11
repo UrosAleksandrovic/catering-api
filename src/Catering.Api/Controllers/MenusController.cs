@@ -21,7 +21,7 @@ public class MenusController(
     [HttpPost]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateMenuAsync([FromBody] CreateMenuDto createRequest)
-        => this.FromResult(await _menuAppService.CreateAsync(createRequest));
+        => this.CreatedAtRouteFromResult(await _menuAppService.CreateAsync(createRequest), GetNameRoute);
 
     const string GetNameRoute = "GetMenuById";
     [HttpGet("{id:Guid}", Name = GetNameRoute)]

@@ -19,11 +19,13 @@ public class MenuItemsController(IItemManagementAppService itemsAppService, IMed
     [HttpPost("{menuId:Guid}/items")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateAsync([FromRoute] Guid menuId, [FromBody] CreateItemDto createRequest)
-        => this.CreatedAtRouteFromResult(await _itemsAppService.CreateItemAsync(menuId, createRequest), GetNameRoute);
+        => this.CreatedAtRouteFromResult(
+            await _itemsAppService.CreateItemAsync(menuId, createRequest),
+            GET_ITEM_BY_ID_ROUTE);
 
 
-    private const string GetNameRoute = "GetItemById";
-    [HttpGet("{menuId:Guid}/items/{itemId:Guid}", Name = GetNameRoute)]
+    private const string GET_ITEM_BY_ID_ROUTE = nameof(GET_ITEM_BY_ID_ROUTE);
+    [HttpGet("{menuId:Guid}/items/{itemId:Guid}", Name = GET_ITEM_BY_ID_ROUTE)]
     [Authorize]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid menuId, [FromRoute] Guid itemId)
         => this.FromResult(await _itemsAppService.GetItemByIdAsync(menuId, itemId, this.GetUserId()));
@@ -56,10 +58,14 @@ public class MenuItemsController(IItemManagementAppService itemsAppService, IMed
         [FromRoute] Guid itemId)
         => this.FromResult(await _itemsAppService.GetCustomerRatingForItemAsync(menuId, itemId, this.GetUserId()));
 
-    [HttpGet("items")]
+    [HttpGet("{menuId:Guid}/items")]
     [Authorize]
-    public async Task<IActionResult> GetPageAsync([FromQuery] ItemsFilter filter)
-        => this.FromResult(await _publisher.Send(new GetFilteredItemsQuery(filter, this.GetUserId())));
+    public async Task<IActionResult> GetPageAsync([FromRoute] Guid menuId, [FromQuery] ItemsFilter filter)
+    {
+        filter.MenuId = menuId;
+        
+        return this.FromResult(await _publisher.Send(new GetFilteredItemsQuery(filter, this.GetUserId())));
+    }
 
     [HttpGet("{menuId:Guid}/top-orders")]
     [Authorize]

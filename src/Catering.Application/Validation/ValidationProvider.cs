@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Catering.Application.Validation;
 
-internal class ValidationProvider
+internal class ValidationProvider : IValidationProvider
 {
     private readonly IValidatorFactory validatorFactory;
 

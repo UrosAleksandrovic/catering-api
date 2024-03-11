@@ -5,7 +5,7 @@ namespace Catering.Application.Aggregates.Items.Abstractions;
 
 public interface IItemManagementAppService
 {
-    Task<Result<Guid>> CreateItemAsync(Guid menuId, CreateItemDto createRequest);
+    Task<Result<ItemsIdDto>> CreateItemAsync(Guid menuId, CreateItemDto createRequest);
     Task<Result> UpdateItemAsync(Guid menuId, Guid itemId, UpdateItemDto updateRequest);
     Task<Result> RateItemAsync(Guid menuId, Guid itemId, string customerId, short rating);
     Task<Result> DeleteItemAsync(Guid menuId, Guid itemId);

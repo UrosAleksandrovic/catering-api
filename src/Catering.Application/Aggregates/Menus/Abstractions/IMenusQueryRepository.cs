@@ -7,4 +7,5 @@ public interface IMenusQueryRepository
 {
     Task<PageBase<MenuInfoDto>> GetPageAsync(MenusFilter menusFilter);
     Task<PageBase<MenuContactDetailedInfoDto>> GetContactsAsync(MenusFilter menusFilter);
+    Task<string> GetContactEmailAsync(Guid menuId);
 }

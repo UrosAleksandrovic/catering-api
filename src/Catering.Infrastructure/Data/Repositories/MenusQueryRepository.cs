@@ -26,7 +26,7 @@ internal class MenusQueryRepository : IMenusQueryRepository
 
     public async Task<PageBase<MenuInfoDto>> GetPageAsync(MenusFilter menusFilter)
     {
-        var dbContext = _dbContextFactory.CreateDbContext();
+        using var dbContext = _dbContextFactory.CreateDbContext();
         var queryableMenus = dbContext
             .Set<Menu>()
             .OrderBy(m => m.Name);
@@ -38,7 +38,7 @@ internal class MenusQueryRepository : IMenusQueryRepository
 
     public async Task<PageBase<MenuContactDetailedInfoDto>> GetContactsAsync(MenusFilter menusFilter)
     {
-        var dbContext = _dbContextFactory.CreateDbContext();
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
         var queryableContacts = dbContext.Menus.AsNoTracking().Join(
             dbContext.Identities,
@@ -55,5 +55,17 @@ internal class MenusQueryRepository : IMenusQueryRepository
             }).OrderBy(c => c.MenuName);
 
         return new(await queryableContacts.Paginate(menusFilter).ToListAsync(), await queryableContacts.CountAsync());
+    }
+
+    public async Task<string> GetContactEmailAsync(Guid menuId)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext
+            .Menus
+            .AsNoTracking()
+            .Where(m => m.Id == menuId)
+            .Select(m => m.Contact.Email)
+            .SingleOrDefaultAsync();
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Catering.Application.Validation;
 
-internal class ValidatorFactory
+internal class ValidatorFactory : IValidatorFactory
 {
     private readonly IServiceProvider serviceProvider;
 

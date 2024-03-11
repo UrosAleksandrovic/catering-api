@@ -5,7 +5,9 @@ using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Items.Dtos;
 using Catering.Domain.Aggregates.Item;
 using Catering.Domain.Aggregates.Order;
+using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
@@ -39,19 +41,13 @@ internal class ItemsQueryRepository : IItemsQueryRepository
     {
         var dbContext = _dbContextFactory.CreateDbContext();
 
-        var queryableItems = dbContext.Set<Item>().AsQueryable();
+        var queryableItems = dbContext.Items.AsNoTracking();
         queryableItems = ApplyFilters(filters, queryableItems);
+        queryableItems = queryableItems.ApplyOrdering(filters.OrderBy, filters.IsOrderByDescending);
 
-        if (!filters.OrderBy.HasValue)
-        {
-            var unorderedProjectedQuery = _mapper.ProjectTo<ItemInfoDto>(queryableItems);
-            return new (await unorderedProjectedQuery.ToListAsync(), await queryableItems.CountAsync());
-        }
+        var projectedQuery = _mapper.ProjectTo<ItemInfoDto>(queryableItems);
 
-        var orderedQueryable = ApplyOrdering(filters, queryableItems);
-        var projectedQuery = _mapper.ProjectTo<ItemInfoDto>(orderedQueryable);
-
-        return new (await projectedQuery.ToListAsync(), await orderedQueryable.CountAsync());
+        return new (await projectedQuery.Paginate(filters).ToListAsync(), await queryableItems.CountAsync());
     }
 
     private IQueryable<Item> ApplyFilters(ItemsFilter itemsFilter, IQueryable<Item> queryableItems)
@@ -77,25 +73,6 @@ internal class ItemsQueryRepository : IItemsQueryRepository
 
         queryableItems = queryableItems.Where(i => i.MenuId == itemsFilter.MenuId);
 
-        return queryableItems
-            .Skip((itemsFilter.PageIndex - 1) * itemsFilter.PageSize)
-            .Take(itemsFilter.PageSize);
-    }
-
-    private IOrderedQueryable<Item> ApplyOrdering(ItemsFilter itemsFilter, IQueryable<Item> queryableItems)
-    {
-        return itemsFilter switch
-        {
-            { OrderBy: ItemsOrderBy.Price, IsOrderByDescending: false } => queryableItems.OrderBy(i => i.Price),
-            { OrderBy: ItemsOrderBy.Price, IsOrderByDescending: true } => queryableItems.OrderByDescending(i => i.Price),
-
-            { OrderBy: ItemsOrderBy.Name, IsOrderByDescending: false } => queryableItems.OrderBy(i => i.Name),
-            { OrderBy: ItemsOrderBy.Name, IsOrderByDescending: true } => queryableItems.OrderByDescending(i => i.Name),
-
-            { OrderBy: ItemsOrderBy.Rating, IsOrderByDescending: false } => queryableItems.OrderBy(i => i.Ratings.Average(r => r.Rating)),
-            { OrderBy: ItemsOrderBy.Rating, IsOrderByDescending: true } => queryableItems.OrderByDescending(i => i.Ratings.Average(r => r.Rating)),
-
-            _ => queryableItems.OrderBy(i => i.Name),
-        };
+        return queryableItems;
     }
 }

@@ -6,6 +6,7 @@ using Catering.Application.Results;
 using Catering.Application.Validation;
 using Catering.Domain.Aggregates.Cart;
 using Catering.Domain.Aggregates.Item;
+using Catering.Domain.ErrorCodes;
 using Catering.Domain.Exceptions;
 using MediatR;
 
@@ -36,8 +37,12 @@ internal class CartManagementAppService : ICartManagementAppService
             return valResult;
 
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
+        var itemToAdd = await _publisher.Send(new GetItemForAddingToTheCart(addItemDto.MenuId, addItemDto.ItemId));
 
-        cart.AddItem(addItemDto.MenuId, addItemDto.ItemId, addItemDto.Quantity, addItemDto.Note);
+        if (itemToAdd == null)
+            return Result.NotFound();
+
+        cart.AddItem(itemToAdd.MenuId, itemToAdd.Id, addItemDto.Quantity, addItemDto.Note);
 
         await _cartRepository.UpdateAsync(cart);
         return Result.Success();
@@ -78,12 +83,14 @@ internal class CartManagementAppService : ICartManagementAppService
         var resultCart = _mapper.Map<CartInfoDto>(cart);
         resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.SingleOrDefault(ci => ci.Id == i.ItemId)));
 
-        return Result.Success();
+        return Result.Success(resultCart);
     }
 
     private async Task<Cart> CreateForCustomerAsync(string customerId)
     {
         var cart = new Cart(customerId);
+
+        await _cartRepository.DeleteByCustomerIdAsync(customerId);
         await _cartRepository.CreateAsync(cart);
 
         return cart;
@@ -92,7 +99,8 @@ internal class CartManagementAppService : ICartManagementAppService
     private async Task<Cart> GetOrCreteCartForCustomerAsync(string customerId)
     {
         var cart = await _cartRepository.GetByCustomerIdAsync(customerId);
-        if (cart != default)
+        var cartItems = await _publisher.Send(new GetItemsFromTheCart(customerId));
+        if (cart != default && cartItems.Count != 0)
             return cart;
 
         cart = await CreateForCustomerAsync(customerId);

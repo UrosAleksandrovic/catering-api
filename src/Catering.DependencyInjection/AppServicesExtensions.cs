@@ -12,11 +12,11 @@ using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos.Validators;
 using Catering.Application.Security.Handlers;
+using Catering.Application.Validation;
 using Catering.Domain.Services;
 using Catering.Domain.Services.Abstractions;
 using Catering.Infrastructure;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Catering.DependencyInjection;
@@ -55,12 +55,9 @@ public static class AppServicesExtensions
 
     public static IServiceCollection AddFluentValidation(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining<CreateOrderDtoValidator>();
-
-        services.AddFluentValidationAutoValidation().AddFluentValidationAutoValidation(cfg =>
-        {
-            cfg.DisableDataAnnotationsValidation = true;
-        });
+        services.AddScoped<IValidationProvider, ValidationProvider>();
+        services.AddScoped<Application.Validation.IValidatorFactory, ValidatorFactory>();
+        services.AddValidatorsFromAssemblyContaining<CreateOrderDtoValidator>(includeInternalTypes: true);
 
         return services;
     }

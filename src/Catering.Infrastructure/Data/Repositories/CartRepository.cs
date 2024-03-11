@@ -10,18 +10,16 @@ internal class CartRepository : BaseCrudRepository<Cart, CateringDbContext>, ICa
     { }
 
     public Task DeleteByCustomerIdAsync(string customerId)
-        => _dbContext
-            .Set<Cart>()
+        => _dbContext.Carts
             .Where(c => c.CustomerId == customerId)
             .ExecuteDeleteAsync();
 
     public Task DeleteItemsWithMenuAsync(Guid menuId)
         => _dbContext.Carts
-            .Where(x => x.MenuId == menuId)
+            .Where(c => c.MenuId == menuId)
             .ExecuteDeleteAsync();
 
     public Task<Cart> GetByCustomerIdAsync(string customerId)
-        => _dbContext
-            .Carts
-            .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+        => _dbContext.Carts
+            .SingleOrDefaultAsync(c => c.CustomerId == customerId);
 }

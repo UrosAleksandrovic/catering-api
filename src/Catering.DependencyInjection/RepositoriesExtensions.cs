@@ -28,7 +28,8 @@ public static class RepositoriesExtensions
         services.AddScoped<IOrderRepository, OrdersRepository>();
         services.AddTransient<IOrdersQueryRepository, OrdersQueryRepository>();
 
-        services.AddTransient<IExpensesRepository, ExpensesRepository>();
+        services.AddScoped<IExpensesRepository, ExpensesRepository>();
+        services.AddTransient<IExpensesQueryRepository, ExpensesQueryRepository>();
 
         services.AddTransient<ICustomerReportsRepository, CustomerReportsRepository>();
 

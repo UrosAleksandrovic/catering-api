@@ -1,9 +1,6 @@
-﻿using MediatR;
+﻿using Catering.Application.Results;
+using MediatR;
 
 namespace Catering.Application.Security.Requests;
 
-public class LoginCateringIdentity : IRequest<string>
-{
-    public string Login { get; set; }
-    public string Password { get; set; }
-}
+public record LoginCateringIdentity(string Login, string Password) : IRequest<Result<string>>;

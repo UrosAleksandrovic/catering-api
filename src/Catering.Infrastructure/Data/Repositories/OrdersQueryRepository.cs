@@ -4,6 +4,7 @@ using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Domain.Aggregates.Order;
+using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
@@ -33,17 +34,12 @@ internal class OrdersQueryRepository : IOrdersQueryRepository
     public async Task<PageBase<OrderInfoDto>> GetFilteredAsync(OrdersFilter filters)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var filterableOrders = ApplyFilters(filters, dbContext.Set<Order>());
-        if (!filters.OrderBy.HasValue)
-        {
-            var unorderedProjectedQuery = _mapper.ProjectTo<OrderInfoDto>(filterableOrders);
-            return new(await unorderedProjectedQuery.ToListAsync(), await filterableOrders.CountAsync());
-        }
 
-        filterableOrders = ApplyOrdering(filters, filterableOrders);
+        var query = ApplyFilters(filters, dbContext.Orders.AsNoTracking());
+        query = query.ApplyOrdering(filters.OrderBy, filters.IsOrderByDescending);
 
-        var projectedQuery = _mapper.ProjectTo<OrderInfoDto>(filterableOrders);
-        return new(await projectedQuery.ToListAsync(), await filterableOrders.CountAsync());
+        var projectedQuery = _mapper.ProjectTo<OrderInfoDto>(query);
+        return new(await projectedQuery.Paginate(filters).ToListAsync(), await query.CountAsync());
     }
 
     public async Task<PageBase<OrderInfoDto>> GetOrdersForCustomerAsync(OrdersFilter filters)
@@ -90,25 +86,6 @@ internal class OrdersQueryRepository : IOrdersQueryRepository
         if (filters.IsHomeDelivery.HasValue && filters.IsHomeDelivery.Value)
             query = query.Where(o => o.HomeDeliveryInfo != null);
 
-        return query
-            .Skip((filters.PageIndex - 1) * filters.PageSize)
-            .Take(filters.PageSize);
-    }
-
-    private IOrderedQueryable<Order> ApplyOrdering(OrdersFilter filters, IQueryable<Order> query)
-    {
-        return filters switch
-        {
-            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: false } => query.OrderBy(i => i.TotalPrice),
-            { OrderBy: OrdersOrderBy.TotalPrice, IsOrderByDescending: true } => query.OrderByDescending(i => i.TotalPrice),
-
-            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: false } => query.OrderBy(i => i.Status),
-            { OrderBy: OrdersOrderBy.Status, IsOrderByDescending: true } => query.OrderByDescending(i => i.Status),
-
-            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: false } => query.OrderBy(i => i.ExpectedOn),
-            { OrderBy: OrdersOrderBy.ExpectedOn, IsOrderByDescending: true } => query.OrderByDescending(i => i.ExpectedOn),
-
-            _ => query.OrderByDescending(i => i.ExpectedOn),
-        };
+        return query;
     }
 }

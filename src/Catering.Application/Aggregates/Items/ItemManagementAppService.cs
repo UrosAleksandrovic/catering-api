@@ -29,10 +29,10 @@ internal class ItemManagementAppService : IItemManagementAppService
         _publisher = publisher;
     }
 
-    public async Task<Result<Guid>> CreateItemAsync(Guid menuId, CreateItemDto createRequest)
+    public async Task<Result<ItemsIdDto>> CreateItemAsync(Guid menuId, CreateItemDto createRequest)
     {
         if (await _validationProvider.ValidateModelAsync(createRequest) is var valRes && !valRes.IsSuccess)
-            return Result.From<Guid>(valRes);
+            return Result.From<ItemsIdDto>(valRes);
 
         var itemToCreate = new ItemBuilder()
             .HasMenu(menuId)
@@ -43,7 +43,7 @@ internal class ItemManagementAppService : IItemManagementAppService
 
         var createdItem = await _itemRepository.CreateAsync(itemToCreate);
 
-        return Result.Success(createdItem.Id);
+        return Result.Success<ItemsIdDto>(new(menuId, createdItem.Id));
     }
 
     public async Task<Result> DeleteItemAsync(Guid menuId, Guid itemId)

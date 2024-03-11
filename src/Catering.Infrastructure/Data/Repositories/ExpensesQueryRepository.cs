@@ -4,6 +4,7 @@ using Catering.Application.Aggregates.Expenses;
 using Catering.Application.Aggregates.Expenses.Abstractions;
 using Catering.Application.Aggregates.Expenses.Dtos;
 using Catering.Domain.Aggregates.Expense;
+using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
@@ -34,15 +35,11 @@ internal class ExpensesQueryRepository : IExpensesQueryRepository
     {
         var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var filterableOrders = ApplyFilters(filters, dbContext.Expenses);
-        if (!filters.OrderBy.HasValue)
-        {
-            var projectedQuery = _mapper.ProjectTo<ExpenseInfoDto>(filterableOrders);
-            return new(await projectedQuery.ToListAsync(), await filterableOrders.CountAsync());
-        }
+        var query = ApplyFilters(filters, dbContext.Expenses);
+        query = query.ApplyOrdering(filters.OrderBy, filters.IsOrderByDescending);
 
-        var projectedOrdered = _mapper.ProjectTo<ExpenseInfoDto>(ApplyOrdering(filters, filterableOrders));
-        return new(await projectedOrdered.ToListAsync(), await filterableOrders.CountAsync());
+        var projectedOrdered = _mapper.ProjectTo<ExpenseInfoDto>(query);
+        return new(await projectedOrdered.Paginate(filters).ToListAsync(), await query.CountAsync());
     }
 
     private IQueryable<Expense> ApplyFilters(ExpensesFilter filters, IQueryable<Expense> expenses)
@@ -61,19 +58,5 @@ internal class ExpensesQueryRepository : IExpensesQueryRepository
         return expenses
             .Skip((filters.PageIndex - 1) * filters.PageSize)
             .Take(filters.PageSize);
-    }
-
-    private IOrderedQueryable<Expense> ApplyOrdering(ExpensesFilter filters, IQueryable<Expense> query)
-    {
-        return filters switch
-        {
-            { OrderBy: ExpensesOrderBy.Price, IsOrderByDescending: false } => query.OrderBy(i => i.Price),
-            { OrderBy: ExpensesOrderBy.Price, IsOrderByDescending: true } => query.OrderByDescending(i => i.Price),
-
-            { OrderBy: ExpensesOrderBy.DeliveredOn, IsOrderByDescending: false } => query.OrderBy(i => i.DeliveredOn),
-            { OrderBy: ExpensesOrderBy.DeliveredOn, IsOrderByDescending: true } => query.OrderByDescending(i => i.DeliveredOn),
-
-            _ => query.OrderByDescending(i => i.DeliveredOn),
-        };
     }
 }

@@ -29,7 +29,8 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
         {
             Id = "super.admin",
             Email = "super.admin@catering.test",
-            Role = IdentityRole.SuperAdmin
+            Role = IdentityRole.SuperAdmin,
+            IsExternal = false
         });
     }
 }

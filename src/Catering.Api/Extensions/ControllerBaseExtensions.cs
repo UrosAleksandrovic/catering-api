@@ -37,7 +37,7 @@ public static class ControllerBaseExtensions
             return new OkResult();
         }
 
-        return new OkObjectResult(result.Value);
+        return new OkObjectResult(result);
     }
 
     public static IActionResult FromResult(this ControllerBase controller, Result result)
@@ -70,9 +70,7 @@ public static class ControllerBaseExtensions
             return MapErrorResultToActionResult(result);
         }
 
-        var model = new { Id = result.Value };
-
-        return new CreatedAtRouteResult(route, model, model);
+        return controller.CreatedAtRoute(route, result.Value, result.Value);
     }
 
     private static ObjectResult GetDefaultResponse() => new ObjectResult(Result.Error(ErrorType.Unknown))

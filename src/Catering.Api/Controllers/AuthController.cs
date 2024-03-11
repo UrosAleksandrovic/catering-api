@@ -1,4 +1,5 @@
-﻿using Catering.Application.Security.Dtos;
+﻿using Catering.Api.Extensions;
+using Catering.Application.Security.Dtos;
 using Catering.Application.Security.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,21 +13,19 @@ public class AuthController(IMediator publisher) : ControllerBase
 
     [HttpPost("/api/auth/ldap/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> LoginLdap([FromBody] UsernameAndPasswordDto request)
+    public async Task<IActionResult> LoginLdap([FromBody] UsernameAndPasswordDto request)
     {
-        var identityRequest = new LoginLdap { Login = request.Username, Password = request.Password };
-        var response = await _publisher.Send(identityRequest);
+        var response = await _publisher.Send(new LoginLdap(request.Username, request.Password));
 
-        return Ok(new { token = response });
+        return this.FromResult(response);
     }
 
     [HttpPost("/api/auth/login")]
     [AllowAnonymous]
-    public async Task<ActionResult<string>> LoginCateringIdentity([FromBody] UsernameAndPasswordDto request)
+    public async Task<IActionResult> LoginCateringIdentity([FromBody] UsernameAndPasswordDto request)
     {
-        var identityRequest = new LoginCateringIdentity { Login = request.Username, Password = request.Password };
-        var response = await _publisher.Send(identityRequest);
+        var response = await _publisher.Send(new LoginCateringIdentity(request.Username, request.Password));
 
-        return Ok(new { token = response });
+        return this.FromResult(response);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Application.Filtering;
+using Catering.Domain.Aggregates.Order;
 
 namespace Catering.Application.Aggregates.Orders;
 
@@ -6,7 +7,7 @@ public class OrdersFilter : FilterBase
 {
     public string CustomerId { get; set; }
     public Guid? MenuId { get; set; }
-    public DateTime? DeliveredOn { get; set; }
+    public DateTimeOffset? DeliveredOn { get; set; }
     public decimal? TopPrice { get; set; }
     public decimal? BottomPrice { get; set; }
     public List<OrderStatus> Statuses { get; set; }

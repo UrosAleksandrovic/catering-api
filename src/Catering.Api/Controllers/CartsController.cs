@@ -1,72 +1,34 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Carts.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
 [Route("api/carts")]
 [AuthorizeClientsEmployee]
-public class CartsController : ControllerBase
+public class CartsController(ICartManagementAppService cartsAppService) : ControllerBase
 {
-    private readonly ICartManagementAppService _cartsAppService;
-
-    public CartsController(ICartManagementAppService cartsAppService)
-    {
-        _cartsAppService = cartsAppService;
-    }
+    private readonly ICartManagementAppService _cartsAppService = cartsAppService;
 
     [HttpGet]
     public async Task<IActionResult> GetByCustomerIdAsync()
-    {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        => this.FromResult(await _cartsAppService.GetCartByCustomerIdAsync(this.GetUserId()));
 
-        return Ok(await _cartsAppService.GetCartByCustomerIdAsync(customerId));
-    }
-
-    [HttpPut("items")]
+    [HttpPost("items")]
     public async Task<IActionResult> PutItemInCartAsync([FromBody] AddItemToCartDto addItemDto)
-    {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.AddItemAsync(customerId, addItemDto);
+        => this.FromResult(await _cartsAppService.AddItemAsync(this.GetUserId(), addItemDto));
 
-        return NoContent();
-    }
-
-    [HttpPut("items/{itemMenuId}/{itemId}/increment")]
-    public async Task<IActionResult> IncrementAsync(
+    [HttpPut("items/{itemId:Guid}/quantity")]
+    public async Task<IActionResult> ChangeQuantity(
         [FromRoute] Guid itemId,
-        [FromRoute] Guid itemMenuId,
-        [FromQuery] int quantity = 1)
-    {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.IncrementItemAsync(customerId, itemMenuId, itemId, quantity);
+        [FromBody] CartItemQuantityDto newQuantity)
+        => this.FromResult(await _cartsAppService.ChangeQuantity(this.GetUserId(), itemId, newQuantity.Quantity));
 
-        return NoContent();
-    }
-
-    [HttpPut("items/{itemMenuId}/{itemId}/decrement")]
-    public async Task<IActionResult> DecrementAsync(
-        [FromRoute] Guid itemId,
-        [FromRoute] Guid itemMenuId,
-        [FromQuery] int quantity = 1)
-    {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.DecrementItemAsync(customerId, itemMenuId, itemId, quantity);
-
-        return NoContent();
-    }
-
-    [HttpPut("items/{itemMenuId}/{itemId}/note")]
+    [HttpPut("items/{itemId:Guid}/note")]
     public async Task<IActionResult> ChangeNoteAsync(
-        [FromRoute] Guid itemId, 
-        [FromRoute] Guid itemMenuId,
+        [FromRoute] Guid itemId,
         [FromBody] CartItemNoteDto newNote)
-    {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        await _cartsAppService.AddOrEditItemNoteAsync(customerId, itemMenuId, itemId, newNote.Note);
-
-        return NoContent();
-    }
+        => this.FromResult(await _cartsAppService.AddOrEditItemNoteAsync(this.GetUserId(), itemId, newNote.Note));
 }

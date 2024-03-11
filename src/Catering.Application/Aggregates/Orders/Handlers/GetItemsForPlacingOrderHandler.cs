@@ -1,6 +1,6 @@
 ﻿using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Orders.Requests;
-using Catering.Domain.Entities.ItemAggregate;
+using Catering.Domain.Aggregates.Item;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Orders.Handlers;

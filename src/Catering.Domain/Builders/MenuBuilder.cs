@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.MenuAggregate;
+﻿using Catering.Domain.Aggregates.Menu;
 
 namespace Catering.Domain.Builders;
 

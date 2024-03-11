@@ -1,9 +1,6 @@
-﻿using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Order;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Items.Requests;
 
-public class GetActiveOrdersOfItem : IRequest<List<Order>>
-{
-    public Guid ItemId { get; init; }
-}
+public record GetActiveOrdersOfItem(Guid ItemId) : IRequest<List<Order>>;

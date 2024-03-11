@@ -1,11 +1,12 @@
-﻿using AutoMapper;
-using Catering.Application.Aggregates.Identities.Abstractions;
+﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
 using Catering.Application.Aggregates.Identities.Notifications;
+using Catering.Application.Results;
 using Catering.Application.Security;
+using Catering.Application.Validation;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Exceptions;
+using Catering.Domain.ErrorCodes;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Identities;
@@ -16,34 +17,34 @@ internal class CateringIdentitiesManagementAppService : ICateringIdentitiesManag
     private readonly IIdentityRepository<Identity> _identityRepository;
     private readonly IMediator _publisher;
     private readonly IDataProtector _dataProtector;
-    private readonly ICustomerRepository _customerRepository;
-    private readonly IMapper _mapper;
+    private readonly IValidationProvider _validationProvider;
 
     public CateringIdentitiesManagementAppService(
         ICateringIdentitiesRepository cateringIdentitiesRepository,
         IMediator publisher,
         IIdentityRepository<Identity> identityRepository,
         IDataProtector dataProtector,
-        ICustomerRepository customerRepository,
-        IMapper mapper)
+        IValidationProvider validationProvider)
     {
         _cateringIdentitiesRepository = cateringIdentitiesRepository;
         _publisher = publisher;
         _identityRepository = identityRepository;
         _dataProtector = dataProtector;
-        _customerRepository = customerRepository;
-        _mapper = mapper;
+        _validationProvider = validationProvider;
     }
 
-    public async Task SendIdentityInvitationAsync(string creatorId, CreateIdentityInvitationDto createRequest)
+    public async Task<Result> SendIdentityInvitationAsync(string creatorId, CreateIdentityInvitationDto createRequest)
     {
+        if (await _validationProvider.ValidateModelAsync(createRequest) is var valRes && !valRes.IsSuccess)
+            return valRes;
+
         var creator = await _identityRepository.GetByIdAsync(creatorId);
-        if (creator != null && creator.HasRole(IdentityRoleExtensions.GetClientAdministrator()))
-            throw new IdentityRestrictionException(creatorId, "User Invitation");
+        if (creator != null && creator.HasRole(IdentityRole.ClientAdmin))
+            return Result.ValidationError(IdentityErrorCodes.INVALID_CREATOR_ROLE);
 
         var identityExists = await _cateringIdentitiesRepository.GetByEmailAsync(createRequest.Email);
         if (identityExists != null)
-            throw new ArgumentException("Identity with provided email already exists.");
+            return Result.ValidationError(IdentityErrorCodes.IDENTITY_ALREADY_EXISTS);
 
         var invtitation = new IdentityInvitationBuilder()
             .HasEmail(createRequest.Email)
@@ -54,38 +55,18 @@ internal class CateringIdentitiesManagementAppService : ICateringIdentitiesManag
         await _cateringIdentitiesRepository.CreateInvitationAsync(invtitation);
 
         await _publisher.Publish(new IdentityInvitationCreated { InvitationId = invtitation.Id });
+        return Result.Success();
     }
 
-    public async Task AcceptInvitationAsync(string invitationId, string newPassword)
+    public async Task<Result> AcceptInvitationAsync(string invitationId, string newPassword)
     {
         var invitation = await _cateringIdentitiesRepository.GetInvitationByIdAsync(invitationId);
         if (invitation == null)
-            throw new CateringException("Invitation does not exist!");
-
+            return Result.ValidationError(IdentityErrorCodes.INVITATION_NOT_FOUND);
 
         var (identity, customer) = invitation.AcceptInvitation(_dataProtector.Hash(newPassword));
-        await _identityRepository.CreateAsync(identity);
-        if (customer != null)
-            await _customerRepository.CreateAsync(customer);
+        await _identityRepository.CompleteInvitationAsync(identity, customer, invitation);
 
-        await _cateringIdentitiesRepository.RemoveInvitationAsync(invitation);
-    }
-
-    public async Task<IdentityInfoDto> GetIdentityInfoAsync(string identityId)
-    {
-        var identity = await _identityRepository.GetByIdAsync(identityId);
-
-        return _mapper.Map<IdentityInfoDto>(identity);
-    }
-
-    public async Task<IdentityPermissionsDto> GetIdentityPermissionsAsync(string identityId)
-    {
-        var identity = await _identityRepository.GetByIdAsync(identityId);
-
-        return new IdentityPermissionsDto
-        {
-            Permissions = identity.Role.GetFromRole(),
-            Role = identity.Role
-        };
+        return Result.Success();
     }
 }

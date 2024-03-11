@@ -1,5 +1,5 @@
-﻿using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,6 +17,8 @@ internal class CartEntityConfiguration : IEntityTypeConfiguration<Cart>
             .HasForeignKey<Cart>(c => c.CustomerId);
 
         builder.Property(e => e.CustomerId).IsRequired();
+
+        builder.HasIndex(e => e.CustomerId).IsUnique();
 
         builder.OwnsMany(e => e.Items, cfg =>
         {

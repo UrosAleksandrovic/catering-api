@@ -4,7 +4,7 @@ namespace Catering.Api.Configuration.ErrorHandling;
 
 public class ErrorPublisher : IErrorPublisher
 {
-    private readonly Dictionary<Type, Type> _exceptionResolvers = new();
+    private readonly Dictionary<Type, Type> _exceptionResolvers = [];
 
     public HttpErrorResult? Publish(Exception e)
     {

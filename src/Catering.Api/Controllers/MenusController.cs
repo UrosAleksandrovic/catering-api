@@ -1,76 +1,50 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Menus;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Menus.Dtos;
+using Catering.Application.Aggregates.Menus.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/menus")]
-public class MenusController : ControllerBase
+public class MenusController(
+    IMenusManagementAppService menuAppService,
+    IMediator publisher) : ControllerBase
 {
-    private readonly IMenuManagementAppService _menuAppService;
-
-    public MenusController(IMenuManagementAppService menuAppService)
-    {
-        _menuAppService = menuAppService;
-    }
+    private readonly IMenusManagementAppService _menuAppService = menuAppService;
+    private readonly IMediator _publisher = publisher;
 
     [HttpPost]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateMenuAsync([FromBody] CreateMenuDto createRequest)
-    {
-        var createdId = await _menuAppService.CreateAsync(createRequest);
-
-        return CreatedAtRoute(GetNameRoute, new { id = createdId }, new { id = createdId });
-    }
+        => this.CreatedAtRouteFromResult(await _menuAppService.CreateAsync(createRequest), GetNameRoute);
 
     const string GetNameRoute = "GetMenuById";
-    [HttpGet("{id}", Name = GetNameRoute)]
+    [HttpGet("{id:Guid}", Name = GetNameRoute)]
     [Authorize]
     public async Task<IActionResult> GetMenuByIdAsync(Guid id)
-    {
-        var requestorId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var menu = await _menuAppService.GetByIdAsync(id, requestorId);
+        => this.FromResult(await _menuAppService.GetByIdAsync(id, this.GetUserId()));
 
-        if (menu == null)
-            return NotFound();
-
-        return Ok(menu);
-    }
-
-    [HttpGet("page")]
+    [HttpGet]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> GetPageAsync([FromQuery] MenusFilter filter)
-    {
-        var result = await _menuAppService.GetFilteredAsync(filter);
+        => this.FromResult(await _publisher.Send(new GetFilteredMenusQuery(filter)));
 
-        return Ok(result);
-    } 
-
-    [HttpPut("{id}")]
+    [HttpPut("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateMenu([FromRoute] Guid id, [FromBody] UpdateMenuDto updateRequest)
-    {
-        await _menuAppService.UpdateAsync(id, updateRequest);
+        => this.FromResult(await _menuAppService.UpdateAsync(id, updateRequest));
 
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> DeleteMenu([FromRoute] Guid id)
-    {
-        await _menuAppService.DeleteAsync(id);
-
-        return NoContent();
-    }
+        => this.FromResult(await _menuAppService.DeleteAsync(id));
 
     [HttpGet("contacts")]
     public async Task<IActionResult> GetRestaurantContacts([FromQuery] MenusFilter filter)
-    {
-        return Ok(await _menuAppService.GetRestaurantContactsAsync(filter));
-    }
+        => this.FromResult(await _publisher.Send(new GetFilteredMenuContactsQuery(filter)));
 }

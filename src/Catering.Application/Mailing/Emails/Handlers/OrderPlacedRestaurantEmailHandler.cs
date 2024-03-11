@@ -10,25 +10,25 @@ namespace Catering.Application.Mailing.Emails.Handlers;
 internal class OrderPlacedRestaurantEmailHandler : INotificationHandler<OrderPlaced>
 {
     private readonly IEmailRepository _emailRepository;
-    private readonly IOrderRepository _orderRepository;
+    private readonly IOrdersQueryRepository _orderQueryRepository;
+    private readonly IMenusQueryRepository _menuQueryRepository;
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
-    private readonly IMenuRepository _menuRepository;
     private readonly ILogger<OrderPlacedRestaurantEmailHandler> _logger;
 
     public OrderPlacedRestaurantEmailHandler(
         IEmailRepository emailRepository,
         IEmailSender emailSender,
-        IOrderRepository orderRepository,
+        IOrdersQueryRepository orderRepository,
+        IMenusQueryRepository menuRepository,
         IEmailBuilder emailBuilder,
-        IMenuRepository menuRepository,
         ILogger<OrderPlacedRestaurantEmailHandler> logger)
     {
         _emailRepository = emailRepository;
         _emailSender = emailSender;
-        _orderRepository = orderRepository;
+        _orderQueryRepository = orderRepository;
         _emailBuilder = emailBuilder;
-        _menuRepository = menuRepository;
+        _menuQueryRepository = menuRepository;
         _logger = logger;
     }
 
@@ -56,12 +56,12 @@ internal class OrderPlacedRestaurantEmailHandler : INotificationHandler<OrderPla
         try
         {
             var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestaurant);
-            var order = await _orderRepository.GetByIdAsync(notification.OrderId);
-            var menu = await _menuRepository.GetByIdAsync(order.MenuId);
+            var order = await _orderQueryRepository.GetByIdAsync(notification.OrderId);
+            var contactEmail = await _menuQueryRepository.GetContactEmailAsync(order.MenuId);
 
             _emailBuilder.HasTitle($"New order arrived. (#{order.Id})");
             _emailBuilder.HasEmailTemplate(template, new { Order = order });
-            _emailBuilder.HasRecepient(menu.Contact.Email);
+            _emailBuilder.HasRecepient(contactEmail);
 
             generatedEmail = _emailBuilder.Build();
         }

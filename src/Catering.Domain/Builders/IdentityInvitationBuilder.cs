@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
 
 namespace Catering.Domain.Builders;
 
@@ -42,9 +42,9 @@ public class IdentityInvitationBuilder : IBuilder<IdentityInvitation>
         return this;
     }
 
-    public IdentityInvitationBuilder HasFutureRole(IdentityRole roles, bool isCustomer)
+    public IdentityInvitationBuilder HasFutureRole(IdentityRole role, bool isCustomer)
     {
-        _futureRole = roles;
+        _futureRole = role;
         _isCustomer = isCustomer;
 
         return this;

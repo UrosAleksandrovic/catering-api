@@ -1,7 +1,8 @@
 ﻿using Catering.Application.Aggregates.Identities.Abstractions;
+using Catering.Application.Aggregates.Identities.Dtos;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Notifications;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Catering.Application.Mailing.Emails.TemplateNamesConstants;
@@ -11,26 +12,26 @@ namespace Catering.Application.Mailing.Emails.Handlers;
 internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlaced>
 {
     private readonly IEmailRepository _emailRepository;
-    private readonly IOrderRepository _orderRepository;
+    private readonly IOrdersQueryRepository _orderQueryRepository;
+    private readonly IIdentityQueryRepository<Identity> _identityQueryRepository;
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
-    private readonly IIdentityRepository<Identity> _identityRepository;
     private readonly ILogger<OrderPlacedCustomerEmailHandler> _logger;
 
     public OrderPlacedCustomerEmailHandler(
         IEmailRepository emailRepository,
         IEmailSender emailSender,
-        IOrderRepository orderRepository,
+        IOrdersQueryRepository orderRepository,
+        IIdentityQueryRepository<Identity> identityRepository,
         IEmailBuilder emailBuilder,
-        ILogger<OrderPlacedCustomerEmailHandler> logger,
-        IIdentityRepository<Identity> identityRepository)
+        ILogger<OrderPlacedCustomerEmailHandler> logger)
     {
         _emailRepository = emailRepository;
         _emailSender = emailSender;
-        _orderRepository = orderRepository;
+        _orderQueryRepository = orderRepository;
         _emailBuilder = emailBuilder;
         _logger = logger;
-        _identityRepository = identityRepository;
+        _identityQueryRepository = identityRepository;
     }
 
     public async Task Handle(OrderPlaced notification, CancellationToken cancellationToken)
@@ -57,8 +58,8 @@ internal class OrderPlacedCustomerEmailHandler : INotificationHandler<OrderPlace
         try
         {
             var template = await _emailRepository.GetTemplateAsync(OrderPlacedRestaurant);
-            var order = await _orderRepository.GetByIdAsync(notification.OrderId);
-            var customerIdentity = await _identityRepository.GetByIdAsync(order.CustomerId);
+            var order = await _orderQueryRepository.GetByIdAsync(notification.OrderId);
+            var customerIdentity = await _identityQueryRepository.GetByIdAsync<IdentityInfoDto>(order.CustomerId);
 
             _emailBuilder.HasTitle($"Order #{order.Id}")
                 .HasEmailTemplate(template, new { Order = order })

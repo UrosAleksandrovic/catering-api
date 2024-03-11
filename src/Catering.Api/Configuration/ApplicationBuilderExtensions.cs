@@ -14,6 +14,7 @@ public static class ApplicationBuilderExtensions
 
             config.RoutePrefix = string.Empty;
             config.DocumentTitle = OpenApiConstants.Title;
+            config.ConfigObject.PersistAuthorization = true;
         });
 
         return app;

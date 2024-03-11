@@ -4,16 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
-[Route("api/jobs/")]
+[Route("api/jobs")]
 [AuthorizeClientsAdmins]
-public class ManualJobController : ControllerBase
+public class ManualJobController(IBudgetResetJob budgetResetJob) : ControllerBase
 {
-    private readonly IBudgetResetJob _budgetResetJob;
-
-    public ManualJobController(IBudgetResetJob budgetResetJob)
-    {
-        _budgetResetJob = budgetResetJob;
-    }
+    private readonly IBudgetResetJob _budgetResetJob = budgetResetJob;
 
     [HttpPost("reset-budgets")]
     public async Task<IActionResult> ResetBudgets()

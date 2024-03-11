@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
 using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,15 +15,5 @@ internal class IdentityInvitationEntityConfiguration : IEntityTypeConfiguration<
 
         var fullNameBuilder = builder.OwnsOne(e => e.FullName);
         fullNameBuilder.Property(e => e.FirstName).IsRequired();
-
-        builder.Property(e => e.CreatedOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
-
-        builder.Property(e => e.ExpiredOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
     }
 }

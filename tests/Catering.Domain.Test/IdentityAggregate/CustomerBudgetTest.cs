@@ -1,5 +1,5 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
-using System;
+﻿using System;
+using Catering.Domain.Aggregates.Identity;
 using Xunit;
 
 namespace Catering.Domain.Test.IdentityAggregate;

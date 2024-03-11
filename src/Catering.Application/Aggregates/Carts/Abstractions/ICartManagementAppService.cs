@@ -1,12 +1,12 @@
 ﻿using Catering.Application.Aggregates.Carts.Dtos;
+using Catering.Application.Results;
 
 namespace Catering.Application.Aggregates.Carts.Abstractions;
 
 public interface ICartManagementAppService
 {
-    Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId);
-    Task AddItemAsync(string customerId, AddItemToCartDto addItemDto);
-    Task IncrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1);
-    Task DecrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1);
-    Task AddOrEditItemNoteAsync(string customerId, Guid itemMenuId, Guid itemId, string note);
+    Task<Result> AddItemAsync(string customerId, AddItemToCartDto addItemDto);
+    Task<Result> ChangeQuantity(string customerId, Guid itemId, int quantity);
+    Task<Result> AddOrEditItemNoteAsync(string customerId, Guid itemId, string note);
+    Task<Result<CartInfoDto>> GetCartByCustomerIdAsync(string customerId);
 }

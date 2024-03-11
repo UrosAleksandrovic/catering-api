@@ -27,6 +27,12 @@ public static class PersistenceExtensions
             options.UseSnakeCaseNamingConvention();
         });
 
+        services.AddDbContext<CateringDbContext>(options =>
+        {
+            options.UseNpgsql(settingsSection.Get<CateringDataSettings>().ConnectionString);
+            options.UseSnakeCaseNamingConvention();
+        });
+
         return services;
     }
 

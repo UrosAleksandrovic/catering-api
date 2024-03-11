@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -29,7 +29,8 @@ internal class IdentityEntityConfiguration : IEntityTypeConfiguration<Identity>
         {
             Id = "super.admin",
             Email = "super.admin@catering.test",
-            Role = IdentityRole.Administrator | IdentityRole.Super
+            Role = IdentityRole.SuperAdmin,
+            IsExternal = false
         });
     }
 }

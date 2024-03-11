@@ -1,6 +1,6 @@
-﻿using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Order;
+using Catering.Domain.Builders;
 using Catering.Domain.Services;
 using FakeItEasy;
 using System;
@@ -28,7 +28,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
 
         //Act
@@ -43,7 +43,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
         var orderBuilder = A.Fake<IBuilder<Order>>();
         A.CallTo(() => orderBuilder.Build()).Returns(
@@ -53,7 +53,7 @@ public class OrderingServiceTest
             },
             Guid.NewGuid(),
             "someid",
-            DateTime.Now));
+            DateTimeOffset.UtcNow));
 
         //Act
         var resultOrder = orderingService.PlaceOrder(customer, orderBuilder);
@@ -81,7 +81,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
 
         //Act
@@ -97,7 +97,7 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
@@ -108,7 +108,7 @@ public class OrderingServiceTest
             },
             Guid.NewGuid(),
             "someid",
-            DateTime.Now));
+            DateTimeOffset.UtcNow));
         var order = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Act
@@ -138,7 +138,7 @@ public class OrderingServiceTest
     {
         //Arrange
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
 
         //Act
@@ -155,7 +155,7 @@ public class OrderingServiceTest
         //Arrange
         var itemPrice = 100;
         var orderingService = new OrderingService();
-        var identity = new Identity(new FullName("Test", "Test"), "test@test.com", IdentityRoleExtensions.GetClientEmployee());
+        var identity = new Identity("test@test.com", new FullName("Test", "Test"), IdentityRole.ClientEmployee, false);
         var customer = new Customer(identity);
         customer.ResetBudget(100);
         var orderBuilder = A.Fake<IBuilder<Order>>();
@@ -166,7 +166,7 @@ public class OrderingServiceTest
             },
             Guid.NewGuid(),
             "someid",
-            DateTime.Now));
+            DateTimeOffset.UtcNow));
         var order = orderingService.PlaceOrder(customer, orderBuilder);
 
         //Act

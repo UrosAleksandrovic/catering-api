@@ -6,12 +6,12 @@ using Catering.Application.Aggregates.Items.Dtos;
 using Catering.Application.Aggregates.Menus.Dtos;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Dtos.Menu;
-using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ExpenseAggregate;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.ItemAggregate;
-using Catering.Domain.Entities.MenuAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Expense;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Aggregates.Menu;
+using Catering.Domain.Aggregates.Order;
 
 namespace Catering.Infrastructure;
 
@@ -30,7 +30,7 @@ internal class CateringAggregatesMapperConfiguration : Profile
         CreateMap<Identity, IdentityInfoDto>()
             .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FullName.FirstName))
             .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.FullName.LastName))
-            .ForMember(d => d.Roles, opt => opt.MapFrom(s => s.Role.GetRoles().Select(r => r.ToString())));
+            .ForMember(d => d.Role, opt => opt.MapFrom(s => s.Role.ToString()));
 
         CreateMap<CustomerBudget, CustomerBudgetInfoDto>()
             .ForMember(c => c.ReservedBalance, opt => opt.MapFrom(s => s.ReservedAssets))

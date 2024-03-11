@@ -60,7 +60,7 @@ internal class EmailSender : IEmailSender
         mailMessage.To.AddRange(emailToSend.Recepiants.Select(e => new MailboxAddress(null, e)));
         mailMessage.Subject = emailToSend.Title;
         mailMessage.Body = contentBuilder.ToMessageBody();
-        mailMessage.Date = DateTime.Now;
+        mailMessage.Date = DateTimeOffset.UtcNow;
 
         return mailMessage;
     }

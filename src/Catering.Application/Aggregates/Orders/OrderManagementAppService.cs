@@ -1,11 +1,15 @@
-﻿using AutoMapper;
-using Catering.Application.Aggregates.Orders.Abstractions;
+﻿using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
 using Catering.Application.Aggregates.Orders.Notifications;
 using Catering.Application.Aggregates.Orders.Requests;
+using Catering.Application.Results;
+using Catering.Application.Validation;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Identity;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.Aggregates.Order;
 using Catering.Domain.Builders;
-using Catering.Domain.Entities.IdentityAggregate;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain.ErrorCodes;
 using Catering.Domain.Services.Abstractions;
 using MediatR;
 
@@ -15,24 +19,26 @@ internal class OrderManagementAppService : IOrderManagementAppService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderingService _orderingService;
+    private readonly IValidationProvider _validationProvider;
     private readonly IMediator _publisher;
-    private readonly IMapper _mapper;
 
     public OrderManagementAppService(
         IOrderRepository orderRepository,
         IOrderingService orderingService,
-        IMediator publisher,
-        IMapper mapper)
+        IValidationProvider validationProvider,
+        IMediator publisher)
     {
         _orderRepository = orderRepository;
         _orderingService = orderingService;
+        _validationProvider = validationProvider;
         _publisher = publisher;
-        _mapper = mapper;
     }
 
-    public async Task CancelAsync(long orderId) 
+    public async Task<Result> CancelAsync(long orderId) 
     {
-        var order = await GetExistingByIdAsync(orderId);
+        var order = await _orderRepository.GetByIdAsync(orderId);
+        if (order == default)
+            return Result.NotFound();
 
         var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = order.CustomerId });
 
@@ -40,106 +46,64 @@ internal class OrderManagementAppService : IOrderManagementAppService
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
 
         _ = _publisher.Publish(new OrderCanceled { CustomerId = customer.IdentityId, OrderId = order.Id });
+
+        return Result.Success();
     }
 
-    public async Task ConfirmAsync(long orderId)
+    public async Task<Result> ConfirmAsync(long orderId)
     {
-        var order = await GetExistingByIdAsync(orderId);
+        var order = await _orderRepository.GetByIdAsync(orderId);
+        if (order == default)
+            return Result.NotFound();
 
         var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = order.CustomerId });
 
         _orderingService.ConfirmOrder(customer, order);
         await _orderRepository.UpdateOrderWithCustomerAsync(customer, order);
         _ = _publisher.Publish(new OrderConfirmed { CustomerId = customer.IdentityId, OrderId = order.Id });
+
+        return Result.Success();
     }
 
-    public async Task<FilterResult<ListOrderInfoDto>> GetFilteredAsync(OrdersFilter orderFilters, string requestorId)
+    public async Task<Result<long>> PlaceOrderAsync(string customerId, CreateOrderDto createRequest)
     {
-        var orders = await GetFilteredOrdersBasedOnRequestorAsync(orderFilters, requestorId);
+        if (await _validationProvider.ValidateModelAsync(createRequest) is var valRes && !valRes.IsSuccess)
+            return Result.From<long>(valRes);
 
-        return new FilterResult<ListOrderInfoDto>
-        {
-            PageIndex = orderFilters.PageIndex,
-            PageSize = orderFilters.PageSize,
-            Result = _mapper.Map<IEnumerable<ListOrderInfoDto>>(orders.Item1),
-            TotalNumberOfElements = orders.Item2,
-        };
-    }
-
-    public async Task<OrderInfoDto> GetByIdAsync(long id, string requestorId)
-    {
-        var order = await GetExistingByIdAsync(id);
-
-        var customerRequest = new GetOrderCustomer { CustomerId = requestorId };
-        var customer = await _publisher.Send(customerRequest);
-
-        if (customer.Identity.Role.IsClientEmployee() && order.CustomerId != customer.IdentityId)
-            return null;
-
-        return _mapper.Map<OrderInfoDto>(order);
-    }
-
-    public async Task<long> PlaceOrderAsync(string customerId, CreateOrderDto createOrder)
-    {
         if (string.IsNullOrWhiteSpace(customerId))
-            throw new ArgumentNullException(nameof(customerId));
+            return Result.ValidationError(IdentityErrorCodes.INVALID_CUSTOMER_ID);
 
-        var cartOfOrder = await _publisher.Send(new GetCartFromCustomer { CustomerId = customerId });
-        if (cartOfOrder == default || !cartOfOrder.Items.Any())
-            throw new ArgumentException("Customer does not have cart.");
-
-        var orderBuilder = new OrderBuilder()
-            .HasCart(cartOfOrder)
-            .HasDateOfDelivery(createOrder.ExpectedTimeOfDelivery)
-            .HasItems(await _publisher.Send(new GetItemsForPlacingOrder { CustomerId = customerId }));
-
-        if (createOrder.HomeDeliveryInfo != default)
-            orderBuilder.HasHomeDeliveryOption(
-                createOrder.HomeDeliveryInfo.StreetAndHouse,
-                createOrder.HomeDeliveryInfo.FloorAndApartment);
-
+        var cartOfOrder = await _publisher.Send(new GetCartFromCustomer(customerId));
+        var cartItems = await _publisher.Send(new GetItemsForPlacingOrder(customerId));
         var customer = await _publisher.Send(new GetOrderCustomer { CustomerId = customerId });
 
-        var order = _orderingService.PlaceOrder(customer, orderBuilder);
+        if (cartOfOrder == default || cartItems.Count == 0)
+            return Result.ValidationError(CartErrorCodes.CART_IS_EMPTY);
 
-        await _orderRepository.CreateOrderForCustomerAsync(customer, order);
+        var order = PlaceOrder(createRequest, cartOfOrder, cartItems, customer);
+        await _orderRepository.CreateOrderForCustomerAsync(customer, order, cartOfOrder);
 
         _ = _publisher.Publish(new OrderPlaced { CustomerId = customerId, OrderId = order.Id });
-        return order.Id;
+        return Result.Success(order.Id);
     }
 
-    private async Task<Order> GetExistingByIdAsync(long odrerId)
+    private Order PlaceOrder(
+        CreateOrderDto createRequest,
+        Cart cartOfOrder,
+        List<Item> cartItems,
+        Customer customer)
     {
-        var order = await _orderRepository.GetByIdAsync(odrerId);
-        if (order == default)
-            throw new KeyNotFoundException();
+        var orderBuilder = new OrderBuilder()
+            .HasCart(cartOfOrder)
+            .HasDateOfDelivery(createRequest.ExpectedTimeOfDelivery)
+            .HasItems(cartItems);
 
-        return order;
-    }
+        if (createRequest.HomeDeliveryInfo != default)
+            orderBuilder.HasHomeDeliveryOption(
+                createRequest.HomeDeliveryInfo.StreetAndHouse,
+                createRequest.HomeDeliveryInfo.FloorAndApartment);
 
-    private async Task<(List<Order>, int)> GetFilteredOrdersBasedOnRequestorAsync(OrdersFilter orderFilters, string requestorId)
-    {
-        var identityRequest = new GetIdentityWithId { IdentityId = requestorId };
-        var requestorIdentity = await _publisher.Send(identityRequest);
 
-        if (requestorIdentity.Role.IsClientEmployee() && !requestorIdentity.Role.IsAdministrator())
-        {
-            var newFilter = new OrdersFilter(orderFilters)
-            {
-                CustomerId = requestorIdentity.Id
-            };
-            return await _orderRepository.GetOrdersForCustomerAsync(newFilter);
-        }
-
-        if (requestorIdentity.Role.IsRestaurantEmployee())
-        {
-            var newFilter = new OrdersFilter(orderFilters)
-            {
-                MenuId = await _publisher.Send(new GetMenuWithContactId { ContactId = requestorId })
-            };
-            return await _orderRepository.GetOrdersForMenuAsync(newFilter);
-        }
-
-        return await _orderRepository.GetFilteredAsync(orderFilters);
+        return _orderingService.PlaceOrder(customer, orderBuilder);
     }
 }

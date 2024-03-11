@@ -1,7 +1,5 @@
-﻿namespace Catering.Application.Aggregates.Items.Dtos;
+﻿using Catering.Domain;
 
-public class ItemsLeaderboardDto
-{
-    public ItemInfoDto ItemInfo { get; set; }
-    public int EvaluatedValue { get; set; }
-}
+namespace Catering.Application.Aggregates.Items.Dtos;
+
+public record ItemsLeaderboardDto(Guid Id, string Name, double EvaluatedValue) : IdAndName<Guid>(Id, Name);

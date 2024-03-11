@@ -2,8 +2,12 @@
 using Catering.Application.Aggregates.Carts.Abstractions;
 using Catering.Application.Aggregates.Carts.Dtos;
 using Catering.Application.Aggregates.Carts.Requests;
-using Catering.Domain.Entities.CartAggregate;
-using Catering.Domain.Entities.ItemAggregate;
+using Catering.Application.Results;
+using Catering.Application.Validation;
+using Catering.Domain.Aggregates.Cart;
+using Catering.Domain.Aggregates.Item;
+using Catering.Domain.ErrorCodes;
+using Catering.Domain.Exceptions;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Carts;
@@ -11,75 +15,95 @@ namespace Catering.Application.Aggregates.Carts;
 internal class CartManagementAppService : ICartManagementAppService
 {
     private readonly ICartRepository _cartRepository;
-    private readonly IMediator _publisher;
+    private readonly IValidationProvider _validationProvider;
     private readonly IMapper _mapper;
+    private readonly IMediator _publisher;
 
     public CartManagementAppService(
         ICartRepository cartRepository,
+        IValidationProvider validationProvider,
         IMapper mapper,
         IMediator publisher)
     {
         _cartRepository = cartRepository;
         _mapper = mapper;
         _publisher = publisher;
+        _validationProvider = validationProvider;
     }
 
-    public async Task AddItemAsync(string customerId, AddItemToCartDto addItemDto)
+    public async Task<Result> AddItemAsync(string customerId, AddItemToCartDto addItemDto)
     {
-        var cart = await GetOrCreteCartForCustomerAsync(customerId);
+        if (await _validationProvider.ValidateModelAsync(addItemDto) is var valResult && !valResult.IsSuccess)
+            return valResult;
 
-        cart.AddItem(addItemDto.MenuId, addItemDto.ItemId, addItemDto.Quantity, addItemDto.Note);
+        var cart = await GetOrCreteCartForCustomerAsync(customerId);
+        var itemToAdd = await _publisher.Send(new GetItemForAddingToTheCart(addItemDto.MenuId, addItemDto.ItemId));
+
+        if (itemToAdd == null)
+            return Result.NotFound();
+
+        cart.AddItem(itemToAdd.MenuId, itemToAdd.Id, addItemDto.Quantity, addItemDto.Note);
 
         await _cartRepository.UpdateAsync(cart);
+        return Result.Success();
     }
 
-    public async Task AddOrEditItemNoteAsync(string customerId, Guid itemMenuId, Guid itemId, string note)
+    public async Task<Result> AddOrEditItemNoteAsync(string customerId, Guid itemId, string note)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.AddOrEditNoteToItem(itemMenuId, itemId, note);
+        cart.AddOrEditNoteToItem(itemId, note);
 
         await _cartRepository.UpdateAsync(cart);
+        return Result.Success();
     }
 
-    public async Task DecrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1)
+    public async Task<Result> ChangeQuantity(string customerId, Guid itemId, int quantity)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
 
-        cart.DecrementOrDeleteItem(itemMenuId, itemId, quantity);
+        var currentQuantity = cart.GetItemQuantity(itemId);
+        if (currentQuantity == 0)
+            throw new ItemNotInCartException(itemId, cart.Id);
+
+        if (quantity > currentQuantity)
+            cart.IncrementItem(itemId, quantity - currentQuantity);
+        else
+            cart.DecrementOrDeleteItem(itemId, currentQuantity - quantity);
 
         await _cartRepository.UpdateAsync(cart);
-        await _cartRepository.CleanUpDeletedItemsAsync(cart);
+        return Result.Success();
     }
 
-    public async Task<CartInfoDto> GetCartByCustomerIdAsync(string customerId)
+    public async Task<Result<CartInfoDto>> GetCartByCustomerIdAsync(string customerId)
     {
         var cart = await GetOrCreteCartForCustomerAsync(customerId);
-        var cartItems = await _publisher.Send(new GetItemsFromTheCart { CustomerId = customerId });
+        var cartItems = await _publisher.Send(new GetItemsFromTheCart(customerId));
 
         var resultCart = _mapper.Map<CartInfoDto>(cart);
         resultCart.Items = cart.Items.Select(i => MapToCartItemInfo(i, cartItems.SingleOrDefault(ci => ci.Id == i.ItemId)));
 
-        return resultCart;
+        return Result.Success(resultCart);
     }
 
-    public async Task IncrementItemAsync(string customerId, Guid itemMenuId, Guid itemId, int quantity = 1)
+    private async Task<Cart> CreateForCustomerAsync(string customerId)
     {
-        var cart = await GetOrCreteCartForCustomerAsync(customerId);
+        var cart = new Cart(customerId);
 
-        cart.IncrementItem(itemMenuId, itemId, quantity);
+        await _cartRepository.DeleteByCustomerIdAsync(customerId);
+        await _cartRepository.CreateAsync(cart);
 
-        await _cartRepository.UpdateAsync(cart);
+        return cart;
     }
 
     private async Task<Cart> GetOrCreteCartForCustomerAsync(string customerId)
     {
         var cart = await _cartRepository.GetByCustomerIdAsync(customerId);
-        if (cart != default)
+        var cartItems = await _publisher.Send(new GetItemsFromTheCart(customerId));
+        if (cart != default && cartItems.Count != 0)
             return cart;
 
-        cart = new Cart(customerId);
-        await _cartRepository.CreateAsync(cart);
+        cart = await CreateForCustomerAsync(customerId);
 
         return cart;
     }

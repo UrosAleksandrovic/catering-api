@@ -1,9 +1,6 @@
-﻿using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Domain.Aggregates.Identity;
 using MediatR;
 
 namespace Catering.Application.Aggregates.Menus.Requests;
 
-internal class GetIdentityById : IRequest<Identity>
-{
-    public string Id { get; set; }
-}
+internal record GetIdentityById(string Id) : IRequest<Identity>;

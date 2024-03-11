@@ -1,6 +1,7 @@
 ﻿using Catering.Application.Aggregates.Identities.Abstractions;
 using Catering.Application.Aggregates.Identities.Dtos;
-using Catering.Domain.Entities.OrderAggregate;
+using Catering.Domain;
+using Catering.Domain.Aggregates.Order;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catering.Infrastructure.Data.Repositories;
@@ -14,13 +15,13 @@ internal class CustomerReportsRepository : ICustomerReportsRepository
         _dbContextFactory = dbContextFactory;
     }
 
-    public async Task<List<CustomerMonthlySpendingDto>> GetMonthlySendingReportAsync(int month, int year)
+    public async Task<List<CustomerMonthlySpendingDto>> GetMonthlySendingReportAsync(YearAndMonth target)
     {
         var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
         var orderData = dbContext.Orders.AsNoTracking()
-            .Where(o => o.CreatedOn.Month == month)
-            .Where(o => o.CreatedOn.Year == year)
+            .Where(o => o.CreatedOn.Month == target.Month)
+            .Where(o => o.CreatedOn.Year == target.Year)
             .Where(o => o.Status == OrderStatus.Confirmed)
             .GroupBy(o => o.CustomerId)
             .Select(o => new
@@ -30,8 +31,8 @@ internal class CustomerReportsRepository : ICustomerReportsRepository
             });
 
         var expensesData = dbContext.Expenses.AsNoTracking()
-            .Where(e => e.DeliveredOn.Month == month)
-            .Where(e => e.DeliveredOn.Year == year)
+            .Where(e => e.DeliveredOn.Month == target.Month)
+            .Where(e => e.DeliveredOn.Year == target.Year)
             .GroupBy(e => e.CustomerId)
             .Select(e => new
             {
@@ -48,8 +49,8 @@ internal class CustomerReportsRepository : ICustomerReportsRepository
             {
                 CustomerId = x.customer.IdentityId,
                 CustomerFullName = x.customer.Identity.FullName,
-                Month = month,
-                Year = year,
+                Month = target.Month,
+                Year = target.Year,
                 CurrentBalance = x.customer.Budget.Balance,
                 TotalSpent = x.order.TotalSpent
             }).ToListAsync();

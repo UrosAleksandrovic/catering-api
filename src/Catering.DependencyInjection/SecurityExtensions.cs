@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Catering.Application.Security;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Infrastructure.Security;
 using Catering.Infrastructure.Security.Ldap;
 using Catering.Infrastructure.Security.Settings;

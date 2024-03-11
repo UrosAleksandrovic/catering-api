@@ -17,6 +17,6 @@ internal class SchedulingDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
-        new JobLogEntityConfiguration().Configure(modelBuilder.Entity<JobLog>());
+        modelBuilder.ApplyConfiguration(new JobLogEntityConfiguration());
     }
 }

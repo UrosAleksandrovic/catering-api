@@ -15,7 +15,7 @@ internal class OrderConfirmedEmailHandler : INotificationHandler<OrderConfirmed>
     private readonly IEmailSender _emailSender;
     private readonly IEmailBuilder _emailBuilder;
     private readonly ICustomerRepository _customerRepository;
-    private readonly IMenuRepository _menuRepository;
+    private readonly IMenusRepository _menuRepository;
     private readonly ILogger<OrderConfirmedEmailHandler> _logger;
 
     public OrderConfirmedEmailHandler(
@@ -24,7 +24,7 @@ internal class OrderConfirmedEmailHandler : INotificationHandler<OrderConfirmed>
         IOrderRepository orderRepository,
         IEmailBuilder emailBuilder,
         ICustomerRepository customerRepository,
-        IMenuRepository menuRepository,
+        IMenusRepository menuRepository,
         ILogger<OrderConfirmedEmailHandler> logger)
     {
         _emailRepository = emailRepository;

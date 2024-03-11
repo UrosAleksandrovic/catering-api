@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.ItemAggregate;
+﻿using Catering.Domain.Aggregates.Item;
 using System;
 using Xunit;
 

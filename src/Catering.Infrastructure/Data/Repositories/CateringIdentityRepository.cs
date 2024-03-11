@@ -1,38 +1,27 @@
 ﻿using Catering.Application.Aggregates.Identities.Abstractions;
-using Catering.Domain.Entities.IdentityAggregate;
-using Microsoft.EntityFrameworkCore;
+using Catering.Domain.Aggregates.Identity;
 
 namespace Catering.Infrastructure.Data.Repositories;
 
 internal class CateringIdentityRepository : IdentityRepository<CateringIdentity>, ICateringIdentitiesRepository
 {
-    public CateringIdentityRepository(IDbContextFactory<CateringDbContext> dbContextFactory)
-        : base(dbContextFactory) { }
+    public CateringIdentityRepository(CateringDbContext dbContext)
+        : base(dbContext) { }
 
     public async Task<IdentityInvitation> CreateInvitationAsync(IdentityInvitation invitation)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        await dbContext.Set<IdentityInvitation>().AddAsync(invitation);
-        await dbContext.SaveChangesAsync();
+        await _dbContext.Set<IdentityInvitation>().AddAsync(invitation);
+        await _dbContext.SaveChangesAsync();
 
         return invitation;
     }
 
     public async Task<IdentityInvitation> GetInvitationByIdAsync(string invitationId)
-    {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        var result = await dbContext.Set<IdentityInvitation>().FindAsync(invitationId);
-
-        return result;
-    }
+        => await _dbContext.Set<IdentityInvitation>().FindAsync(invitationId);
 
     public async Task RemoveInvitationAsync(IdentityInvitation invitation)
     {
-        using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-
-        dbContext.Set<IdentityInvitation>().Remove(invitation);
-        await dbContext.SaveChangesAsync();
+        _dbContext.Set<IdentityInvitation>().Remove(invitation);
+        await _dbContext.SaveChangesAsync();
     }
 }

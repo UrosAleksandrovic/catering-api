@@ -1,11 +1,10 @@
 ﻿using Catering.Application.Aggregates.Identities.Dtos;
+using Catering.Application.Results;
 
 namespace Catering.Application.Aggregates.Identities.Abstractions;
 
 public interface ICateringIdentitiesManagementAppService
 {
-    Task SendIdentityInvitationAsync(string creatorId, CreateIdentityInvitationDto createRequest);
-    Task AcceptInvitationAsync(string invitationId, string newPassword);
-    Task<IdentityInfoDto> GetIdentityInfoAsync(string identityId);
-    Task<IdentityPermissionsDto> GetIdentityPermissionsAsync(string identityId);
+    Task<Result> SendIdentityInvitationAsync(string creatorId, CreateIdentityInvitationDto createRequest);
+    Task<Result> AcceptInvitationAsync(string invitationId, string newPassword);
 }

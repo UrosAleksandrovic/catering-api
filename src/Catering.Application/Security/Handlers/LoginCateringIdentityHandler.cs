@@ -1,10 +1,11 @@
-﻿using Catering.Application.Security.Requests;
-using Catering.Domain.Entities.IdentityAggregate;
+﻿using Catering.Application.Results;
+using Catering.Application.Security.Requests;
+using Catering.Domain.Aggregates.Identity;
 using MediatR;
 
 namespace Catering.Application.Security.Handlers;
 
-internal class LoginCateringIdentityHandler : IRequestHandler<LoginCateringIdentity, string>
+internal class LoginCateringIdentityHandler : IRequestHandler<LoginCateringIdentity, Result<string>>
 {
     private readonly ITokenAtuhenticator<CateringIdentity> _cateringIdentityAuthenticator;
 
@@ -13,8 +14,6 @@ internal class LoginCateringIdentityHandler : IRequestHandler<LoginCateringIdent
         _cateringIdentityAuthenticator = cateringIdentityAuthenticator;
     }
 
-    public Task<string> Handle(LoginCateringIdentity request, CancellationToken cancellationToken)
-    {
-        return _cateringIdentityAuthenticator.GenerateTokenAsync(request.Login, request.Password);
-    }
+    public async Task<Result<string>> Handle(LoginCateringIdentity request, CancellationToken cancellationToken)
+        => Result.Success(await _cateringIdentityAuthenticator.GenerateTokenAsync(request.Login, request.Password));
 }

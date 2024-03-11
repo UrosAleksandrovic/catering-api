@@ -1,5 +1,5 @@
-﻿using Catering.Domain.Entities.CartAggregate;
-using System;
+﻿using System;
+using Catering.Domain.Aggregates.Cart;
 using Xunit;
 
 namespace Catering.Domain.Test.CartAggregate;

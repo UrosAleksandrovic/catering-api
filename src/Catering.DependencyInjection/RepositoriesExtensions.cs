@@ -5,7 +5,7 @@ using Catering.Application.Aggregates.Items.Abstractions;
 using Catering.Application.Aggregates.Menus.Abstractions;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Mailing.Emails;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Domain.Aggregates.Identity;
 using Catering.Infrastructure.Data.Repositories;
 using Catering.Infrastructure.Mailing.Emails;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,15 +16,30 @@ public static class RepositoriesExtensions
 {
     public static IServiceCollection AddCateringRepositories(this IServiceCollection services)
     {
-        services.AddTransient<IItemRepository, ItemRepository>();
-        services.AddTransient<ICartRepository, CartRepository>();
-        services.AddTransient<ICustomerRepository, CustomerRepository>();
-        services.AddTransient<IMenuRepository, MenuRepository>();
-        services.AddTransient<IOrderRepository, OrderRepository>();
-        services.AddTransient<IExpensesRepository, ExpensesRepository>();
+        services.AddScoped<IItemRepository, ItemRepository>();
+        services.AddTransient<IItemsQueryRepository, ItemsQueryRepository>();
+
+        services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<ICartQueryRepository, CartQueryRepository>();
+
+        services.AddScoped<IMenusRepository, MenusRepository>();
+        services.AddTransient<IMenusQueryRepository, MenusQueryRepository>();
+
+        services.AddScoped<IOrderRepository, OrdersRepository>();
+        services.AddTransient<IOrdersQueryRepository, OrdersQueryRepository>();
+
+        services.AddScoped<IExpensesRepository, ExpensesRepository>();
+        services.AddTransient<IExpensesQueryRepository, ExpensesQueryRepository>();
+
         services.AddTransient<ICustomerReportsRepository, CustomerReportsRepository>();
+
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddTransient<ICustomerQueryRepository, CustomerQueryRepository>();
+
         services.AddTransient<ICateringIdentitiesRepository, CateringIdentityRepository>();
-        services.AddTransient<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
+
+        services.AddScoped<IIdentityRepository<Identity>, IdentityRepository<Identity>>();
+        services.AddTransient<IIdentityQueryRepository<Identity>, IdentityQueryRepository<Identity>>();
 
         return services;
     }

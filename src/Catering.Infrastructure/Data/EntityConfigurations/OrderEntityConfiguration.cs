@@ -1,4 +1,4 @@
-﻿using Catering.Domain.Entities.OrderAggregate;
+﻿using Catering.Domain.Aggregates.Order;
 using Catering.Infrastructure.EFUtility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -25,15 +25,5 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
         homeDeliveryInfoBuilder.Property(e => e.StreetAndHouse).IsRequired();
 
         builder.Property(e => e.CustomerId).IsRequired();
-
-        builder.Property(e => e.ExpectedOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
-
-        builder.Property(e => e.CreatedOn)
-            .HasConversion<DateTimeConverter>()
-            .Metadata
-            .SetValueComparer(typeof(DateTimeComparer));
     }
 }

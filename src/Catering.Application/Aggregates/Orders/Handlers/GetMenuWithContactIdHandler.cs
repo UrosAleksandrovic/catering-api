@@ -6,9 +6,9 @@ namespace Catering.Application.Aggregates.Orders.Handlers;
 
 internal class GetMenuWithContactIdHandler : IRequestHandler<GetMenuWithContactId, Guid?>
 {
-    private readonly IMenuRepository _repository;
+    private readonly IMenusRepository _repository;
 
-    public GetMenuWithContactIdHandler(IMenuRepository repository)
+    public GetMenuWithContactIdHandler(IMenusRepository repository)
     {
         _repository = repository;
     }

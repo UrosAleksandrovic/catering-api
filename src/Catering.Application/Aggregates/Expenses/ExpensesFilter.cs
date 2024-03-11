@@ -1,4 +1,6 @@
-﻿namespace Catering.Application.Aggregates.Expenses;
+﻿using Catering.Application.Filtering;
+
+namespace Catering.Application.Aggregates.Expenses;
 
 public class ExpensesFilter : FilterBase
 {

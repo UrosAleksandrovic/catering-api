@@ -1,78 +1,56 @@
 ﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Orders;
 using Catering.Application.Aggregates.Orders.Abstractions;
 using Catering.Application.Aggregates.Orders.Dtos;
-using Catering.Domain.Entities.IdentityAggregate;
+using Catering.Application.Aggregates.Orders.Queries;
+using Catering.Application.Results;
+using Catering.Domain.Aggregates.Order;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Catering.Api.Controllers;
 
 [Route("/api/orders")]
-public class OrdersController : ControllerBase
+public class OrdersController(IOrderManagementAppService ordersService, IMediator publisher) : ControllerBase
 {
-    private readonly IOrderManagementAppService _ordersService;
-
-    public OrdersController(IOrderManagementAppService ordersService)
-    {
-        _ordersService = ordersService;
-    }
+    private readonly IOrderManagementAppService _ordersService = ordersService;
+    private readonly IMediator _publisher = publisher;
 
     [HttpPost]
     [AuthorizeClientsEmployee]
     public async Task<IActionResult> MakeOrderAsync([FromBody] CreateOrderDto createOrder)
     {
-        var customerId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var createdResult = await _ordersService.PlaceOrderAsync(this.GetUserId(), createOrder);
 
-        var orderId = await _ordersService.PlaceOrderAsync(customerId, createOrder);
-
-        return CreatedAtRoute(GetNameRoute, new { id = orderId }, new { id = orderId });
+        return this.CreatedAtRouteFromResult(createdResult, GetNameRoute);
     }
 
-    [HttpPut("{orderId}/cancel")]
-    [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
-        IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-        IdentityRole.Restaurant | IdentityRole.Employee)]
-    public async Task<IActionResult> CancelOrderAsync([FromRoute] long orderId)
+    [HttpPut("{id:long}/status")]
+    [AuthorizeRestaurantEmployee]
+    public async Task<IActionResult> ChangeStatusAsync(
+        [FromRoute] long id,
+        [FromBody] ChangeOrderStatusDto newStatus)
     {
-        await _ordersService.CancelAsync(orderId);
+        var result = newStatus.NewStatus switch
+        {
+            OrderStatus.Canceled => await _ordersService.CancelAsync(id),
+            OrderStatus.Confirmed => await _ordersService.ConfirmAsync(id),
+            _ => Result.Error(ErrorType.Unknown)
+        };
 
-        return NoContent();
-    }
-
-    [HttpPut("{orderId}/confirm")]
-    [CateringAuthorization(IdentityRole.Administrator | IdentityRole.Super,
-        IdentityRole.Administrator | IdentityRole.Client | IdentityRole.Employee,
-        IdentityRole.Restaurant | IdentityRole.Employee)]
-    public async Task<IActionResult> ConfirmOrderAsync([FromRoute] long orderId)
-    {
-        await _ordersService.ConfirmAsync(orderId);
-
-        return NoContent();
+        return this.FromResult(result);
     }
 
     private const string GetNameRoute = "GetOrderById";
-    [HttpGet("{id}", Name = GetNameRoute)]
+    [HttpGet("{id:long}", Name = GetNameRoute)]
     [Authorize]
     public async Task<IActionResult> GetOrderByIdAsync([FromRoute] long id)
-    {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var order = await _ordersService.GetByIdAsync(id, requesterId);
-
-        if (order == default)
-            return NotFound();
-
-        return Ok(order);
-    }
+        => this.FromResult(await _publisher.Send(new GetOrderByIdQuery(id, this.GetUserId())));
 
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetFilteredOrdersAsync([FromQuery] OrdersFilter filter)
-    {
-        var requesterId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var orders = await _ordersService.GetFilteredAsync(filter, requesterId);
-
-        return Ok(orders);
-    }
+        => this.FromResult(await _publisher.Send(new GetFilteredOrdersQuery(filter, this.GetUserId())));
 }

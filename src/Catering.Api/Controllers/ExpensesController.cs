@@ -1,62 +1,39 @@
-﻿using System.Security.Claims;
-using Catering.Api.Configuration.Authorization;
+﻿using Catering.Api.Configuration.Authorization;
+using Catering.Api.Extensions;
 using Catering.Application.Aggregates.Expenses;
 using Catering.Application.Aggregates.Expenses.Abstractions;
 using Catering.Application.Aggregates.Expenses.Dtos;
+using Catering.Application.Aggregates.Expenses.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catering.Api.Controllers;
 
-[Route("api/expenses/")]
-public class ExpensesController : ControllerBase
+[Route("api/expenses")]
+public class ExpensesController(IExpensesManagementAppService expensesService, IMediator publisher) : ControllerBase
 {
-    private readonly IExpensesManagementAppService _expensesService;
+    private readonly IExpensesManagementAppService _expensesService = expensesService;
+    private readonly IMediator _publisher = publisher;
 
     private const string GetNameRoute = "GetExpenseById";
-
-    public ExpensesController(IExpensesManagementAppService expensesService)
-    {
-        _expensesService = expensesService;
-    }
 
     [HttpPost]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> CreateAsync([FromBody] CreateExpenseDto createRequest)
-    {
-        var createdId = await _expensesService.CreateAsync(createRequest);
-
-        return CreatedAtRoute(GetNameRoute, new { id = createdId }, new { id = createdId });
-    }
+        => this.CreatedAtRouteFromResult(await _expensesService.CreateAsync(createRequest), GetNameRoute);
 
     [HttpPut("{id:Guid}")]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateExpenseDto updateRequest)
-    {
-        await _expensesService.UpdateAsync(id, updateRequest);
-
-        return NoContent();
-    }
+        => this.FromResult(await _expensesService.UpdateAsync(id, updateRequest));
 
     [HttpGet("{id:Guid}", Name = GetNameRoute)]
     [AuthorizeClientsAdmins]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
-    {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var expense = await _expensesService.GetByIdAsync(id, userId);
-
-        if (expense == default)
-            return NotFound();
-
-        return Ok(expense);
-    }
+        => this.FromResult(await _publisher.Send(new GetExpenseByIdQuery(id, this.GetUserId())));
 
     [HttpGet]
     [AuthorizeClientsAdmins]
-    public async Task<IActionResult> GetFiltered([FromQuery] ExpensesFilter filter)
-    {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var expenses = await _expensesService.GetFilteredAsync(filter);
-
-        return Ok(expenses);
-    }
+    public async Task<IActionResult> GetFiltered([FromQuery] ExpensesFilter filters)
+        => this.FromResult(await _publisher.Send(new GetFilteredExpensesQuery(filters)));
 }
